@@ -1,0 +1,19 @@
+title: Pi of life
+description:
+category: comic
+media: Pi of life 3.webp
+media: Pi of life 4.webp
+media: Pi of life 5.webp
+media: Pi of life 6.webp
+media: Pi of life 7.webp
+media: Pi-of-life-21.webp
+media: Pi-of-life-22.webp
+media: Pi-of-life-23.webp
+media: Pi-of-life-24.webp
+media: Pi-of-life-25.webp
+media: Pi-of-life-25-5.webp
+media: Pi-of-life-26.webp
+media: Pi-of-life-27.webp
+media: Pi-of-life-28.webp
+media: Pi-of-life-29.webp
+media: Pi-of-life-30.webp

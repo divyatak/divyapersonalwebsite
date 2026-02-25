@@ -1,0 +1,11 @@
+title: Common
+description: Inspired by the height of covid, published in the "diseased" edition of the INKLAB anthology, this comic captured the innocuous cold and its ability to stop life.
+category: comic
+media: Page 1.webp
+media: page 2.webp
+media: Page 3.webp
+media: Page 4.webp
+media: Page 5.webp
+media: Page 6.webp
+media: Page 7.webp
+media: Page 8.webp

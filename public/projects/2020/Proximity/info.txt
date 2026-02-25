@@ -1,0 +1,12 @@
+title: Proximity
+description:
+category: game
+media: https://www.youtube.com/watch?v=L92W7zcnLGk
+media: Ewux55.webp
+media: Fs0dH.webp
+media: JHWvgV.webp
+media: pQ5PsG.webp
+media: RwoSMd.webp
+collaborator: Charu Tak
+link: https://charutak.itch.io/proximity
+itch: https://itch.io/embed/710203?dark=true

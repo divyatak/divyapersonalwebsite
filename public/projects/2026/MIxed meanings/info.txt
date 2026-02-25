@@ -1,0 +1,10 @@
+title: Mixed meanings
+description:
+category: conceptual
+category: ai
+collaborator: Kahran Singh
+media: 1.mp4
+media: 2.mp4
+media: 3.mp4
+media: 4.mp4
+media: 5.mp4

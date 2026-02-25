@@ -1,0 +1,12 @@
+title: Friendly stories
+description:
+category: comic
+collaborator: Kahran Singh
+media: Close1.webp
+media: Close2.webp
+media: Close3.webp
+media: Close4.webp
+media: gossip1.webp
+media: gossip2.webp
+media: gossip3.webp
+media: gossip4.webp

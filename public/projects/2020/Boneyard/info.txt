@@ -1,0 +1,10 @@
+title: Boneyard
+description:
+category: game
+media: https://www.youtube.com/watch?v=kq55Od_mA_8
+media: 2_a8xD.webp
+media: ri67IB.webp
+media: sjeBdO.webp
+collaborator: Charu Tak
+link: https://charutak.itch.io/boneyard
+itch: https://itch.io/embed/600257?dark=true

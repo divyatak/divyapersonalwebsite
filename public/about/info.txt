@@ -1,0 +1,24 @@
+bio: Divya Tak is a multi-disciplinary designer and creative with more than a decade of experience in product design, game design, and creative consulting. As the co-founder of Joyus Studio, she brings a unique blend of creativity and strategic thinking to every project, crafting impactful and user-centered experiences.
+bio: Divya's expertise spans visual storytelling, branding, and leveraging AI for innovative design solutions. With a background in physics from IIT Kharagpur and a passion for fostering creative growth, she continues to inspire audiences by bridging the gap between art, technology, and human connection.
+
+email: hello@divyatak.art
+
+talk: Talk on Creativity | Layers, Portugal (online) | 2025
+talk: Panel on State of Games in India | Google India
+talk: The Innovative Power of AI in Creative Industries | IIM Bangalore | 2024
+talk: Panel on Women in Animation, Video Games & Comics | GAFX, Bengaluru | 2024 | https://www.linkedin.com/company/bengaluru-gafx-conference-2024/
+talk: Panel on Games and Literature | Goethe Institut, New Delhi | 2024 | https://www.goethe.de/ins/in/en/ver.cfm?event_id=25664310
+talk: AI in Workflows | Slush'd New Delhi | 2023 | https://www.linkedin.com/company/new-delhi-slush-d/
+talk: Panel on AI in Creative Spaces | Bangalore International Center | 2023
+talk: Talk on Product Design Learnings | UXDX | 2022 | https://youtu.be/_PJwXuoS0Ns
+talk: Talk on Creative Career Blocks | Christ University | 2021 | https://www.linkedin.com/posts/divya-tak_creative-storytelling-leadership-activity-6724232400668368896-q5wO/
+
+workshop: Narrative Design | AGI Fest | 2025
+workshop: Investing 101 | StartOut, USA
+workshop: Midjourney | AI Enthusiasts Circle
+workshop: Design Lessons from Games | Lab59 | 2024
+workshop: Visual Storytelling | Goethe Institut, New Delhi | 2024 | https://www.goethe.de/ins/in/en/ver.cfm?event_id=25664310
+
+press: INKLAB — Common published in anthology | Amazon | 2021 | https://www.amazon.in/INKLAB-Adhiraj-Arunachalam-Shikhant-Sablania/dp/B08WPZ73YP
+press: Podcast feature | Spotify | | https://open.spotify.com/episode/1T3uIPziUpoETZr2fm8zbf
+press: Instincts Brocade — illustration feature | Creative Gaga | | https://www.creativegaga.com/design/graphic-design/instincts-brocade

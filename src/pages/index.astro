@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro'
+import HeroParallax from '../components/HeroParallax.astro'
+import works from '../data/generated-projects.json'
+
+const heroProjects = works
+  .flatMap(y => y.projects)
+  .filter(p => p.cover)
+  .map(p => ({ cover: p.cover, title: p.title, slug: p.slug, coverOrientation: p.coverOrientation }))
+---
+
+<Layout>
+  <section aria-label="Introduction" class="home-section">
+    <h1 class="sr-only">Divya — Artist Portfolio</h1>
+    <div class="home-hero">
+      <HeroParallax projects={heroProjects} />
+    </div>
+    <div class="home-text">
+      <p class="divya-intro">
+        Hello, I'm Divya — artist, maker, collaborator.
+        This is a space for my work and the people I create with.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Redirect old hash-based URLs to proper routes
+  const hash = window.location.hash.replace('#', '')
+  if (hash) {
+    const parts = hash.split('/')
+    const section = parts[0]
+    if (section === 'works' && parts[1]) {
+      window.location.replace('/works/' + parts[1] + '/')
+    } else if (section === 'works') {
+      window.location.replace('/works/')
+    } else if (section === 'friends') {
+      window.location.replace('/friends/')
+    } else if (section === 'about') {
+      window.location.replace('/about/')
+    }
+  }
+</script>

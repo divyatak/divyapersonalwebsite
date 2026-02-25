@@ -1,0 +1,4 @@
+name: Devanshu Tak
+role: 3D artist & designer
+url: https://www.instagram.com/devanshutak25/
+description: Specializes in Blender, Houdini, and Unreal Engine. Credits on Netflix and SonyLIV productions.

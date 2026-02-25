@@ -1,0 +1,37 @@
+title: Wonderful Worlds
+description:
+category: zine
+category: illustration
+media: Page 1.webp
+media: page 3.webp
+media: page 5.webp
+media: page 6.webp
+media: page 7.webp
+media: page 8.webp
+media: page 9.webp
+media: page 10.webp
+media: page 11.webp
+media: page 12.webp
+media: page 13.webp
+media: page 14.webp
+media: page 15.webp
+media: page 16.webp
+media: page 17.webp
+media: page 18.webp
+media: page 19.webp
+media: page 20.webp
+media: page 21.webp
+media: page 22.webp
+media: page 23.webp
+media: page 24.webp
+media: page 25.webp
+media: page 26.webp
+media: page 27.webp
+media: page 28.webp
+media: page 29.webp
+media: page 30.webp
+media: page 31.webp
+media: page 32.webp
+media: page 33.webp
+media: page 34.webp
+media: page 36.webp

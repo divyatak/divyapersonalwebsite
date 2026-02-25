@@ -1,0 +1,13 @@
+title: AI quit
+description:
+category: game
+media: https://www.youtube.com/watch?v=bZy-VKiIzUI
+media: 9i6eYA.webp
+media: mt4RP.webp
+media: UQBYVb.webp
+media: VFbZ8Z.webp
+collaborator: Charu Tak
+collaborator: Varun Ramanna
+collaborator: Devanshu Tak
+link: https://charutak.itch.io/ai-quit
+itch: https://itch.io/embed/679985?dark=true

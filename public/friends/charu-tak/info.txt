@@ -1,0 +1,4 @@
+name: Charu Tak
+role: Game developer & multidisciplinary creative
+url: https://charutak.xyz
+description: Makes browser-based games spanning puzzles, visual novels, and experimental interactive projects. Long-time collaborator.

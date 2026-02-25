@@ -1,0 +1,182 @@
+---
+const { projects } = Astro.props
+---
+
+<div class="hero-container hero-parallax" id="hero-parallax">
+  {projects.map((p) => (
+    <a
+      href={`/works/${p.slug}/`}
+      class:list={['parallax-card', 'parallax-card--candidate', { 'parallax-card--portrait': p.coverOrientation === 'portrait', 'parallax-card--landscape': p.coverOrientation !== 'portrait' }]}
+      data-cover={p.cover}
+      data-orientation={p.coverOrientation || 'landscape'}
+    >
+      <img data-src={p.cover} alt={p.title} decoding="async" />
+      <span class="parallax-card-title">{p.title}</span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .hero-parallax {
+    position: relative;
+  }
+
+  /* All cards hidden until JS picks them */
+  .parallax-card--candidate {
+    display: none;
+  }
+
+  .parallax-card {
+    position: absolute;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.15s ease-out, box-shadow 0.2s;
+    will-change: transform;
+    transform: rotate(var(--rotation));
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .parallax-card--portrait {
+    width: 22%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .parallax-card--landscape {
+    width: 28%;
+    aspect-ratio: 3 / 2;
+  }
+
+  .parallax-card:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+    z-index: 20 !important;
+  }
+
+  .parallax-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  .parallax-card-title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .parallax-card:hover .parallax-card-title {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .parallax-card-title {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('hero-parallax')
+    if (!container) return
+
+    const layouts = [
+      { left: 2,  top: 0,  depth: 0.3, rotation: -2.5 },
+      { left: 38, top: 2,  depth: 0.7, rotation: 3 },
+      { left: 68, top: 4,  depth: 0.4, rotation: -1.5 },
+      { left: 10, top: 20, depth: 0.6, rotation: 2 },
+      { left: 42, top: 18, depth: 0.5, rotation: -3.5 },
+      { left: 65, top: 22, depth: 0.8, rotation: 1.5 },
+      { left: 0,  top: 40, depth: 0.4, rotation: -2 },
+      { left: 35, top: 38, depth: 0.6, rotation: 4 },
+      { left: 64, top: 42, depth: 0.3, rotation: -1 },
+      { left: 5,  top: 60, depth: 0.7, rotation: 3.5 },
+      { left: 38, top: 58, depth: 0.5, rotation: -2.5 },
+      { left: 66, top: 62, depth: 0.4, rotation: 2 },
+    ]
+
+    // Gather all candidate cards, shuffle, pick 12
+    const allCards = Array.from(container.querySelectorAll('.parallax-card--candidate')) as HTMLElement[]
+    for (let i = allCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allCards[i], allCards[j]] = [allCards[j], allCards[i]]
+    }
+
+    const isMobile = window.innerWidth <= 768
+    const count = isMobile ? Math.min(8, allCards.length) : Math.min(12, allCards.length)
+    const selected = allCards.slice(0, count)
+
+    // Position and reveal selected cards
+    selected.forEach((card, i) => {
+      const layout = layouts[i]
+      const zIndex = Math.floor(layout.depth * 10)
+
+      card.style.left = `${layout.left}%`
+      card.style.top = `${layout.top}%`
+      card.style.zIndex = String(zIndex)
+      card.style.setProperty('--depth', String(layout.depth))
+      card.style.setProperty('--rotation', `${layout.rotation}deg`)
+      card.dataset.baseRotation = String(layout.rotation)
+
+      // Load the image
+      const img = card.querySelector('img') as HTMLImageElement
+      if (img && img.dataset.src) {
+        img.src = img.dataset.src
+        img.loading = i < 6 ? 'eager' : 'lazy'
+      }
+
+      // Show the card
+      card.classList.remove('parallax-card--candidate')
+      card.style.display = 'block'
+    })
+
+    // Parallax movement
+    const MAX_SHIFT = Math.min(40, container.offsetWidth * 0.06)
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reducedMotion) return
+
+    function handleMove(clientX: number, clientY: number) {
+      const rect = container!.getBoundingClientRect()
+      const dx = (clientX - rect.left - rect.width / 2) / (rect.width / 2)
+      const dy = (clientY - rect.top - rect.height / 2) / (rect.height / 2)
+
+      selected.forEach(card => {
+        const depth = parseFloat(card.style.getPropertyValue('--depth'))
+        const rotation = card.dataset.baseRotation || '0'
+        card.style.transform = `rotate(${rotation}deg) translate(${dx * depth * MAX_SHIFT}px, ${dy * depth * MAX_SHIFT}px)`
+      })
+    }
+
+    container.addEventListener('mousemove', (e) => {
+      handleMove(e.clientX, e.clientY)
+    })
+
+    container.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0]
+      handleMove(touch.clientX, touch.clientY)
+    }, { passive: true })
+
+    container.addEventListener('mouseleave', () => {
+      selected.forEach(card => {
+        const rotation = card.dataset.baseRotation || '0'
+        card.style.transform = `rotate(${rotation}deg) translate(0, 0)`
+      })
+    })
+  })
+</script>

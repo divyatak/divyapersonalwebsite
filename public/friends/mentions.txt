@@ -1,0 +1,19 @@
+name: Soumyadeep Mukherjee
+role: Engineer & entrepreneur
+url: https://www.linkedin.com/in/soumyadeepmukherjee/
+description: Co-founder & CTO of Dashtoon, building an AI-powered comic creation platform. Forbes 30 Under 30 Asia.
+
+name: Samhita Arni
+role: Author & brand consultant
+url: https://www.samarni.com/
+description: Known for Sita's Ramayana (NYT Bestseller) and The Mahabharatha — A Child's View. Elsa Morante Literary Award winner.
+
+name: Maitreyee Kalaskar
+role: Art director, designer & illustrator
+url: https://maitreyeekalaskar.com/
+description: Founder of Mee Studios. Has worked with Budweiser, OnePlus, Adobe, and FIFA. Known for bold, playful visual work.
+
+name: Amrita Sukrity
+role: Entrepreneur & healthcare innovator
+url: https://www.linkedin.com/in/amritasukrity/
+description: Founder of SpotSense Healthcare. IIT Kharagpur alumna and collaborator on the Flatline podcast.

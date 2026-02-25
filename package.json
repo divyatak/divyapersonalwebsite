@@ -1,0 +1,16 @@
+{
+  "name": "divyapersonalwebsite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/build-projects.js",
+    "dev": "node scripts/build-projects.js && astro dev",
+    "build": "node scripts/build-projects.js && astro build",
+    "preview": "node scripts/build-projects.js && astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.17.3",
+    "sharp": "^0.33.0"
+  }
+}

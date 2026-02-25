@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import works from '../../data/generated-projects.json'
+
+export function getStaticPaths() {
+  const allProjects = works.flatMap(y => y.projects)
+  return allProjects.map(p => ({
+    params: { slug: p.slug },
+    props: { project: p },
+  }))
+}
+
+const { project } = Astro.props
+
+function youtubeEmbedUrl(url: string) {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/)
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url
+}
+
+const mediaContent = project.media.length > 0
+  ? project.media
+  : project.cover
+    ? [{ type: 'image', src: project.cover }]
+    : []
+---
+
+<Layout title={`${project.title} — Divya`} description={project.description || `${project.title} by Divya`}>
+  <section aria-label={`Project: ${project.title}`}>
+    <a href="/works/" class="back-link">&larr; back to works</a>
+    <h1 class="project-detail-title">{project.title}</h1>
+    {project.description && <p class="project-detail-desc">{project.description}</p>}
+    {project.link && (
+      <a href={project.link} target="_blank" rel="noopener noreferrer" class="project-link">View project &rarr;</a>
+    )}
+    {project.itch && (
+      <div class="itch-embed">
+        <iframe src={project.itch} title={`${project.title} on itch.io`}></iframe>
+      </div>
+    )}
+    {mediaContent.length > 0 ? (
+      <div class="project-media">
+        {mediaContent.map((m, i) =>
+          m.type === 'youtube' ? (
+            <div class="video-wrapper">
+              <iframe
+                src={youtubeEmbedUrl(m.src)}
+                title={`${project.title} video ${i + 1}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              />
+            </div>
+          ) : m.type === 'video' ? (
+            <video
+              class="project-media-video"
+              src={m.src}
+              controls
+              preload="metadata"
+              playsinline
+            />
+          ) : (
+            <img
+              class="project-media-img"
+              src={m.src}
+              alt={`${project.title} ${i + 1}`}
+              loading="lazy"
+              decoding="async"
+            />
+          )
+        )}
+      </div>
+    ) : (
+      <div class="placeholder timeline-placeholder"></div>
+    )}
+  </section>
+</Layout>

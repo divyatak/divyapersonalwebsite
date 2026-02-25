@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro'
+import friendsData from '../data/generated-friends.json'
+import works from '../data/generated-projects.json'
+
+const { collaborators, mentions } = friendsData
+
+// Map project titles to slugs so friend project tags can link to them
+const titleToSlug = new Map<string, string>()
+works.flatMap(y => y.projects).forEach(p => titleToSlug.set(p.title, p.slug))
+---
+
+<Layout title="Friends — Divya" description="Friends and collaborators of Divya.">
+  <section aria-label="Friends and collaborators">
+    <h1 class="sr-only">Friends</h1>
+    <h2 class="section-title">collaborators</h2>
+    <div class="friends-grid">
+      {collaborators.map((f) => (
+        <div class="friend-card">
+          <div class="friend-card-top">
+            {f.photo ? (
+              <img
+                class="friend-photo"
+                src={f.photo}
+                alt={f.name}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <div class="friend-photo friend-photo-fallback"></div>
+            )}
+            <div class="friend-info">
+              <div class="friend-name">
+                {f.url ? (
+                  <a href={f.url} target="_blank" rel="noopener noreferrer">{f.name}<svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                ) : f.name}
+              </div>
+              {f.role && (
+                <div class="friend-role">{f.role}</div>
+              )}
+              {f.description && (
+                <div class="friend-desc">{f.description}</div>
+              )}
+              {f.projects.length > 0 && (
+                <div class="friend-projects">
+                  {f.projects.map((p) => {
+                    const slug = titleToSlug.get(p)
+                    return slug ? (
+                      <a href={`/works/${slug}/`} class="friend-project-tag">{p}</a>
+                    ) : (
+                      <span class="friend-project-tag">{p}</span>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {mentions.length > 0 && (
+      <>
+        <h2 class="section-title" style="margin-top: 3rem;">cool friends who do cool things</h2>
+        <div class="mentions-list">
+          {mentions.map((f) => (
+            <div class="mention-item">
+              <div class="mention-header">
+                <span class="mention-name">
+                  {f.url ? (
+                    <a href={f.url} target="_blank" rel="noopener noreferrer">{f.name}<svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                  ) : f.name}
+                </span>
+                {f.projects.length > 0 && (
+                  <span class="mention-projects">
+                    {f.projects.map((p) => {
+                      const slug = titleToSlug.get(p)
+                      return slug ? (
+                        <a href={`/works/${slug}/`} class="friend-project-tag">{p}</a>
+                      ) : (
+                        <span class="friend-project-tag">{p}</span>
+                      )
+                    })}
+                  </span>
+                )}
+              </div>
+              {f.role && (
+                <div class="mention-role">{f.role}</div>
+              )}
+              {f.description && (
+                <div class="mention-desc">{f.description}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </>
+    )}
+  </section>
+</Layout>

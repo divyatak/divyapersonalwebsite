@@ -1,0 +1,19 @@
+title: Protest
+description:
+category: zine
+category: illustration
+media: Protest zine print_Page_01_Image_0001.webp
+media: Protest zine print_Page_03_Image_0001.webp
+media: Protest zine print_Page_04_Image_0001.webp
+media: Protest zine print_Page_05_Image_0001.webp
+media: Protest zine print_Page_06_Image_0001.webp
+media: Protest zine print_Page_07_Image_0001.webp
+media: Protest zine print_Page_08_Image_0001.webp
+media: Protest zine print_Page_09_Image_0001.webp
+media: Protest zine print_Page_10_Image_0001.webp
+media: Protest zine print_Page_11_Image_0001.webp
+media: Protest zine print_Page_12_Image_0001.webp
+media: Protest zine print_Page_13_Image_0001.webp
+media: Protest zine print_Page_14_Image_0001.webp
+media: Protest zine print_Page_15_Image_0001.webp
+media: Protest zine print_Page_16_Image_0001.webp

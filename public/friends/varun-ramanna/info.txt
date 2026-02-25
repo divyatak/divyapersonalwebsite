@@ -1,0 +1,4 @@
+name: Varun Ramanna
+role: Creative director, game maker & founder of Shapeshifter Studio
+url: https://varuns.work
+description: Works across animation, VFX, interactive content, games, and immersive web experiences.

@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import works from '../../data/generated-projects.json'
+
+// Collect all unique categories across all projects
+const allCategories = [...new Set(
+  works.flatMap(y => y.projects).flatMap(p => p.categories || [])
+)].sort()
+---
+
+<Layout title="Works — Divya" description="Selected works by Divya — artist, maker, collaborator.">
+  <section aria-label="Works">
+    <h1 class="sr-only">Works</h1>
+    <div class="category-filters" id="category-filters">
+      <button class="category-btn active" data-category="all">all</button>
+      {allCategories.map((cat) => (
+        <><span class="category-sep">&middot;</span><button class="category-btn" data-category={cat}>{cat}</button></>
+      ))}
+    </div>
+    <div class="timeline" id="works-timeline">
+      {works.map((yearGroup) => (
+        <div class="timeline-entry">
+          <div class="timeline-year">{yearGroup.year}</div>
+          <div class="timeline-body">
+            {yearGroup.projects.map((p) => (
+              <a
+                href={`/works/${p.slug}/`}
+                class="project-thumb"
+                aria-label={p.title}
+                data-categories={(p.categories || []).join(',')}
+              >
+                <div class="project-thumb-img-wrap">
+                  {p.cover ? (
+                    <img
+                      class="project-thumb-img"
+                      src={p.cover}
+                      alt={p.title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class="project-thumb-img project-thumb-fallback"></div>
+                  )}
+                </div>
+                <span class="project-thumb-name">{p.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filters = document.getElementById('category-filters')
+    if (!filters) return
+
+    const buttons = filters.querySelectorAll('.category-btn') as NodeListOf<HTMLElement>
+    const entries = document.querySelectorAll('.timeline-entry') as NodeListOf<HTMLElement>
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'))
+        btn.classList.add('active')
+
+        const cat = btn.dataset.category
+        const showAll = cat === 'all'
+
+        entries.forEach(entry => {
+          const thumbs = entry.querySelectorAll('.project-thumb') as NodeListOf<HTMLElement>
+          let anyVisible = false
+
+          thumbs.forEach(thumb => {
+            const cats = (thumb.dataset.categories || '').split(',')
+            const match = showAll || cats.includes(cat!)
+            thumb.style.display = match ? '' : 'none'
+            if (match) anyVisible = true
+          })
+
+          entry.style.display = anyVisible ? '' : 'none'
+        })
+      })
+    })
+  })
+</script>

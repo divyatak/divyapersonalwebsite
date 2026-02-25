@@ -1,0 +1,12 @@
+title: Mark
+description: A puzzle-platformer where you control a bouncing ball using only your mouse to navigate levels, collect keys, and avoid enemies. Made with Charu Tak.
+category: game
+media: https://www.youtube.com/watch?v=YZET-0OZTmU
+media: WbPlbQ.webp
+media: fp38G.webp
+media: FzhEND.webp
+media: 5_Jp_w.webp
+media: 6hY9KY.webp
+media: yjkZlv.webp
+collaborator: Charu Tak
+itch: https://itch.io/embed/558405?dark=true
