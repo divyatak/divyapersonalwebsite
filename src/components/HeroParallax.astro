@@ -30,9 +30,8 @@ const { projects } = Astro.props
     position: absolute;
     overflow: hidden;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    transition: transform 0.15s ease-out, box-shadow 0.2s;
+    transition: box-shadow 0.2s;
     will-change: transform;
-    transform: rotate(var(--rotation));
     text-decoration: none;
     color: inherit;
   }
@@ -45,6 +44,22 @@ const { projects } = Astro.props
   .parallax-card--landscape {
     width: 28%;
     aspect-ratio: 3 / 2;
+  }
+
+  /* Entrance: hidden state */
+  .parallax-card--entering {
+    opacity: 0;
+    transform: rotate(var(--rotation)) scale(0.96);
+  }
+
+  /* Entrance: animating in */
+  .parallax-card--entered {
+    opacity: 1;
+    transform: rotate(var(--rotation)) scale(1);
+    transition:
+      opacity var(--duration-slow) var(--ease-settle),
+      transform var(--duration-slow) var(--ease-settle),
+      box-shadow 0.2s;
   }
 
   .parallax-card:hover {
@@ -91,9 +106,10 @@ const { projects } = Astro.props
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initParallax() {
     const container = document.getElementById('hero-parallax')
-    if (!container) return
+    if (!container || container.dataset.initialized) return
+    container.dataset.initialized = 'true'
 
     const layouts = [
       { left: 2,  top: 0,  depth: 0.3, rotation: -2.5 },
@@ -110,7 +126,7 @@ const { projects } = Astro.props
       { left: 66, top: 62, depth: 0.4, rotation: 2 },
     ]
 
-    // Gather all candidate cards, shuffle, pick 12
+    // Gather all candidate cards, shuffle, pick up to 12
     const allCards = Array.from(container.querySelectorAll('.parallax-card--candidate')) as HTMLElement[]
     for (let i = allCards.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -121,62 +137,179 @@ const { projects } = Astro.props
     const count = isMobile ? Math.min(8, allCards.length) : Math.min(12, allCards.length)
     const selected = allCards.slice(0, count)
 
-    // Position and reveal selected cards
+    // Per-card lerp state
+    const cardState = new Map<HTMLElement, {
+      currentX: number
+      currentY: number
+      depth: number
+      rotation: number
+      ready: boolean
+    }>()
+
+    // Position cards, keep hidden for entrance
     selected.forEach((card, i) => {
       const layout = layouts[i]
-      const zIndex = Math.floor(layout.depth * 10)
-
       card.style.left = `${layout.left}%`
       card.style.top = `${layout.top}%`
-      card.style.zIndex = String(zIndex)
+      card.style.zIndex = String(Math.floor(layout.depth * 10))
       card.style.setProperty('--depth', String(layout.depth))
       card.style.setProperty('--rotation', `${layout.rotation}deg`)
-      card.dataset.baseRotation = String(layout.rotation)
 
-      // Load the image
       const img = card.querySelector('img') as HTMLImageElement
       if (img && img.dataset.src) {
         img.src = img.dataset.src
         img.loading = i < 6 ? 'eager' : 'lazy'
       }
 
-      // Show the card
+      // Show card but keep visually hidden for entrance animation
+      card.classList.add('parallax-card--entering')
       card.classList.remove('parallax-card--candidate')
-      card.style.display = 'block'
+
+      cardState.set(card, {
+        currentX: 0,
+        currentY: 0,
+        depth: layout.depth,
+        rotation: layout.rotation,
+        ready: false,
+      })
     })
 
-    // Parallax movement
-    const MAX_SHIFT = Math.min(40, container.offsetWidth * 0.06)
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+    // Center-outward entrance stagger
+    requestAnimationFrame(() => {
+      const rect = container.getBoundingClientRect()
+      const cx = rect.width / 2
+      const cy = rect.height / 2
+
+      const sorted = [...selected].sort((a, b) => {
+        const ar = a.getBoundingClientRect()
+        const br = b.getBoundingClientRect()
+        const ad = Math.hypot(
+          ar.left + ar.width / 2 - rect.left - cx,
+          ar.top + ar.height / 2 - rect.top - cy
+        )
+        const bd = Math.hypot(
+          br.left + br.width / 2 - rect.left - cx,
+          br.top + br.height / 2 - rect.top - cy
+        )
+        return ad - bd
+      })
+
+      sorted.forEach((card, i) => {
+        const delay = reducedMotion ? 0 : i * 80 + 100
+
+        setTimeout(() => {
+          card.classList.remove('parallax-card--entering')
+          card.classList.add('parallax-card--entered')
+
+          if (reducedMotion) {
+            // Skip transition, mark ready immediately
+            const state = cardState.get(card)
+            if (state) state.ready = true
+            return
+          }
+
+          // After entrance transition ends, hand off to lerp
+          function onEntranceDone(e: TransitionEvent) {
+            if (e.propertyName !== 'opacity') return
+            card.removeEventListener('transitionend', onEntranceDone)
+            card.classList.remove('parallax-card--entered')
+            // Set inline transform so there's no jump when class is removed
+            const state = cardState.get(card)
+            if (state) {
+              card.style.transform = `rotate(${state.rotation}deg) translate(0px, 0px)`
+              state.ready = true
+            }
+          }
+
+          card.addEventListener('transitionend', onEntranceDone)
+
+          // Fallback in case transitionend doesn't fire
+          setTimeout(() => {
+            const state = cardState.get(card)
+            if (state && !state.ready) {
+              card.removeEventListener('transitionend', onEntranceDone)
+              card.classList.remove('parallax-card--entered')
+              card.style.transform = `rotate(${state.rotation}deg) translate(0px, 0px)`
+              state.ready = true
+            }
+          }, 1200)
+        }, delay)
+      })
+    })
+
+    // Lerp-based parallax
     if (reducedMotion) return
 
-    function handleMove(clientX: number, clientY: number) {
-      const rect = container!.getBoundingClientRect()
-      const dx = (clientX - rect.left - rect.width / 2) / (rect.width / 2)
-      const dy = (clientY - rect.top - rect.height / 2) / (rect.height / 2)
+    const MAX_SHIFT = Math.min(40, container.offsetWidth * 0.06)
+    let targetDx = 0
+    let targetDy = 0
+    let animating = false
+
+    function tick() {
+      let stillMoving = false
 
       selected.forEach(card => {
-        const depth = parseFloat(card.style.getPropertyValue('--depth'))
-        const rotation = card.dataset.baseRotation || '0'
-        card.style.transform = `rotate(${rotation}deg) translate(${dx * depth * MAX_SHIFT}px, ${dy * depth * MAX_SHIFT}px)`
+        const state = cardState.get(card)
+        if (!state || !state.ready) return
+
+        const tx = targetDx * state.depth * MAX_SHIFT
+        const ty = targetDy * state.depth * MAX_SHIFT
+        const dx = tx - state.currentX
+        const dy = ty - state.currentY
+
+        if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+          state.currentX += dx * 0.08
+          state.currentY += dy * 0.08
+          stillMoving = true
+        } else {
+          state.currentX = tx
+          state.currentY = ty
+        }
+
+        card.style.transform = `rotate(${state.rotation}deg) translate(${state.currentX}px, ${state.currentY}px)`
       })
+
+      if (stillMoving) {
+        requestAnimationFrame(tick)
+      } else {
+        animating = false
+      }
+    }
+
+    function startLerp() {
+      if (!animating) {
+        animating = true
+        requestAnimationFrame(tick)
+      }
     }
 
     container.addEventListener('mousemove', (e) => {
-      handleMove(e.clientX, e.clientY)
+      const rect = container.getBoundingClientRect()
+      targetDx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2)
+      targetDy = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2)
+      startLerp()
     })
 
     container.addEventListener('touchmove', (e) => {
       const touch = e.touches[0]
-      handleMove(touch.clientX, touch.clientY)
+      const rect = container.getBoundingClientRect()
+      targetDx = (touch.clientX - rect.left - rect.width / 2) / (rect.width / 2)
+      targetDy = (touch.clientY - rect.top - rect.height / 2) / (rect.height / 2)
+      startLerp()
     }, { passive: true })
 
     container.addEventListener('mouseleave', () => {
-      selected.forEach(card => {
-        const rotation = card.dataset.baseRotation || '0'
-        card.style.transform = `rotate(${rotation}deg) translate(0, 0)`
-      })
+      targetDx = 0
+      targetDy = 0
+      startLerp()
     })
-  })
+  }
+
+  // Run on initial load
+  initParallax()
+
+  // Re-run after Astro page transitions
+  document.addEventListener('astro:after-swap', initParallax)
 </script>

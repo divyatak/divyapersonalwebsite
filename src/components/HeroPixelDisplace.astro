@@ -1,0 +1,233 @@
+---
+const { projects } = Astro.props
+---
+
+<div class="hero-container hero-pixel" id="hero-pixel">
+  <canvas id="pixel-canvas"></canvas>
+  {projects.map((p) => (
+    <img data-src={p.cover} data-slug={p.slug} class="pixel-source" alt="" />
+  ))}
+</div>
+
+<style>
+  .hero-pixel {
+    position: relative;
+    cursor: default;
+  }
+
+  #pixel-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .pixel-source {
+    display: none;
+  }
+</style>
+
+<script>
+  function initPixelDisplace() {
+    const container = document.getElementById('hero-pixel')
+    if (!container) return
+
+    // Skip if already running or container is hidden (0 dimensions)
+    const rect = container.getBoundingClientRect()
+    if (rect.width < 10 || rect.height < 10) return
+    if (container.dataset.initialized === 'true') return
+    container.dataset.initialized = 'true'
+
+    const canvas = document.getElementById('pixel-canvas') as HTMLCanvasElement
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Pick a random cover image
+    const sources = Array.from(container.querySelectorAll('.pixel-source')) as HTMLImageElement[]
+    if (sources.length === 0) return
+
+    const pick = sources[Math.floor(Math.random() * sources.length)]
+    const img = new Image()
+    img.src = pick.dataset.src || ''
+
+    img.onload = () => {
+      const dpr = window.devicePixelRatio || 1
+      const w = rect.width
+      const h = rect.height
+
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
+      ctx.scale(dpr, dpr)
+
+      // Tile grid — smaller tiles for finer grain
+      const TILE_SIZE = 14
+      const cols = Math.ceil(w / TILE_SIZE)
+      const rows = Math.ceil(h / TILE_SIZE)
+
+      // Compute source crop to cover the container (object-fit: cover logic)
+      const imgAspect = img.naturalWidth / img.naturalHeight
+      const containerAspect = w / h
+      let srcW: number, srcH: number, srcX: number, srcY: number
+      if (imgAspect > containerAspect) {
+        srcH = img.naturalHeight
+        srcW = srcH * containerAspect
+        srcX = (img.naturalWidth - srcW) / 2
+        srcY = 0
+      } else {
+        srcW = img.naturalWidth
+        srcH = srcW / containerAspect
+        srcX = 0
+        srcY = (img.naturalHeight - srcH) / 2
+      }
+
+      // Per-tile state
+      const tiles: { cx: number; cy: number; offsetX: number; offsetY: number; targetX: number; targetY: number }[] = []
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          tiles.push({
+            cx: c * TILE_SIZE + TILE_SIZE / 2,
+            cy: r * TILE_SIZE + TILE_SIZE / 2,
+            offsetX: 0,
+            offsetY: 0,
+            targetX: 0,
+            targetY: 0,
+          })
+        }
+      }
+
+      const STRENGTH = 35
+      const RADIUS = 200
+
+      let mouseX = -9999
+      let mouseY = -9999
+      let mouseInside = false
+      let animating = false
+
+      function computeTargets() {
+        for (const tile of tiles) {
+          if (!mouseInside) {
+            tile.targetX = 0
+            tile.targetY = 0
+            continue
+          }
+          const dx = tile.cx - mouseX
+          const dy = tile.cy - mouseY
+          const dist = Math.sqrt(dx * dx + dy * dy)
+
+          if (dist > RADIUS || dist < 0.1) {
+            tile.targetX = 0
+            tile.targetY = 0
+            continue
+          }
+
+          // Push away — strength falls off with distance
+          const force = STRENGTH * (1 - dist / RADIUS) * (1 - dist / RADIUS)
+          const angle = Math.atan2(dy, dx)
+          tile.targetX = Math.cos(angle) * force
+          tile.targetY = Math.sin(angle) * force
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h)
+
+        let stillMoving = false
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const tile = tiles[r * cols + c]
+
+            // Lerp
+            const dxL = tile.targetX - tile.offsetX
+            const dyL = tile.targetY - tile.offsetY
+            if (Math.abs(dxL) > 0.05 || Math.abs(dyL) > 0.05) {
+              tile.offsetX += dxL * 0.1
+              tile.offsetY += dyL * 0.1
+              stillMoving = true
+            } else {
+              tile.offsetX = tile.targetX
+              tile.offsetY = tile.targetY
+            }
+
+            // Source rect on the image
+            const tileSrcX = srcX + (c * TILE_SIZE / w) * srcW
+            const tileSrcY = srcY + (r * TILE_SIZE / h) * srcH
+            const tileSrcW = (TILE_SIZE / w) * srcW
+            const tileSrcH = (TILE_SIZE / h) * srcH
+
+            // Dest rect on canvas
+            const destX = c * TILE_SIZE + tile.offsetX
+            const destY = r * TILE_SIZE + tile.offsetY
+
+            ctx.drawImage(
+              img,
+              tileSrcX, tileSrcY, tileSrcW, tileSrcH,
+              destX, destY, TILE_SIZE, TILE_SIZE
+            )
+          }
+        }
+
+        if (stillMoving) {
+          requestAnimationFrame(draw)
+        } else {
+          animating = false
+        }
+      }
+
+      function startAnimation() {
+        if (!animating) {
+          animating = true
+          requestAnimationFrame(draw)
+        }
+      }
+
+      // Initial static draw
+      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, w, h)
+
+      if (reducedMotion) return
+
+      container.addEventListener('mousemove', (e) => {
+        const r = container.getBoundingClientRect()
+        mouseX = e.clientX - r.left
+        mouseY = e.clientY - r.top
+        mouseInside = true
+        computeTargets()
+        startAnimation()
+      })
+
+      container.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0]
+        const r = container.getBoundingClientRect()
+        mouseX = touch.clientX - r.left
+        mouseY = touch.clientY - r.top
+        mouseInside = true
+        computeTargets()
+        startAnimation()
+      }, { passive: true })
+
+      container.addEventListener('mouseleave', () => {
+        mouseInside = false
+        computeTargets()
+        startAnimation()
+      })
+
+      container.addEventListener('touchend', () => {
+        mouseInside = false
+        computeTargets()
+        startAnimation()
+      })
+    }
+  }
+
+  // Listen for activation from the switcher
+  document.addEventListener('hero-pixel-activate', initPixelDisplace)
+
+  // Also try on load in case pixel is the default
+  initPixelDisplace()
+  document.addEventListener('astro:after-swap', initPixelDisplace)
+</script>

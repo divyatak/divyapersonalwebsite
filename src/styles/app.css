@@ -49,6 +49,7 @@
   cursor: pointer;
   text-align: left;
   text-decoration: none;
+  transition: color var(--hover-off) var(--ease-out-soft), transform var(--hover-off) var(--ease-out-soft);
 }
 
 .nav-item:visited {
@@ -57,6 +58,9 @@
 
 .nav-item:hover {
   color: #222;
+  transform: translateX(3px);
+  transition-duration: var(--hover-on);
+  transition-timing-function: var(--ease-settle);
 }
 
 .nav-item.active {
@@ -79,7 +83,7 @@
 .sidebar-socials a {
   display: flex;
   color: #666;
-  transition: color 0.2s ease;
+  transition: color var(--hover-off) var(--ease-out-soft), transform var(--hover-off) var(--ease-out-soft);
 }
 
 .sidebar-socials a:visited {
@@ -88,6 +92,9 @@
 
 .sidebar-socials a:hover {
   color: #222;
+  transform: scale(1.1);
+  transition-duration: var(--hover-on);
+  transition-timing-function: var(--ease-bounce);
 }
 
 .sidebar-socials svg {
@@ -147,7 +154,11 @@
 }
 
 .divya-intro {
-  color: #555;
+  color: #999;
+  font-size: 2.2rem;
+  font-weight: 200;
+  line-height: 1.4;
+  max-width: 520px;
 }
 
 /* Hero container — portrait 3:4 driven by parent height */
@@ -203,12 +214,11 @@
   font-size: 1.1rem;
   color: #999;
   cursor: pointer;
-  transition: color 0.2s, transform 0.2s;
+  transition: color 0.15s var(--ease-settle);
 }
 
 .category-btn:hover {
   color: #222;
-  transform: scale(1.05);
 }
 
 .category-btn.active {
@@ -240,15 +250,17 @@
 
 .project-thumb-img-wrap {
   width: 100%;
-  height: 300px;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.5s var(--ease-out-soft), transform 0.5s var(--ease-out-soft);
 }
 
 .project-thumb:hover .project-thumb-img-wrap {
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
-  transform: scale(1.02);
+  transform: scale(var(--scale-hover));
+  transition-duration: 0.35s;
+  transition-timing-function: var(--ease-settle);
 }
 
 .project-thumb-img {
@@ -268,6 +280,11 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: #555;
+  transition: color 0.25s var(--ease-settle);
+}
+
+.project-thumb:hover .project-thumb-name {
+  color: #222;
 }
 
 .timeline-placeholder {
@@ -298,12 +315,16 @@
   cursor: pointer;
   padding: 0;
   margin-bottom: 1.5rem;
-  display: block;
+  display: inline-block;
   text-decoration: none;
+  transition: color var(--hover-off) var(--ease-out-soft), transform var(--hover-off) var(--ease-out-soft);
 }
 
 .back-link:hover {
   color: #000;
+  transform: translateX(-4px);
+  transition-duration: var(--hover-on);
+  transition-timing-function: var(--ease-settle);
 }
 
 .project-detail-title {
@@ -343,6 +364,12 @@
   height: auto;
   display: block;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.4s var(--ease-out-soft);
+}
+
+.project-media-img:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transition-duration: 0.3s;
 }
 
 .video-wrapper {
@@ -370,6 +397,17 @@
 
 .friend-card {
   padding: 0;
+  transition: transform 0.4s var(--ease-out-soft);
+}
+
+.friend-card:hover {
+  transform: translateY(-3px);
+  transition-duration: 0.25s;
+  transition-timing-function: var(--ease-settle);
+}
+
+.friend-card:hover .friend-photo {
+  filter: brightness(1.05);
 }
 
 .friend-card-top {
@@ -384,6 +422,7 @@
   object-fit: cover;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: filter 0.4s var(--ease-out-soft);
 }
 
 .friend-photo-fallback {
@@ -668,15 +707,91 @@ a.talk-name:visited {
   object-fit: contain;
 }
 
+/* Scroll-triggered entrance animations */
+.animate-in {
+  opacity: 0;
+  transform:
+    translateX(var(--enter-x, 0px))
+    translateY(var(--enter-y, var(--slide-lg)))
+    scale(var(--enter-scale, 1));
+  transition:
+    opacity var(--enter-duration, var(--duration-medium)) var(--ease-settle) var(--enter-delay, 0s),
+    transform var(--enter-duration, var(--duration-medium)) var(--ease-settle) var(--enter-delay, 0s);
+}
+
+.animate-in.visible {
+  opacity: 1;
+  transform: translateX(0) translateY(0) scale(1);
+}
+
+/* Filter transitions for category filtering */
+.filter-hiding {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+}
+
+.filter-showing {
+  transition: opacity 0.4s var(--ease-bounce), transform 0.4s var(--ease-bounce);
+}
+
+/* Sidebar first-visit entrance */
+.sidebar--entering .nav-item,
+.sidebar--entering .sidebar-socials a {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
+.sidebar--entered .nav-item,
+.sidebar--entered .sidebar-socials a {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.6s var(--ease-settle), transform 0.6s var(--ease-settle);
+}
+
+.sidebar--entered .nav-item:nth-child(1) { transition-delay: 0.4s; }
+.sidebar--entered .nav-item:nth-child(2) { transition-delay: 0.5s; }
+.sidebar--entered .nav-item:nth-child(3) { transition-delay: 0.6s; }
+.sidebar--entered .nav-item:nth-child(4) { transition-delay: 0.7s; }
+.sidebar--entered .sidebar-socials a:nth-child(1) { transition-delay: 0.9s; }
+.sidebar--entered .sidebar-socials a:nth-child(2) { transition-delay: 0.95s; }
+.sidebar--entered .sidebar-socials a:nth-child(3) { transition-delay: 1.0s; }
+
+/* View transition: sidebar persists, content swaps instantly */
+.sidebar { view-transition-name: sidebar; }
+.content { view-transition-name: main-content; }
+
+::view-transition-old(main-content) {
+  animation: none;
+  display: none;
+}
+::view-transition-new(main-content) {
+  animation: none;
+}
+::view-transition-group(sidebar) {
+  animation: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .sidebar--entering .nav-item,
+  .sidebar--entering .sidebar-socials a {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Tablet */
 @media (max-width: 900px) {
   .project-thumb {
     width: 300px;
   }
 
-  .project-thumb-img-wrap {
-    height: 225px;
-  }
 
   .content {
     padding: 2rem;
@@ -780,7 +895,11 @@ a.talk-name:visited {
     height: 32px;
   }
 
-  .divya-intro,
+  .divya-intro {
+    font-size: 1.5rem;
+    max-width: 100%;
+  }
+
   .artist-statement,
   .project-detail-desc {
     max-width: 100%;
@@ -807,8 +926,7 @@ a.talk-name:visited {
   }
 
   .project-thumb-img-wrap {
-    height: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
   }
 
   .timeline-year {

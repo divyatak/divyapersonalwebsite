@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions'
+
 interface Props {
   title?: string
   description?: string
@@ -29,8 +31,8 @@ function isActive(href: string) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" /></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700;800&display=swap" /></noscript>
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#ffffff" />
@@ -38,11 +40,12 @@ function isActive(href: string) {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
+    <ViewTransitions />
   </head>
   <body>
     <div class="layout">
       <a href="#main-content" class="skip-link">Skip to main content</a>
-      <nav class="sidebar" aria-label="Main navigation">
+      <nav class="sidebar" transition:persist aria-label="Main navigation">
         {navItems.map(item => (
           <a
             href={item.href}
@@ -70,6 +73,76 @@ function isActive(href: string) {
     </div>
   </body>
 </html>
+
+<script>
+  function initAnimations() {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Sidebar first-visit entrance
+    const sidebar = document.querySelector('.sidebar')
+    if (sidebar) {
+      if (!sessionStorage.getItem('sidebar-entered')) {
+        sidebar.classList.add('sidebar--entering')
+        // Trigger reflow, then start animation
+        requestAnimationFrame(() => {
+          sidebar.classList.remove('sidebar--entering')
+          sidebar.classList.add('sidebar--entered')
+          sessionStorage.setItem('sidebar-entered', '1')
+        })
+      }
+    }
+
+    // Scroll-triggered animations
+    if (prefersReduced) {
+      document.querySelectorAll('.animate-in').forEach(el => el.classList.add('visible'))
+      return
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return
+
+        const el = entry.target
+
+        // If this is a stagger parent, reveal children with stagger delays
+        if (el.dataset.staggerChildren !== undefined) {
+          const children = el.querySelectorAll('.animate-in:not(.visible)')
+          const staggerMs = parseInt(el.dataset.staggerMs || '80')
+          const cap = 6
+          children.forEach((child, i) => {
+            const delay = Math.min(i, cap - 1) * staggerMs
+            child.style.setProperty('--enter-delay', `${delay}ms`)
+            child.classList.add('visible')
+          })
+          if (el.classList.contains('animate-in')) {
+            el.classList.add('visible')
+          }
+        } else {
+          el.classList.add('visible')
+        }
+
+        observer.unobserve(el)
+      })
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' })
+
+    document.querySelectorAll('.animate-in').forEach(el => {
+      // Don't observe children that will be stagger-revealed by their parent
+      if (el.closest('[data-stagger-children]') && !el.hasAttribute('data-stagger-children')) return
+      observer.observe(el)
+    })
+
+    // Also observe stagger parents that aren't .animate-in themselves
+    document.querySelectorAll('[data-stagger-children]:not(.animate-in)').forEach(el => {
+      observer.observe(el)
+    })
+  }
+
+  // Run on initial load
+  initAnimations()
+
+  // Re-run after Astro page transitions
+  document.addEventListener('astro:after-swap', initAnimations)
+</script>
 
 <style is:global>
   @import '../styles/global.css';

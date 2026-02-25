@@ -6,6 +6,45 @@
 
   color: #222;
   background-color: #fff;
+
+  /* Motion tokens */
+  --ease-settle:    cubic-bezier(0.25, 0.1, 0.25, 1.0);
+  --ease-out-soft:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-bounce:    cubic-bezier(0.19, 1, 0.22, 1);
+
+  --duration-fast:   0.3s;
+  --duration-medium: 0.6s;
+  --duration-slow:   0.9s;
+
+  --hover-on:  0.2s;
+  --hover-off: 0.35s;
+
+  --stagger-tight:  60ms;
+  --stagger-normal: 80ms;
+  --stagger-wide:   150ms;
+
+  --slide-sm:  8px;
+  --slide-md:  12px;
+  --slide-lg:  16px;
+  --slide-xl:  20px;
+
+  --scale-enter: 0.97;
+  --scale-hover: 1.02;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:   0s;
+    --duration-medium: 0s;
+    --duration-slow:   0s;
+    --hover-on:        0s;
+    --hover-off:       0s;
+    --slide-sm:  0px;
+    --slide-md:  0px;
+    --slide-lg:  0px;
+    --slide-xl:  0px;
+    --scale-enter: 1;
+  }
 }
 
 *,

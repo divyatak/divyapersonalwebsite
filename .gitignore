@@ -14,6 +14,7 @@ src/data/generated-projects.json
 src/data/generated-friends.json
 src/data/generated-about.json
 archive-originals
+archive
 dist-ssr
 *.local
 

@@ -17,11 +17,11 @@ function linkifyBio(text) {
   <section aria-label="About" class="about-intro">
     <h1 class="sr-only">About</h1>
     {photo ? (
-      <img src={photo} alt="Divya Tak" class="about-photo" loading="lazy" />
+      <img src={photo} alt="Divya Tak" class="about-photo animate-in" style="--enter-scale: 0.97" loading="lazy" />
     ) : (
       <div class="about-photo-placeholder"></div>
     )}
-    <div class="about-intro-text">
+    <div class="about-intro-text animate-in" style="--enter-delay: 0.2s">
       <div class="artist-statement">
         {bio.map((paragraph) => (
           <p set:html={linkifyBio(paragraph)} />
@@ -32,21 +32,21 @@ function linkifyBio(text) {
   </section>
 
   <section aria-label="Talks and workshops" class="about-section">
-    <div class="logo-strip">
-      <img src="/logos/google.webp" alt="Google India" loading="lazy" />
-      <img src="/logos/goethe-institut.png" alt="Goethe Institut" loading="lazy" />
-      <img src="/logos/iimb.png" alt="IIM Bangalore" loading="lazy" />
-      <img src="/logos/gafx.webp" alt="GAFX Bangalore" loading="lazy" />
-      <img src="/logos/slush.webp" alt="Slush'd" loading="lazy" />
-      <img src="/logos/uxdx.webp" alt="UXDX" loading="lazy" />
-      <img src="/logos/christ-university.webp" alt="Christ University" loading="lazy" />
-      <img src="/logos/bangalore-international-centre.png" alt="Bangalore International Centre" loading="lazy" />
-      <img src="/logos/agifest.png" alt="AGI Fest" loading="lazy" />
-      <img src="/logos/startout.svg" alt="StartOut" loading="lazy" />
-      <img src="/logos/ai-enthusiasts-circle.webp" alt="AI Enthusiasts Circle" loading="lazy" />
-      <img src="/logos/ajaibghar.webp" alt="AjaibGhar" loading="lazy" />
+    <div class="logo-strip" data-stagger-children data-stagger-ms="60">
+      <img class="animate-in" src="/logos/google.webp" alt="Google India" loading="lazy" />
+      <img class="animate-in" src="/logos/goethe-institut.png" alt="Goethe Institut" loading="lazy" />
+      <img class="animate-in" src="/logos/iimb.png" alt="IIM Bangalore" loading="lazy" />
+      <img class="animate-in" src="/logos/gafx.webp" alt="GAFX Bangalore" loading="lazy" />
+      <img class="animate-in" src="/logos/slush.webp" alt="Slush'd" loading="lazy" />
+      <img class="animate-in" src="/logos/uxdx.webp" alt="UXDX" loading="lazy" />
+      <img class="animate-in" src="/logos/christ-university.webp" alt="Christ University" loading="lazy" />
+      <img class="animate-in" src="/logos/bangalore-international-centre.png" alt="Bangalore International Centre" loading="lazy" />
+      <img class="animate-in" src="/logos/agifest.png" alt="AGI Fest" loading="lazy" />
+      <img class="animate-in" src="/logos/startout.svg" alt="StartOut" loading="lazy" />
+      <img class="animate-in" src="/logos/ai-enthusiasts-circle.webp" alt="AI Enthusiasts Circle" loading="lazy" />
+      <img class="animate-in" src="/logos/ajaibghar.webp" alt="AjaibGhar" loading="lazy" />
     </div>
-    <div class="two-col">
+    <div class="two-col animate-in">
       <div>
         <h3 class="about-subheading">talks & panels</h3>
         <ul class="talk-list">
@@ -81,7 +81,7 @@ function linkifyBio(text) {
   </section>
 
   {press.length > 0 && (
-    <section aria-label="Publications" class="about-section">
+    <section aria-label="Publications" class="about-section animate-in">
       <h3 class="about-subheading">publications & features</h3>
       <ul class="about-list">
         {press.map((p) => (

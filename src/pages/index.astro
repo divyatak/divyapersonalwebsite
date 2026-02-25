@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import HeroParallax from '../components/HeroParallax.astro'
+import HeroPixelDisplace from '../components/HeroPixelDisplace.astro'
 import works from '../data/generated-projects.json'
 
 const heroProjects = works
@@ -13,9 +13,9 @@ const heroProjects = works
   <section aria-label="Introduction" class="home-section">
     <h1 class="sr-only">Divya — Artist Portfolio</h1>
     <div class="home-hero">
-      <HeroParallax projects={heroProjects} />
+      <HeroPixelDisplace projects={heroProjects} />
     </div>
-    <div class="home-text">
+    <div class="home-text animate-in" style="--enter-delay: 0.8s">
       <p class="divya-intro">
         Hello, I'm Divya — artist, maker, collaborator.
         This is a space for my work and the people I create with.

@@ -11,7 +11,7 @@ const allCategories = [...new Set(
 <Layout title="Works — Divya" description="Selected works by Divya — artist, maker, collaborator.">
   <section aria-label="Works">
     <h1 class="sr-only">Works</h1>
-    <div class="category-filters" id="category-filters">
+    <div class="category-filters animate-in" id="category-filters">
       <button class="category-btn active" data-category="all">all</button>
       {allCategories.map((cat) => (
         <><span class="category-sep">&middot;</span><button class="category-btn" data-category={cat}>{cat}</button></>
@@ -20,12 +20,12 @@ const allCategories = [...new Set(
     <div class="timeline" id="works-timeline">
       {works.map((yearGroup) => (
         <div class="timeline-entry">
-          <div class="timeline-year">{yearGroup.year}</div>
-          <div class="timeline-body">
+          <div class="timeline-year animate-in" style="--enter-x: -12px; --enter-y: 0px">{yearGroup.year}</div>
+          <div class="timeline-body" data-stagger-children data-stagger-ms="80">
             {yearGroup.projects.map((p) => (
               <a
                 href={`/works/${p.slug}/`}
-                class="project-thumb"
+                class="project-thumb animate-in"
                 aria-label={p.title}
                 data-categories={(p.categories || []).join(',')}
               >
