@@ -3,17 +3,22 @@ import Layout from '../layouts/Layout.astro'
 import HeroPixelDisplace from '../components/HeroPixelDisplace.astro'
 import works from '../data/generated-projects.json'
 
-const heroProjects = works
+// Collect high-res interior images from (un)seen projects only
+const MIN_DIM = 800
+const heroImages = works
   .flatMap(y => y.projects)
-  .filter(p => p.cover)
-  .map(p => ({ cover: p.cover, title: p.title, slug: p.slug, coverOrientation: p.coverOrientation }))
+  .filter(p => p.title.toLowerCase().includes('unseen') || p.title.includes('(un)seen'))
+  .flatMap(p => p.media
+    .filter(m => m.type === 'image' && m.width && m.height && Math.min(m.width, m.height) >= MIN_DIM)
+    .map(m => ({ src: m.src }))
+  )
 ---
 
 <Layout>
   <section aria-label="Introduction" class="home-section">
     <h1 class="sr-only">Divya — Artist Portfolio</h1>
     <div class="home-hero">
-      <HeroPixelDisplace projects={heroProjects} />
+      <HeroPixelDisplace images={heroImages} />
     </div>
     <div class="home-text animate-in" style="--enter-delay: 0.8s">
       <p class="divya-intro">

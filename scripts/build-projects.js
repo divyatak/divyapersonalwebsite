@@ -139,14 +139,29 @@ async function buildAll() {
         const basePath = `/projects/${year}/${projDir}`
         const encodedBase = encodePath(basePath)
 
-        const rawMedia = info.media.map(m => {
+        const rawMedia = []
+        for (const m of info.media) {
           if (isUrl(m)) {
-            return { type: 'youtube', src: m }
+            rawMedia.push({ type: 'youtube', src: m })
+            continue
           }
           const ext = path.extname(m).toLowerCase()
           const type = videoExts.has(ext) ? 'video' : 'image'
-          return { type, src: `${encodedBase}/${encodeURIComponent(m)}` }
-        })
+          const src = `${encodedBase}/${encodeURIComponent(m)}`
+          const entry = { type, src }
+
+          // Read dimensions for images
+          if (type === 'image') {
+            try {
+              const filePath = path.resolve('public', src.slice(1))
+              const meta = await sharp(fs.readFileSync(decodeURIComponent(filePath))).metadata()
+              if (meta.width) entry.width = meta.width
+              if (meta.height) entry.height = meta.height
+            } catch (e) { /* skip dimensions */ }
+          }
+
+          rawMedia.push(entry)
+        }
 
         // Deduplicate media entries by src
         const seenSrc = new Set()

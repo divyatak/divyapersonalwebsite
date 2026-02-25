@@ -1,11 +1,11 @@
 ---
-const { projects } = Astro.props
+const { images } = Astro.props
 ---
 
 <div class="hero-container hero-pixel" id="hero-pixel">
   <canvas id="pixel-canvas"></canvas>
-  {projects.map((p) => (
-    <img data-src={p.cover} data-slug={p.slug} class="pixel-source" alt="" />
+  {images.map((img) => (
+    <img data-src={img.src} class="pixel-source" alt="" />
   ))}
 </div>
 
@@ -13,12 +13,16 @@ const { projects } = Astro.props
   .hero-pixel {
     position: relative;
     cursor: default;
+    overflow: visible;
+    pointer-events: auto;
   }
 
   #pixel-canvas {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: -40px;
+    left: -40px;
     display: block;
+    pointer-events: none;
   }
 
   .pixel-source {
@@ -31,7 +35,6 @@ const { projects } = Astro.props
     const container = document.getElementById('hero-pixel')
     if (!container) return
 
-    // Skip if already running or container is hidden (0 dimensions)
     const rect = container.getBoundingClientRect()
     if (rect.width < 10 || rect.height < 10) return
     if (container.dataset.initialized === 'true') return
@@ -45,34 +48,39 @@ const { projects } = Astro.props
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Pick a random cover image
+    // Collect all source URLs, shuffle them
     const sources = Array.from(container.querySelectorAll('.pixel-source')) as HTMLImageElement[]
     if (sources.length === 0) return
+    const srcUrls = sources.map(s => s.dataset.src || '').filter(Boolean)
+    for (let i = srcUrls.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [srcUrls[i], srcUrls[j]] = [srcUrls[j], srcUrls[i]]
+    }
 
-    const pick = sources[Math.floor(Math.random() * sources.length)]
-    const img = new Image()
-    img.src = pick.dataset.src || ''
+    const dpr = window.devicePixelRatio || 1
+    const PAD = 40
+    const w = rect.width
+    const h = rect.height
+    const cw = w + PAD * 2
+    const ch = h + PAD * 2
 
-    img.onload = () => {
-      const dpr = window.devicePixelRatio || 1
-      const w = rect.width
-      const h = rect.height
+    canvas.width = cw * dpr
+    canvas.height = ch * dpr
+    canvas.style.width = cw + 'px'
+    canvas.style.height = ch + 'px'
+    ctx.scale(dpr, dpr)
 
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      canvas.style.width = w + 'px'
-      canvas.style.height = h + 'px'
-      ctx.scale(dpr, dpr)
+    const TILE_SIZE = 14
+    const cols = Math.ceil(w / TILE_SIZE)
+    const rows = Math.ceil(h / TILE_SIZE)
+    const containerAspect = w / h
 
-      // Tile grid — smaller tiles for finer grain
-      const TILE_SIZE = 14
-      const cols = Math.ceil(w / TILE_SIZE)
-      const rows = Math.ceil(h / TILE_SIZE)
+    // Current image state (mutable for cycling)
+    let currentImg: HTMLImageElement | null = null
+    let srcX = 0, srcY = 0, srcW = 0, srcH = 0
 
-      // Compute source crop to cover the container (object-fit: cover logic)
+    function computeCrop(img: HTMLImageElement) {
       const imgAspect = img.naturalWidth / img.naturalHeight
-      const containerAspect = w / h
-      let srcW: number, srcH: number, srcX: number, srcY: number
       if (imgAspect > containerAspect) {
         srcH = img.naturalHeight
         srcW = srcH * containerAspect
@@ -84,110 +92,184 @@ const { projects } = Astro.props
         srcX = 0
         srcY = (img.naturalHeight - srcH) / 2
       }
+    }
 
-      // Per-tile state
-      const tiles: { cx: number; cy: number; offsetX: number; offsetY: number; targetX: number; targetY: number }[] = []
+    // Per-tile state
+    const tiles: { cx: number; cy: number; offsetX: number; offsetY: number; targetX: number; targetY: number; angleJitter: number; strengthMult: number }[] = []
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        tiles.push({
+          cx: c * TILE_SIZE + TILE_SIZE / 2,
+          cy: r * TILE_SIZE + TILE_SIZE / 2,
+          offsetX: 0,
+          offsetY: 0,
+          targetX: 0,
+          targetY: 0,
+          angleJitter: (Math.random() - 0.5) * 1.2,
+          strengthMult: 0.5 + Math.random() * 1.0,
+        })
+      }
+    }
+
+    const STRENGTH = 40
+    const RADIUS = 220
+
+    let mouseX = -9999
+    let mouseY = -9999
+    let mouseInside = false
+    let animating = false
+
+    // Crossfade state
+    let fadeAlpha = 1 // 1 = fully visible, fades to 0 then back to 1 on swap
+    let fading = false
+
+    function computeTargets() {
+      for (const tile of tiles) {
+        if (!mouseInside) {
+          tile.targetX = 0
+          tile.targetY = 0
+          continue
+        }
+        const dx = tile.cx - mouseX
+        const dy = tile.cy - mouseY
+        const dist = Math.sqrt(dx * dx + dy * dy)
+
+        if (dist > RADIUS || dist < 0.1) {
+          tile.targetX = 0
+          tile.targetY = 0
+          continue
+        }
+
+        const force = STRENGTH * (1 - dist / RADIUS) * tile.strengthMult
+        const angle = Math.atan2(dy, dx) + tile.angleJitter
+        tile.targetX = Math.cos(angle) * force
+        tile.targetY = Math.sin(angle) * force
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, cw, ch)
+      if (!currentImg) { animating = false; return }
+
+      let stillMoving = false
+
+      // Apply fade alpha
+      const prevAlpha = ctx.globalAlpha
+      ctx.globalAlpha = fadeAlpha
+
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          tiles.push({
-            cx: c * TILE_SIZE + TILE_SIZE / 2,
-            cy: r * TILE_SIZE + TILE_SIZE / 2,
-            offsetX: 0,
-            offsetY: 0,
-            targetX: 0,
-            targetY: 0,
-          })
-        }
-      }
+          const tile = tiles[r * cols + c]
 
-      const STRENGTH = 35
-      const RADIUS = 200
-
-      let mouseX = -9999
-      let mouseY = -9999
-      let mouseInside = false
-      let animating = false
-
-      function computeTargets() {
-        for (const tile of tiles) {
-          if (!mouseInside) {
-            tile.targetX = 0
-            tile.targetY = 0
-            continue
-          }
-          const dx = tile.cx - mouseX
-          const dy = tile.cy - mouseY
-          const dist = Math.sqrt(dx * dx + dy * dy)
-
-          if (dist > RADIUS || dist < 0.1) {
-            tile.targetX = 0
-            tile.targetY = 0
-            continue
+          const dxL = tile.targetX - tile.offsetX
+          const dyL = tile.targetY - tile.offsetY
+          if (Math.abs(dxL) > 0.05 || Math.abs(dyL) > 0.05) {
+            tile.offsetX += dxL * 0.1
+            tile.offsetY += dyL * 0.1
+            stillMoving = true
+          } else {
+            tile.offsetX = tile.targetX
+            tile.offsetY = tile.targetY
           }
 
-          // Push away — strength falls off with distance
-          const force = STRENGTH * (1 - dist / RADIUS) * (1 - dist / RADIUS)
-          const angle = Math.atan2(dy, dx)
-          tile.targetX = Math.cos(angle) * force
-          tile.targetY = Math.sin(angle) * force
+          const tileSrcX = srcX + (c * TILE_SIZE / w) * srcW
+          const tileSrcY = srcY + (r * TILE_SIZE / h) * srcH
+          const tileSrcW = (TILE_SIZE / w) * srcW
+          const tileSrcH = (TILE_SIZE / h) * srcH
+
+          const destX = PAD + c * TILE_SIZE + tile.offsetX
+          const destY = PAD + r * TILE_SIZE + tile.offsetY
+
+          ctx.drawImage(
+            currentImg,
+            tileSrcX, tileSrcY, tileSrcW, tileSrcH,
+            destX, destY, TILE_SIZE, TILE_SIZE
+          )
         }
       }
 
-      function draw() {
-        ctx.clearRect(0, 0, w, h)
+      ctx.globalAlpha = prevAlpha
 
-        let stillMoving = false
+      if (fading || stillMoving) {
+        requestAnimationFrame(draw)
+      } else {
+        animating = false
+      }
+    }
 
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            const tile = tiles[r * cols + c]
+    function startAnimation() {
+      if (!animating) {
+        animating = true
+        requestAnimationFrame(draw)
+      }
+    }
 
-            // Lerp
-            const dxL = tile.targetX - tile.offsetX
-            const dyL = tile.targetY - tile.offsetY
-            if (Math.abs(dxL) > 0.05 || Math.abs(dyL) > 0.05) {
-              tile.offsetX += dxL * 0.1
-              tile.offsetY += dyL * 0.1
-              stillMoving = true
-            } else {
-              tile.offsetX = tile.targetX
-              tile.offsetY = tile.targetY
-            }
+    // --- Image cycling ---
+    let imgIndex = 0
+    let nextImg: HTMLImageElement | null = null
 
-            // Source rect on the image
-            const tileSrcX = srcX + (c * TILE_SIZE / w) * srcW
-            const tileSrcY = srcY + (r * TILE_SIZE / h) * srcH
-            const tileSrcW = (TILE_SIZE / w) * srcW
-            const tileSrcH = (TILE_SIZE / h) * srcH
+    function preloadNext() {
+      const nextIndex = (imgIndex + 1) % srcUrls.length
+      const img = new Image()
+      img.src = srcUrls[nextIndex]
+      img.onload = () => { nextImg = img }
+    }
 
-            // Dest rect on canvas
-            const destX = c * TILE_SIZE + tile.offsetX
-            const destY = r * TILE_SIZE + tile.offsetY
+    function swapImage() {
+      if (!nextImg || srcUrls.length < 2) return
 
-            ctx.drawImage(
-              img,
-              tileSrcX, tileSrcY, tileSrcW, tileSrcH,
-              destX, destY, TILE_SIZE, TILE_SIZE
-            )
-          }
+      // Fade out
+      fading = true
+      startAnimation()
+
+      function fadeOut() {
+        fadeAlpha -= 0.03
+        if (fadeAlpha <= 0) {
+          fadeAlpha = 0
+          // Swap
+          imgIndex = (imgIndex + 1) % srcUrls.length
+          currentImg = nextImg
+          computeCrop(currentImg!)
+          nextImg = null
+          preloadNext()
+          // Fade in
+          fadeIn()
+          return
         }
-
-        if (stillMoving) {
-          requestAnimationFrame(draw)
-        } else {
-          animating = false
-        }
+        requestAnimationFrame(fadeOut)
       }
 
-      function startAnimation() {
-        if (!animating) {
-          animating = true
-          requestAnimationFrame(draw)
+      function fadeIn() {
+        fadeAlpha += 0.03
+        if (fadeAlpha >= 1) {
+          fadeAlpha = 1
+          fading = false
+          if (!animating) startAnimation() // one final draw at full alpha
+          return
         }
+        requestAnimationFrame(fadeIn)
       }
+
+      fadeOut()
+    }
+
+    // Load first image
+    const firstImg = new Image()
+    firstImg.src = srcUrls[0]
+    firstImg.onload = () => {
+      currentImg = firstImg
+      computeCrop(currentImg)
 
       // Initial static draw
-      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, w, h)
+      ctx.drawImage(currentImg, srcX, srcY, srcW, srcH, PAD, PAD, w, h)
+
+      // Start preloading next
+      if (srcUrls.length > 1) preloadNext()
+
+      // Cycle every 5 seconds
+      if (!reducedMotion && srcUrls.length > 1) {
+        setInterval(swapImage, 7000)
+      }
 
       if (reducedMotion) return
 
@@ -224,10 +306,7 @@ const { projects } = Astro.props
     }
   }
 
-  // Listen for activation from the switcher
   document.addEventListener('hero-pixel-activate', initPixelDisplace)
-
-  // Also try on load in case pixel is the default
   initPixelDisplace()
   document.addEventListener('astro:after-swap', initPixelDisplace)
 </script>
