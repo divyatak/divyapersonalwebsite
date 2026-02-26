@@ -1,5 +1,5 @@
 title: (un)seen Life
-description:
+description: scenes from life, with imaginative drawing mixing the seen and the imagined. shots captured in life in 2024
 category: photocomics
 category: illustration
 media: IMG_5879.webp

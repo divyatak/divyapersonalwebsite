@@ -137,11 +137,31 @@ function isActive(href: string) {
     })
   }
 
+  // Update sidebar active state on navigation
+  function updateSidebarActive() {
+    const path = window.location.pathname
+    document.querySelectorAll('.nav-item').forEach(item => {
+      const href = item.getAttribute('href') || ''
+      const isActive = href === '/'
+        ? (path === '/' || path === '')
+        : path.startsWith(href)
+      item.classList.toggle('active', isActive)
+      if (isActive) {
+        item.setAttribute('aria-current', 'page')
+      } else {
+        item.removeAttribute('aria-current')
+      }
+    })
+  }
+
   // Run on initial load
   initAnimations()
 
   // Re-run after Astro page transitions
-  document.addEventListener('astro:after-swap', initAnimations)
+  document.addEventListener('astro:after-swap', () => {
+    updateSidebarActive()
+    initAnimations()
+  })
 </script>
 
 <style is:global>

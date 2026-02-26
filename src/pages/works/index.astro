@@ -84,4 +84,196 @@ const allCategories = [...new Set(
       })
     })
   })
+
+  // Edge fragment effect on thumbnail hover
+  function initThumbFragment() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (window.matchMedia('(hover: none)').matches) return
+
+    const PAD = 20
+    const canvas = document.createElement('canvas')
+    canvas.style.cssText = `position:absolute;top:-${PAD}px;left:-${PAD}px;pointer-events:none;z-index:1;display:none;`
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const TILE = 6
+    const EDGE_DEPTH = 4
+    const MAX_SHIFT = 14
+
+    type Tile = {
+      r: number; c: number
+      offsetX: number; offsetY: number
+      targetX: number; targetY: number
+      jitter: number; mult: number
+    }
+
+    let tiles: Tile[] = []
+    let cols = 0, rows = 0
+    let imgW = 0, imgH = 0
+    let currentThumb: HTMLElement | null = null
+    let currentImgEl: HTMLImageElement | null = null
+    let animating = false
+    let hovering = false
+
+    // Object-fit: cover crop calc
+    let cSrcX = 0, cSrcY = 0, cSrcW = 0, cSrcH = 0
+
+    function computeCrop(img: HTMLImageElement, w: number, h: number) {
+      const imgAspect = img.naturalWidth / img.naturalHeight
+      const wrapAspect = w / h
+      if (imgAspect > wrapAspect) {
+        cSrcH = img.naturalHeight
+        cSrcW = cSrcH * wrapAspect
+        cSrcX = (img.naturalWidth - cSrcW) / 2
+        cSrcY = 0
+      } else {
+        cSrcW = img.naturalWidth
+        cSrcH = cSrcW / wrapAspect
+        cSrcX = 0
+        cSrcY = (img.naturalHeight - cSrcH) / 2
+      }
+    }
+
+    function setup(thumb: HTMLElement, wrap: HTMLElement, img: HTMLImageElement) {
+      const dpr = window.devicePixelRatio || 1
+      imgW = wrap.offsetWidth
+      imgH = wrap.offsetHeight
+      const cw = imgW + PAD * 2
+      const ch = imgH + PAD * 2
+
+      canvas.width = cw * dpr
+      canvas.height = ch * dpr
+      canvas.style.width = cw + 'px'
+      canvas.style.height = ch + 'px'
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+      // Append canvas to .project-thumb (overflow:visible) so tiles can spill,
+      // but position it relative to the img-wrap inside
+      thumb.appendChild(canvas)
+      currentThumb = thumb
+      currentImgEl = img
+
+      computeCrop(img, imgW, imgH)
+
+      cols = Math.ceil(imgW / TILE)
+      rows = Math.ceil(imgH / TILE)
+
+      tiles = []
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const edgeX = Math.min(c, cols - 1 - c)
+          const edgeY = Math.min(r, rows - 1 - r)
+          const edgeDist = Math.min(edgeX, edgeY)
+          const isEdge = edgeDist < EDGE_DEPTH
+          const edgeFactor = isEdge ? 1 - edgeDist / EDGE_DEPTH : 0
+
+          // Direction: away from center
+          const cx = (c + 0.5) / cols - 0.5
+          const cy = (r + 0.5) / rows - 0.5
+          const len = Math.sqrt(cx * cx + cy * cy) || 1
+
+          const jitter = (Math.random() - 0.5) * 0.8
+          const mult = 0.6 + Math.random() * 0.8
+          const angle = Math.atan2(cy, cx) + jitter
+
+          tiles.push({
+            r, c,
+            offsetX: 0, offsetY: 0,
+            targetX: isEdge ? Math.cos(angle) * MAX_SHIFT * edgeFactor * mult : 0,
+            targetY: isEdge ? Math.sin(angle) * MAX_SHIFT * edgeFactor * mult : 0,
+            jitter, mult,
+          })
+        }
+      }
+    }
+
+    function draw() {
+      if (!currentImgEl) { animating = false; return }
+      ctx.clearRect(0, 0, imgW + PAD * 2, imgH + PAD * 2)
+
+      let stillMoving = false
+      const lerpSpeed = hovering ? 0.12 : 0.08
+
+      for (const tile of tiles) {
+        const tx = hovering ? tile.targetX : 0
+        const ty = hovering ? tile.targetY : 0
+        const dx = tx - tile.offsetX
+        const dy = ty - tile.offsetY
+
+        if (Math.abs(dx) > 0.05 || Math.abs(dy) > 0.05) {
+          tile.offsetX += dx * lerpSpeed
+          tile.offsetY += dy * lerpSpeed
+          stillMoving = true
+        } else {
+          tile.offsetX = tx
+          tile.offsetY = ty
+        }
+
+        const tileSrcX = cSrcX + (tile.c * TILE / imgW) * cSrcW
+        const tileSrcY = cSrcY + (tile.r * TILE / imgH) * cSrcH
+        const tileSrcW = (TILE / imgW) * cSrcW
+        const tileSrcH = (TILE / imgH) * cSrcH
+
+        ctx.drawImage(
+          currentImgEl,
+          tileSrcX, tileSrcY, tileSrcW, tileSrcH,
+          PAD + tile.c * TILE + tile.offsetX,
+          PAD + tile.r * TILE + tile.offsetY,
+          TILE, TILE
+        )
+      }
+
+      if (stillMoving) {
+        requestAnimationFrame(draw)
+      } else {
+        animating = false
+        // If fully settled back, hide canvas
+        if (!hovering) {
+          canvas.style.display = 'none'
+          if (currentThumb && canvas.parentNode === currentThumb) {
+            currentThumb.removeChild(canvas)
+          }
+          currentThumb = null
+          currentImgEl = null
+        }
+      }
+    }
+
+    function startAnim() {
+      if (!animating) {
+        animating = true
+        requestAnimationFrame(draw)
+      }
+    }
+
+    // Attach to all project thumbs (canvas on thumb for overflow, reads img from img-wrap)
+    document.querySelectorAll('.project-thumb').forEach(thumb => {
+      const wrap = thumb.querySelector('.project-thumb-img-wrap') as HTMLElement
+      if (!wrap) return
+
+      thumb.addEventListener('mouseenter', () => {
+        const img = wrap.querySelector('img.project-thumb-img') as HTMLImageElement
+        if (!img || !img.complete || !img.naturalWidth) return
+
+        // Tear down previous if different thumb
+        if (currentThumb && currentThumb !== thumb) {
+          canvas.style.display = 'none'
+          if (canvas.parentNode) canvas.parentNode.removeChild(canvas)
+        }
+
+        hovering = true
+        setup(thumb as HTMLElement, wrap, img)
+        canvas.style.display = 'block'
+        startAnim()
+      })
+
+      thumb.addEventListener('mouseleave', () => {
+        hovering = false
+        startAnim()
+      })
+    })
+  }
+
+  initThumbFragment()
+  document.addEventListener('astro:after-swap', initThumbFragment)
 </script>

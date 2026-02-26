@@ -195,7 +195,7 @@
   flex: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 1.6rem;
 }
 
 /* Category filters */
@@ -240,9 +240,9 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  width: 400px;
+  width: 360px;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -250,6 +250,7 @@
 }
 
 .project-thumb-img-wrap {
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
@@ -278,7 +279,7 @@
 .project-thumb-name {
   display: block;
   padding: 0.5rem 0;
-  font-size: 0.85rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #555;
   transition: color 0.25s var(--ease-settle);
@@ -312,13 +313,17 @@
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
-  color: #1a0dab;
+  color: #999;
   cursor: pointer;
   padding: 0;
   margin-bottom: 1.5rem;
   display: inline-block;
   text-decoration: none;
   transition: color var(--hover-off) var(--ease-out-soft), transform var(--hover-off) var(--ease-out-soft);
+}
+
+.back-link:visited {
+  color: #999;
 }
 
 .back-link:hover {
@@ -329,16 +334,18 @@
 }
 
 .project-detail-title {
-  font-size: 1.8rem;
+  font-size: 3.2rem;
   font-weight: 800;
   margin-bottom: 0.6rem;
 }
 
 .project-detail-desc {
-  color: #555;
-  font-weight: 400;
+  color: #999;
+  font-size: 1.15rem;
+  font-weight: 200;
+  line-height: 1.4;
   margin-bottom: 1.5rem;
-  max-width: 500px;
+  max-width: 520px;
 }
 
 .project-link {
@@ -376,7 +383,7 @@
 .video-wrapper {
   position: relative;
   width: 100%;
-  max-width: 720px;
+  max-width: 1020px;
   aspect-ratio: 16 / 9;
 }
 

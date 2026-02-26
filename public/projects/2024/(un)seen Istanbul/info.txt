@@ -1,5 +1,5 @@
 title: (un)seen Istanbul
-description:
+description: scenes from Istanbul, with imaginative drawing mixing the seen and the imagined. shots captured in Istanbul in 2024
 category: photocomics
 category: illustration
 media: IMG_6242.webp

@@ -1,5 +1,5 @@
 title: (un)seen Emirates
-description:
+description: scenes from the Emirates, with imaginative drawing mixing the seen and the imagined. shots captured in the Emirates in 2025
 category: photocomics
 category: illustration
 media: image.webp

@@ -3,6 +3,7 @@ const { images } = Astro.props
 ---
 
 <div class="hero-container hero-pixel" id="hero-pixel">
+  <img class="pixel-fallback" id="pixel-fallback" alt="" />
   <canvas id="pixel-canvas"></canvas>
   {images.map((img) => (
     <img data-src={img.src} class="pixel-source" alt="" />
@@ -15,6 +16,16 @@ const { images } = Astro.props
     cursor: default;
     overflow: visible;
     pointer-events: auto;
+  }
+
+  .pixel-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   #pixel-canvas {
@@ -56,6 +67,10 @@ const { images } = Astro.props
       const j = Math.floor(Math.random() * (i + 1));
       [srcUrls[i], srcUrls[j]] = [srcUrls[j], srcUrls[i]]
     }
+
+    // Show fallback image immediately while canvas loads
+    const fallback = document.getElementById('pixel-fallback') as HTMLImageElement
+    if (fallback) fallback.src = srcUrls[0]
 
     const dpr = window.devicePixelRatio || 1
     const PAD = 40
@@ -260,8 +275,9 @@ const { images } = Astro.props
       currentImg = firstImg
       computeCrop(currentImg)
 
-      // Initial static draw
+      // Initial static draw — hide fallback now that canvas is ready
       ctx.drawImage(currentImg, srcX, srcY, srcW, srcH, PAD, PAD, w, h)
+      if (fallback) fallback.style.display = 'none'
 
       // Start preloading next
       if (srcUrls.length > 1) preloadNext()
