@@ -3,17 +3,9 @@ import Layout from '../layouts/Layout.astro'
 import aboutData from '../data/generated-about.json'
 
 const { bio, email, photo, talks, workshops, press } = aboutData
-
-// Convert plain text bio to HTML, linking "Joyus Studio"
-function linkifyBio(text) {
-  return text.replace(
-    /Joyus Studio/g,
-    '<a href="https://joyus.studio/" target="_blank" rel="noopener noreferrer">Joyus Studio</a>'
-  )
-}
 ---
 
-<Layout title="About — Divya" description={bio[0] || "Divya Tak is a multi-disciplinary designer and creative."}>
+<Layout title="About — Divya" description="Divya Tak is a multidisciplinary creative whose work spans film, games, comics, interactive systems, and generative media.">
   <section aria-label="About" class="about-intro">
     <h1 class="sr-only">About</h1>
     {photo ? (
@@ -23,16 +15,24 @@ function linkifyBio(text) {
     )}
     <div class="about-intro-text animate-in" style="--enter-delay: 0.2s">
       <div class="artist-statement">
-        {bio.map((paragraph) => (
-          <p set:html={linkifyBio(paragraph)} />
-        ))}
+        <p>Divya Tak is a multidisciplinary creative whose work spans film, games, comics, interactive systems, and generative media, contributing to award-winning projects while pursuing a sustained inquiry into wonder, curiosity, and belonging. Trained in physics and shaped by over a decade of working across creative industries, she approaches storytelling as a study of perception itself, how we see, what we overlook, and how meaning forms between systems and humans.</p>
+        <p>Her visual poetry collaboration with poet Kahran Singh was exhibited in Boulder, Colorado in January 2025. She worked as Creative Producer on the film Jugnuma, which won Best Film at Leeds 2025. Her narrative game The Titli Effect placed second at The Jennifer Ann Group's Connectedness Game Jam. She has created cover illustrations for scientific journals between 2018 and 2024, and her original comic Common was published in the INKLAB Anthology in 2021. She completed the Pollinator Creative Residency in November 2025 and the BHX Creators Residency in March 2025.</p>
       </div>
-      {email && <a href={`mailto:${email}`} class="about-email">{email}</a>}
     </div>
   </section>
 
+  {email && (
+    <section aria-label="Contact" class="about-section animate-in">
+      <h3 class="about-subheading">for queries & commissions</h3>
+      <p class="contact-text">
+        Reach out at <a href={`mailto:${email}`} class="contact-email">{email}</a>
+      </p>
+    </section>
+  )}
+
   <section aria-label="Talks and workshops" class="about-section">
     <div class="logo-strip" data-stagger-children data-stagger-ms="60">
+      <img class="animate-in" src="/logos/ngma.gif" alt="NGMA Bangalore" loading="lazy" />
       <img class="animate-in" src="/logos/google.webp" alt="Google India" loading="lazy" />
       <img class="animate-in" src="/logos/goethe-institut.png" alt="Goethe Institut" loading="lazy" />
       <img class="animate-in" src="/logos/iimb.png" alt="IIM Bangalore" loading="lazy" />
@@ -43,6 +43,7 @@ function linkifyBio(text) {
       <img class="animate-in" src="/logos/bangalore-international-centre.png" alt="Bangalore International Centre" loading="lazy" />
       <img class="animate-in" src="/logos/agifest.png" alt="AGI Fest" loading="lazy" />
       <img class="animate-in" src="/logos/startout.svg" alt="StartOut" loading="lazy" />
+      <img class="animate-in" src="/logos/hasgeek.svg" alt="HasGeek" loading="lazy" />
       <img class="animate-in" src="/logos/ai-enthusiasts-circle.webp" alt="AI Enthusiasts Circle" loading="lazy" />
       <img class="animate-in" src="/logos/ajaibghar.webp" alt="AjaibGhar" loading="lazy" />
     </div>

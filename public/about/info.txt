@@ -3,11 +3,13 @@ bio: Divya's expertise spans visual storytelling, branding, and leveraging AI fo
 
 email: hello@divyatak.art
 
+talk: Algorithm and Art | Art Mantram, NGMA Bangalore | 2026
 talk: Talk on Creativity | Layers, Portugal (online) | 2025
 talk: Panel on State of Games in India | Google India
 talk: The Innovative Power of AI in Creative Industries | IIM Bangalore | 2024
 talk: Panel on Women in Animation, Video Games & Comics | GAFX, Bengaluru | 2024 | https://www.linkedin.com/company/bengaluru-gafx-conference-2024/
 talk: Panel on Games and Literature | Goethe Institut, New Delhi | 2024 | https://www.goethe.de/ins/in/en/ver.cfm?event_id=25664310
+talk: AI and Copyright | Fifth Elephant | 2023
 talk: AI in Workflows | Slush'd New Delhi | 2023 | https://www.linkedin.com/company/new-delhi-slush-d/
 talk: Panel on AI in Creative Spaces | Bangalore International Center | 2023
 talk: Talk on Product Design Learnings | UXDX | 2022 | https://youtu.be/_PJwXuoS0Ns
@@ -15,6 +17,7 @@ talk: Talk on Creative Career Blocks | Christ University | 2021 | https://www.li
 
 workshop: Narrative Design | AGI Fest | 2025
 workshop: Investing 101 | StartOut, USA
+workshop: Midjourney 101 | HasGeek
 workshop: Midjourney | AI Enthusiasts Circle
 workshop: Design Lessons from Games | Lab59 | 2024
 workshop: Visual Storytelling | Goethe Institut, New Delhi | 2024 | https://www.goethe.de/ins/in/en/ver.cfm?event_id=25664310

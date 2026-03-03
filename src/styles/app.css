@@ -31,11 +31,23 @@
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 0;
   border-right: none;
   z-index: 10;
   background: #fff;
+}
+
+.sidebar-name {
+  font-size: 1.1rem;
+  font-weight: 200;
+  color: #999;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .nav-item {
@@ -76,7 +88,6 @@
 .sidebar-socials {
   display: flex;
   gap: 1rem;
-  margin-top: auto;
   padding-top: 2rem;
 }
 
@@ -160,6 +171,10 @@
   font-weight: 200;
   line-height: 1.4;
   max-width: 520px;
+}
+
+.divya-intro-coda {
+  margin-top: 1.2rem;
 }
 
 /* Hero container — portrait 3:4 driven by parent height */
@@ -574,7 +589,7 @@ a.friend-project-tag:visited {
 }
 
 .about-photo {
-  width: 200px;
+  width: 260px;
   align-self: stretch;
   object-fit: cover;
   flex-shrink: 0;
@@ -601,7 +616,7 @@ a.friend-project-tag:visited {
 .artist-statement {
   color: #555;
   font-weight: 400;
-  max-width: 560px;
+  max-width: 720px;
   margin-bottom: 0;
 }
 
@@ -618,15 +633,20 @@ a.friend-project-tag:visited {
   text-decoration: underline;
 }
 
-.about-email {
-  display: inline-block;
-  margin-top: 1rem;
+.contact-text {
+  color: #999;
+  font-size: 1.15rem;
+  font-weight: 200;
+  line-height: 1.4;
+}
+
+.contact-email {
   color: #222;
   font-weight: 400;
   text-decoration: underline;
 }
 
-.about-email:visited {
+.contact-email:visited {
   color: #222;
 }
 
