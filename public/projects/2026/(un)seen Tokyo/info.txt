@@ -1,0 +1,5 @@
+title: (un)seen Tokyo
+description: scenes from Tokyo, with imaginative drawing mixing the seen and the imagined. shots captured in Tokyo in 2026
+category: photocomics
+category: illustration
+media: Flower.webp

@@ -4,7 +4,7 @@ bio: Divya's expertise spans visual storytelling, branding, and leveraging AI fo
 email: hello@divyatak.art
 
 talk: Algorithm and Art | Art Mantram, NGMA Bangalore | 2026
-talk: Talk on Creativity | Layers, Portugal (online) | 2025
+talk: Talk on Creativity | Layers, Portugal (online) | 2025 | https://www.youtube.com/watch?v=VClgiGkX0Sg
 talk: Panel on State of Games in India | Google India
 talk: The Innovative Power of AI in Creative Industries | IIM Bangalore | 2024
 talk: Panel on Women in Animation, Video Games & Comics | GAFX, Bengaluru | 2024 | https://www.linkedin.com/company/bengaluru-gafx-conference-2024/

@@ -1,7 +1,7 @@
 name: Soumyadeep Mukherjee
 role: Engineer & entrepreneur
 url: https://www.linkedin.com/in/soumyadeepmukherjee/
-description: Co-founder & CTO of Dashtoon, building an AI-powered comic creation platform. Forbes 30 Under 30 Asia.
+description: Co-founder & CTO of Dashverse, engineering the future of entertainment with AI.
 
 name: Samhita Arni
 role: Author & brand consultant

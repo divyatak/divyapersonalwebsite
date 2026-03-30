@@ -1,7 +1,7 @@
 :root {
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 16px;
 
   color: #222;
@@ -30,6 +30,15 @@
 
   --scale-enter: 0.97;
   --scale-hover: 1.02;
+
+  /* Spacing tokens */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

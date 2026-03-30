@@ -14,7 +14,7 @@ const allCategories = [...new Set(
     <div class="category-filters animate-in" id="category-filters">
       <button class="category-btn active" data-category="all">all</button>
       {allCategories.map((cat) => (
-        <><span class="category-sep">&middot;</span><button class="category-btn" data-category={cat}>{cat}</button></>
+        <><span class="category-sep" aria-hidden="true">&middot;</span><button class="category-btn" data-category={cat}>{cat}</button></>
       ))}
     </div>
     <div class="timeline" id="works-timeline">
@@ -53,7 +53,7 @@ const allCategories = [...new Set(
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function initCategoryFilters() {
     const filters = document.getElementById('category-filters')
     if (!filters) return
 
@@ -83,7 +83,10 @@ const allCategories = [...new Set(
         })
       })
     })
-  })
+  }
+
+  initCategoryFilters()
+  document.addEventListener('astro:after-swap', initCategoryFilters)
 
   // Edge fragment effect on thumbnail hover
   function initThumbFragment() {

@@ -38,8 +38,8 @@
 
 .sidebar-name {
   font-size: 1.1rem;
-  font-weight: 200;
-  color: #999;
+  font-weight: 300;
+  color: #767676;
   letter-spacing: 0.02em;
 }
 
@@ -130,12 +130,14 @@
 
 /* Section shared */
 .section-title {
-  font-size: 1rem;
-  font-weight: normal;
+  font-size: 0.85rem;
+  font-weight: 600;
   text-transform: lowercase;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 0.3rem;
+  color: #767676;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid #eee;
+  padding-bottom: var(--space-xs);
 }
 
 /* Placeholder rectangles */
@@ -166,15 +168,47 @@
 }
 
 .divya-intro {
-  color: #999;
+  color: #8a8a8a;
   font-size: 2.2rem;
-  font-weight: 200;
+  font-weight: 300;
   line-height: 1.4;
   max-width: 520px;
 }
 
+.divya-intro-details {
+  color: #8a8a8a;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.5;
+  max-width: 520px;
+  margin-top: var(--space-lg);
+}
+
+.divya-intro-details a {
+  color: #666;
+  text-decoration: underline;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 2px;
+}
+
+.divya-intro-details a:visited {
+  color: #666;
+}
+
 .divya-intro-coda {
-  margin-top: 1.2rem;
+  margin-top: 1.8rem;
+}
+
+.not-found-text {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #555;
+  line-height: 1.5;
+}
+
+.not-found-text a {
+  color: #555;
+  text-decoration: underline;
 }
 
 /* Hero container — portrait 3:4 driven by parent height */
@@ -228,7 +262,8 @@
   padding: 0;
   font-family: inherit;
   font-size: 1.1rem;
-  color: #999;
+  font-weight: 400;
+  color: #767676;
   cursor: pointer;
   transition: color 0.15s var(--ease-settle);
 }
@@ -326,19 +361,19 @@
   background: none;
   border: none;
   font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  color: #999;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #767676;
   cursor: pointer;
   padding: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-lg);
   display: inline-block;
   text-decoration: none;
   transition: color var(--hover-off) var(--ease-out-soft), transform var(--hover-off) var(--ease-out-soft);
 }
 
 .back-link:visited {
-  color: #999;
+  color: #767676;
 }
 
 .back-link:hover {
@@ -355,19 +390,22 @@
 }
 
 .project-detail-desc {
-  color: #999;
-  font-size: 1.15rem;
-  font-weight: 200;
+  color: #8a8a8a;
+  font-size: 1.1rem;
+  font-weight: 300;
   line-height: 1.4;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-lg);
   max-width: 520px;
 }
 
 .project-link {
   display: inline-block;
-  margin-bottom: 1.5rem;
-  color: #222;
+  margin-bottom: var(--space-lg);
+  color: #555;
+  font-weight: 400;
   text-decoration: underline;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 2px;
 }
 
 .project-link:visited {
@@ -454,7 +492,7 @@
 
 .friend-role {
   font-size: 0.75rem;
-  color: #888;
+  color: #767676;
   font-weight: 400;
   line-height: 1.2;
 }
@@ -492,10 +530,7 @@
 }
 
 .friend-desc {
-  margin-top: 0.6rem;
-}
-
-.friend-desc {
+  margin-top: var(--space-sm);
   font-size: 0.9rem;
   font-weight: 400;
   color: #555;
@@ -547,21 +582,21 @@ a.friend-project-tag:visited {
 
 .mention-role {
   font-size: 0.75rem;
-  color: #888;
+  color: #767676;
   font-weight: 400;
   line-height: 1.2;
   margin-top: 0.05rem;
 }
 
 .mention-desc {
-  font-size: 0.82rem;
-  color: #aaa;
+  font-size: 0.85rem;
+  color: #888;
   font-weight: 400;
-  margin-top: 0.4rem;
+  margin-top: var(--space-xs);
 }
 
 .mention-name {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #555;
   line-height: 1.2;
@@ -634,9 +669,9 @@ a.friend-project-tag:visited {
 }
 
 .contact-text {
-  color: #999;
-  font-size: 1.15rem;
-  font-weight: 200;
+  color: #8a8a8a;
+  font-size: 1.1rem;
+  font-weight: 300;
   line-height: 1.4;
 }
 
@@ -701,11 +736,12 @@ a.talk-name:visited {
 }
 
 .about-subheading {
-  font-size: 0.9rem;
-  font-weight: normal;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: #767676;
   text-transform: lowercase;
-  margin-bottom: 1rem;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-md);
 }
 
 .about-list {
@@ -830,7 +866,7 @@ a.talk-name:visited {
   }
 }
 
-/* Mobile — sidebar collapses to bottom bar */
+/* Mobile — sidebar collapses to top horizontal bar */
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
@@ -838,39 +874,51 @@ a.talk-name:visited {
 
   .sidebar {
     position: fixed;
-    top: auto;
-    bottom: 0;
+    top: 0;
+    bottom: auto;
     left: 0;
     width: 100%;
     height: auto;
     flex-direction: row;
-    justify-content: space-around;
-    padding: 0.6rem 0.5rem;
-    padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
+    align-items: center;
+    padding: 0.6rem 1rem;
+    padding-top: calc(0.6rem + env(safe-area-inset-top));
     border-right: none;
-    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    gap: 0;
+  }
+
+  .sidebar-name {
+    font-size: 0.85rem;
+    margin-right: auto;
+  }
+
+  .sidebar-links {
+    flex: none;
+    flex-direction: row;
+    gap: 0.2rem;
   }
 
   .nav-item {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     padding: 0.3rem 0.5rem;
   }
 
-  .sidebar-socials {
-    display: flex;
-    margin-top: 0;
-    padding-top: 0;
-    gap: 0.75rem;
+  .nav-item:hover {
+    transform: none;
   }
 
-  .sidebar-socials svg {
-    width: 16px;
-    height: 16px;
+  .sidebar-socials {
+    display: none;
   }
 
   .content {
     margin-left: 0;
-    padding: 1.2rem 1rem 4rem;
+    padding: 4rem 1rem 2rem;
   }
 
   .home-section {
@@ -881,8 +929,26 @@ a.talk-name:visited {
 
   .home-hero {
     width: 100%;
-    height: 60vh;
+    height: 50vh;
     aspect-ratio: auto;
+  }
+
+  .home-text {
+    padding-top: 0;
+  }
+
+  .divya-intro {
+    font-size: 1.5rem;
+    max-width: 100%;
+  }
+
+  .divya-intro-details {
+    font-size: 1.1rem;
+    max-width: 100%;
+  }
+
+  .divya-intro-coda {
+    margin-top: 1rem;
   }
 
   .about-intro {
@@ -891,8 +957,9 @@ a.talk-name:visited {
 
   .about-photo {
     width: 100%;
-    max-width: 200px;
-    height: 200px;
+    max-width: 260px;
+    height: auto;
+    aspect-ratio: 3 / 4;
     align-self: auto;
   }
 
@@ -900,6 +967,16 @@ a.talk-name:visited {
     width: 100%;
     max-width: 200px;
     height: 200px;
+  }
+
+  .artist-statement {
+    max-width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .contact-text {
+    font-size: 1rem;
   }
 
   .two-col {
@@ -920,17 +997,20 @@ a.talk-name:visited {
   }
 
   .logo-strip img {
-    height: 32px;
+    height: 28px;
   }
 
-  .divya-intro {
-    font-size: 1.5rem;
-    max-width: 100%;
+  .project-detail-title {
+    font-size: 2rem;
   }
 
-  .artist-statement,
   .project-detail-desc {
+    font-size: 1rem;
     max-width: 100%;
+  }
+
+  .back-link {
+    margin-bottom: 1rem;
   }
 
   .video-wrapper {
@@ -944,6 +1024,18 @@ a.talk-name:visited {
   .project-media-img,
   .project-media-video {
     width: 100%;
+  }
+
+  .itch-embed {
+    max-width: 100%;
+  }
+
+  .category-filters {
+    margin-bottom: 1.5rem;
+  }
+
+  .category-btn {
+    font-size: 0.85rem;
   }
 }
 
@@ -959,6 +1051,31 @@ a.talk-name:visited {
 
   .timeline-year {
     font-size: 2.2rem;
+  }
+
+  .timeline-body {
+    gap: 1.2rem;
+  }
+
+  .divya-intro {
+    font-size: 1.3rem;
+  }
+
+  .divya-intro-details {
+    font-size: 1rem;
+  }
+
+  .home-hero {
+    height: 40vh;
+  }
+
+  .nav-item {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.35rem;
+  }
+
+  .sidebar-name {
+    font-size: 0.75rem;
   }
 }
 
