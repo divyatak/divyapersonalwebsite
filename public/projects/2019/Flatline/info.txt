@@ -1,5 +1,5 @@
 title: Flatline
-description:
+description: The visual world of a podcast about the things we feel but rarely say out loud — illustrated alongside Charu Tak and Amrita Sukrity
 category: illustration
 category: podcast
 media: Image from iOS (30).webp

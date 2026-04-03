@@ -1,5 +1,5 @@
 title: Pi of life
-description:
+description: A comic series that turns life's messy truths into pie charts — what you actually think about in the shower, why you make art, the things nobody tells you about growing up
 category: comic
 media: Pi of life 3.webp
 media: Pi of life 4.webp

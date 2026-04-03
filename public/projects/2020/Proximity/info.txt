@@ -1,5 +1,5 @@
 title: Proximity
-description: place colors in the correct order and fill the board. the final game of Game'd, a series where we made one game per month over six months. Made with Charu Tak.
+description: A colour puzzle — place them in the right order, fill the board, feel unreasonably satisfied. The final game of Game'd, one game per month for six months. Made with Charu Tak
 category: game
 media: https://www.youtube.com/watch?v=L92W7zcnLGk
 media: Ewux55.webp

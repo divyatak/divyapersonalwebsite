@@ -1,5 +1,5 @@
 title: Friendly stories
-description:
+description: Two short comics about the things that happen when old friends meet — the catching up, the gossip, the stories about everyone else's relationships. Made with Kahran Singh
 category: comic
 collaborator: Kahran Singh
 media: Close1.webp

@@ -1,5 +1,5 @@
 title: Clogs
-description: a series of comic blogs made about everyday musings and thoughts, drawn and inked traditionally.
+description: Comic blogs drawn and inked by hand — everyday musings, small observations, the kind of thoughts that pass through your head and usually disappear
 category: comic
 category: illustration
 media: Clog 1.webp

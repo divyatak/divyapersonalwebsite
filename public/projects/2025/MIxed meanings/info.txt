@@ -1,8 +1,11 @@
 title: Mixed meanings
-description:
+description: What happens when you take a word and let it slip between languages — the meaning bends, the feeling shifts, something new appears. AI-generated video loops made with Kahran Singh, exhibited in Boulder, Colorado in 2025
 category: conceptual
 category: ai
 collaborator: Kahran Singh
+media: still-1.webp
+media: still-2.webp
+media: still-3.webp
 media: 1.mp4
 media: 2.mp4
 media: 3.mp4

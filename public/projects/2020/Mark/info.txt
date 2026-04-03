@@ -1,5 +1,5 @@
 title: Mark
-description: A puzzle-platformer where you control a bouncing ball using only your mouse to navigate levels, collect keys, and avoid enemies. Made with Charu Tak.
+description: A bouncing ball, a mouse, and a series of increasingly unreasonable levels — collect the keys, dodge the enemies, question your life choices. Made with Charu Tak
 category: game
 media: https://www.youtube.com/watch?v=YZET-0OZTmU
 media: WbPlbQ.webp

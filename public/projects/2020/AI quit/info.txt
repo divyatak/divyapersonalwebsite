@@ -1,5 +1,5 @@
 title: AI quit
-description: the great harrowing escape from the capitalistic grasp of the toaster factory. sneak out as a tiny robot while avoiding guard detection zones. Made with Charu Tak, Varun Ramanna and Devanshu Tak.
+description: The great harrowing escape from the capitalistic grasp of the toaster factory — you're a tiny robot, the guards are watching, and the exit is very far away. Made with Charu Tak, Varun Ramanna and Devanshu Tak
 category: game
 media: https://www.youtube.com/watch?v=bZy-VKiIzUI
 media: 9i6eYA.webp

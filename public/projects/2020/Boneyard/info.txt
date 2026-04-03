@@ -1,5 +1,5 @@
 title: Boneyard
-description: a hack and slash against all the skulls. kill all the enemies and survive as long as you can. Made with Charu Tak.
+description: Skulls everywhere, and you with a sword — hack, slash, survive as long as you can. Made with Charu Tak
 category: game
 media: https://www.youtube.com/watch?v=kq55Od_mA_8
 media: 2_a8xD.webp

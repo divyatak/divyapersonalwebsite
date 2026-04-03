@@ -1,5 +1,5 @@
 title: Misplaced
-description: a text-based escape room puzzle. solve puzzles to get out of the room. part of Game'd, a series of six games made in six months. Made with Charu Tak.
+description: You're in a room, the door is locked, and the only way out is through your head — a text-based escape room puzzle. Part of Game'd, six games in six months. Made with Charu Tak
 category: game
 media: https://www.youtube.com/watch?v=g56fjmsIIZg
 media: fZA9yG.webp

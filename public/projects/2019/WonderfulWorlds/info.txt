@@ -1,5 +1,5 @@
 title: Wonderful Worlds
-description:
+description: A hand-drawn zine about a small creature who finds wonder in the most ordinary places — watering plants, meeting bunnies, just being alive and looking around
 category: zine
 category: illustration
 media: Page 1.webp

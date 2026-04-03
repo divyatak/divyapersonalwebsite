@@ -1,3 +1,7 @@
 title: Questions
-description:
+description: A zine about the questions that sit with you — the ones you ask yourself at 3am, the ones you ask other people hoping they won't answer
 category: zine
+media: questions-1.webp
+media: questions-2.webp
+media: questions-3.webp
+media: questions-4.webp

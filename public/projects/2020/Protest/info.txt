@@ -1,5 +1,5 @@
 title: Protest
-description:
+description: An illustrated zine about what you can do when the world is burning — 20 ways to show up, care, and not look away
 category: zine
 category: illustration
 media: Protest zine print_Page_01_Image_0001.webp

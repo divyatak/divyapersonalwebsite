@@ -1,0 +1,9 @@
+title: Journey of my paper plane
+description: A mobile game about guiding a paper plane through hand-painted skies — dodging trees, riding the wind, finding your way. Made with Charu Tak
+category: game
+category: illustration
+collaborator: Charu Tak
+media: splash-screen.webp
+media: sheet-trees.webp
+media: sheet-foliage.webp
+media: sheet-houses.webp

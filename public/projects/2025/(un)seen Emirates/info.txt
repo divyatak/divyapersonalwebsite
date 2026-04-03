@@ -1,11 +1,11 @@
 title: (un)seen Emirates
-description: scenes from the Emirates, with imaginative drawing mixing the seen and the imagined. shots captured in the Emirates in 2025
+description: The Emirates through two lenses — what the camera caught, and what the hand added later. Drawings over photographs, imagination over memory
 category: photocomics
 category: illustration
 media: image.webp
-media: image2.jpg
-media: image4.jpg
-media: image5.jpg
+media: image2.webp
+media: image4.webp
+media: image5.webp
 media: image7.webp
 media: image8.webp
 media: image10.webp

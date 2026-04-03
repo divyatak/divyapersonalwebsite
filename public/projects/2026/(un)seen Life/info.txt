@@ -1,6 +1,6 @@
 title: (un)seen Life
-description: scenes from life, with imaginative drawing mixing the seen and the imagined. shots captured in life in 2026
+description: Photographs of ordinary life, drawn over with the things you imagine when you look a little longer — the seen and the unseen, layered together
 category: photocomics
 category: illustration
 media: image6.webp
-media: WitchChase.jpg
+media: WitchChase.webp

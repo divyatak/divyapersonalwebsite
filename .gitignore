@@ -17,6 +17,7 @@ archive-originals
 archive
 dist-ssr
 *.local
+Calligraphy.PNG
 
 # Editor directories and files
 .vscode/*

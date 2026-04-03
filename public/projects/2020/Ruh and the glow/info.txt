@@ -1,5 +1,5 @@
 title: Ruh and the glow
-description: A children's storybook in the shape of a jigsaw puzzle, exploring Ruh's journey through the forest. Made with Charu Tak.
+description: A children's storybook that you piece together like a puzzle — follow Ruh through the forest as the pieces fall into place. Made with Charu Tak
 category: game
 media: https://www.youtube.com/watch?v=sdWQ7PwXZSE
 media: 8Qe0H.webp

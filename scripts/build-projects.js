@@ -225,13 +225,24 @@ async function buildAll() {
         projects.push(project)
       }
 
+      // Sort: itch.io (Game'd) projects first, then the rest
+      projects.sort((a, b) => (b.itch ? 1 : 0) - (a.itch ? 1 : 0))
+
       if (projects.length > 0) {
         works.push({ year: Number(year), projects })
       }
     }
   }
 
-  fs.writeFileSync(outFile, JSON.stringify(works, null, 2) + '\n')
+  // Merge 2019 and earlier into a single "earlier" group
+  const recent = works.filter(w => w.year >= 2020)
+  const earlier = works.filter(w => w.year <= 2019)
+  if (earlier.length > 0) {
+    const mergedProjects = earlier.flatMap(w => w.projects)
+    recent.push({ year: 0, label: 'earlier', projects: mergedProjects })
+  }
+
+  fs.writeFileSync(outFile, JSON.stringify(recent, null, 2) + '\n')
 
   // --- Build friends ---
   const friends = []

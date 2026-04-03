@@ -1,4 +1,8 @@
 title: The titli effect
-description:
+description: A game about a girl called Titli, where every decision you make ripples through her life in ways you don't quite expect. Placed second at the Jennifer Ann Group's Connectedness Game Jam
 category: game
 category: illustration
+media: titli-title.webp
+media: titli-gameplay.webp
+media: titli-scene2.webp
+media: titli-scene3.webp
