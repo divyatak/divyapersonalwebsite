@@ -34,7 +34,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
                   {p.cover ? (
                     <img
                       class="project-thumb-img"
-                      src={p.cover}
+                      src={`${base}${p.cover}`}
                       alt={p.title}
                       loading="lazy"
                       decoding="async"

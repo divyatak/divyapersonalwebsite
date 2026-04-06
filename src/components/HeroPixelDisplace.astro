@@ -1,12 +1,13 @@
 ---
 const { images } = Astro.props
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <div class="hero-container hero-pixel" id="hero-pixel">
   <img class="pixel-fallback" id="pixel-fallback" alt="" />
   <canvas id="pixel-canvas"></canvas>
   {images.map((img) => (
-    <img data-src={img.src} class="pixel-source" alt="" />
+    <img data-src={`${base}${img.src}`} class="pixel-source" alt="" />
   ))}
 </div>
 

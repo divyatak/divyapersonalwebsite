@@ -55,7 +55,7 @@ const mediaContent = project.media.length > 0
           ) : m.type === 'video' ? (
             <video
               class="project-media-video animate-in"
-              src={m.src}
+              src={`${base}${m.src}`}
               controls
               preload="metadata"
               playsinline
@@ -63,7 +63,7 @@ const mediaContent = project.media.length > 0
           ) : (
             <img
               class="project-media-img animate-in"
-              src={m.src}
+              src={`${base}${m.src}`}
               alt={`${project.title} ${i + 1}`}
               loading="lazy"
               decoding="async"

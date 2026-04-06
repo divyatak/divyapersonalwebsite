@@ -3,13 +3,14 @@ import Layout from '../layouts/Layout.astro'
 import aboutData from '../data/generated-about.json'
 
 const { bio, email, photo, talks, workshops, press } = aboutData
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <Layout title="About — Divya" description="Divya Tak is a multidisciplinary creative whose work spans film, games, comics, interactive systems, and generative media.">
   <section aria-label="About" class="about-intro">
     <h1 class="sr-only">About</h1>
     {photo ? (
-      <img src={photo} alt="Divya Tak" class="about-photo animate-in" style="--enter-scale: 0.97" loading="lazy" />
+      <img src={`${base}${photo}`} alt="Divya Tak" class="about-photo animate-in" style="--enter-scale: 0.97" loading="lazy" />
     ) : (
       <div class="about-photo-placeholder"></div>
     )}
@@ -32,22 +33,22 @@ const { bio, email, photo, talks, workshops, press } = aboutData
 
   <section aria-label="Talks and workshops" class="about-section">
     <div class="logo-strip" data-stagger-children data-stagger-ms="60">
-      <img class="animate-in" src="/logos/google.webp" alt="Google India" loading="lazy" />
-      <img class="animate-in" src="/logos/ngma.gif" alt="NGMA Bangalore" loading="lazy" />
-      <img class="animate-in" src="/logos/goethe-institut.png" alt="Goethe Institut" loading="lazy" />
-      <img class="animate-in" src="/logos/iimb.png" alt="IIM Bangalore" loading="lazy" />
-      <img class="animate-in" src="/logos/layers.png" alt="Friends of Figma / Layers Portugal" loading="lazy" />
-      <img class="animate-in" src="/logos/hasgeek.svg" alt="HasGeek" loading="lazy" />
-      <img class="animate-in" src="/logos/uxdx.webp" alt="UXDX" loading="lazy" />
-      <img class="animate-in" src="/logos/slush.webp" alt="Slush'd" loading="lazy" />
-      <img class="animate-in" src="/logos/gafx.webp" alt="GAFX Bangalore" loading="lazy" />
-      <img class="animate-in" src="/logos/bangalore-international-centre.png" alt="Bangalore International Centre" loading="lazy" />
-      <img class="animate-in" src="/logos/agifest.png" alt="AGI Fest" loading="lazy" />
-      <img class="animate-in" src="/logos/litschool.png" alt="LIT School" loading="lazy" />
-      <img class="animate-in" src="/logos/christ-university.webp" alt="Christ University" loading="lazy" />
-      <img class="animate-in" src="/logos/startout.svg" alt="StartOut" loading="lazy" />
-      <img class="animate-in" src="/logos/ai-enthusiasts-circle.webp" alt="AI Enthusiasts Circle" loading="lazy" />
-      <img class="animate-in" src="/logos/ajaibghar.webp" alt="AjaibGhar / Lab59" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/google.webp`} alt="Google India" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/ngma.gif`} alt="NGMA Bangalore" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/goethe-institut.png`} alt="Goethe Institut" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/iimb.png`} alt="IIM Bangalore" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/layers.png`} alt="Friends of Figma / Layers Portugal" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/hasgeek.svg`} alt="HasGeek" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/uxdx.webp`} alt="UXDX" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/slush.webp`} alt="Slush'd" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/gafx.webp`} alt="GAFX Bangalore" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/bangalore-international-centre.png`} alt="Bangalore International Centre" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/agifest.png`} alt="AGI Fest" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/litschool.png`} alt="LIT School" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/christ-university.webp`} alt="Christ University" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/startout.svg`} alt="StartOut" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/ai-enthusiasts-circle.webp`} alt="AI Enthusiasts Circle" loading="lazy" />
+      <img class="animate-in" src={`${base}/logos/ajaibghar.webp`} alt="AjaibGhar / Lab59" loading="lazy" />
     </div>
     <div class="two-col animate-in">
       <div>
