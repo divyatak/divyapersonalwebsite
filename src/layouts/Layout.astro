@@ -8,17 +8,18 @@ interface Props {
 
 const { title = 'Divya — Artist Portfolio', description = 'Portfolio of Divya — artist, maker, collaborator. A space for work and the people I create with.' } = Astro.props
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 const pathname = Astro.url.pathname
 
 const navItems = [
-  { label: 'hello', href: '/' },
-  { label: 'works', href: '/works/' },
-  { label: 'friends', href: '/friends/' },
-  { label: 'about', href: '/about/' },
+  { label: 'hello', href: `${base}/` },
+  { label: 'works', href: `${base}/works/` },
+  { label: 'friends', href: `${base}/friends/` },
+  { label: 'about', href: `${base}/about/` },
 ]
 
 function isActive(href: string) {
-  if (href === '/') return pathname === '/' || pathname === ''
+  if (href === `${base}/`) return pathname === `${base}/` || pathname === base || pathname === '/'
   return pathname.startsWith(href)
 }
 ---
@@ -27,9 +28,9 @@ function isActive(href: string) {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}/favicon-32.png`} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,9 +42,9 @@ function isActive(href: string) {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content={`${base}/og-image.png`} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image" content={`${base}/og-image.png`} />
     <ViewTransitions />
   </head>
   <body>
@@ -149,8 +150,9 @@ function isActive(href: string) {
     const path = window.location.pathname
     document.querySelectorAll('.nav-item').forEach(item => {
       const href = item.getAttribute('href') || ''
-      const isActive = href === '/'
-        ? (path === '/' || path === '')
+      const isHome = href.endsWith('/') && !href.includes('/works') && !href.includes('/friends') && !href.includes('/about')
+      const isActive = isHome
+        ? (path === href || path === href.slice(0, -1) || path === '/')
         : path.startsWith(href)
       item.classList.toggle('active', isActive)
       if (isActive) {

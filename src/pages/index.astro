@@ -5,6 +5,7 @@ import works from '../data/generated-projects.json'
 
 // Collect high-res interior images from (un)seen projects only
 const MIN_DIM = 800
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 const heroImages = works
   .flatMap(y => y.projects)
   .filter(p => p.title.toLowerCase().includes('unseen') || p.title.includes('(un)seen'))
@@ -38,20 +39,20 @@ const heroImages = works
   </section>
 </Layout>
 
-<script>
+<script is:inline define:vars={{ base }}>
   // Redirect old hash-based URLs to proper routes
   const hash = window.location.hash.replace('#', '')
   if (hash) {
     const parts = hash.split('/')
     const section = parts[0]
     if (section === 'works' && parts[1]) {
-      window.location.replace('/works/' + parts[1] + '/')
+      window.location.replace(base + '/works/' + parts[1] + '/')
     } else if (section === 'works') {
-      window.location.replace('/works/')
+      window.location.replace(base + '/works/')
     } else if (section === 'friends') {
-      window.location.replace('/friends/')
+      window.location.replace(base + '/friends/')
     } else if (section === 'about') {
-      window.location.replace('/about/')
+      window.location.replace(base + '/about/')
     }
   }
 </script>

@@ -11,6 +11,7 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 
 function youtubeEmbedUrl(url: string) {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/)
@@ -26,7 +27,7 @@ const mediaContent = project.media.length > 0
 
 <Layout title={`${project.title} — Divya`} description={project.description || `${project.title} by Divya`}>
   <section aria-label={`Project: ${project.title}`}>
-    <a href="/works/" class="back-link animate-in">&larr; back to works</a>
+    <a href={`${base}/works/`} class="back-link animate-in">&larr; back to works</a>
     <h1 class="project-detail-title animate-in" style="--enter-delay: 0.1s">{project.title}</h1>
     {project.description && <p class="project-detail-desc animate-in" style="--enter-delay: 0.2s">{project.description}</p>}
     {project.link && (

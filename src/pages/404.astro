@@ -1,12 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro'
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <Layout title="Not Found — Divya">
   <section aria-label="Page not found">
     <h2 class="section-title animate-in">not found</h2>
     <p class="not-found-text animate-in" style="--enter-delay: 0.15s">
-      This page doesn't exist. <a href="/">Go home</a>.
+      This page doesn't exist. <a href={`${base}/`}>Go home</a>.
     </p>
   </section>
 </Layout>

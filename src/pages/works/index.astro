@@ -6,6 +6,7 @@ import works from '../../data/generated-projects.json'
 const allCategories = [...new Set(
   works.flatMap(y => y.projects).flatMap(p => p.categories || [])
 )].sort()
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <Layout title="Works — Divya" description="Selected works by Divya — artist, maker, collaborator.">
@@ -24,7 +25,7 @@ const allCategories = [...new Set(
           <div class="timeline-body" data-stagger-children data-stagger-ms="80">
             {yearGroup.projects.map((p) => (
               <a
-                href={`/works/${p.slug}/`}
+                href={`${base}/works/${p.slug}/`}
                 class="project-thumb animate-in"
                 aria-label={p.title}
                 data-categories={(p.categories || []).join(',')}

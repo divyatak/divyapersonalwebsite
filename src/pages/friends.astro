@@ -8,6 +8,7 @@ const { collaborators, mentions } = friendsData
 // Map project titles to slugs so friend project tags can link to them
 const titleToSlug = new Map<string, string>()
 works.flatMap(y => y.projects).forEach(p => titleToSlug.set(p.title, p.slug))
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <Layout title="Friends — Divya" description="Friends and collaborators of Divya.">
@@ -46,7 +47,7 @@ works.flatMap(y => y.projects).forEach(p => titleToSlug.set(p.title, p.slug))
                   {f.projects.map((p) => {
                     const slug = titleToSlug.get(p)
                     return slug ? (
-                      <a href={`/works/${slug}/`} class="friend-project-tag">{p}</a>
+                      <a href={`${base}/works/${slug}/`} class="friend-project-tag">{p}</a>
                     ) : (
                       <span class="friend-project-tag">{p}</span>
                     )
@@ -76,7 +77,7 @@ works.flatMap(y => y.projects).forEach(p => titleToSlug.set(p.title, p.slug))
                     {f.projects.map((p) => {
                       const slug = titleToSlug.get(p)
                       return slug ? (
-                        <a href={`/works/${slug}/`} class="friend-project-tag">{p}</a>
+                        <a href={`${base}/works/${slug}/`} class="friend-project-tag">{p}</a>
                       ) : (
                         <span class="friend-project-tag">{p}</span>
                       )
