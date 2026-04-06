@@ -16,9 +16,9 @@ talk: Talk on Product Design Learnings | UXDX | 2022 | https://youtu.be/_PJwXuoS
 talk: Talk on Creative Career Blocks | Christ University | 2021 | https://www.linkedin.com/posts/divya-tak_creative-storytelling-leadership-activity-6724232400668368896-q5wO/
 
 workshop: Narrative Design | AGI Fest | 2025
-workshop: Investing 101 | StartOut, USA
-workshop: Midjourney 101 | HasGeek
-workshop: Midjourney | AI Enthusiasts Circle
+workshop: Investing 101 | StartOut, USA | 2025
+workshop: Midjourney 101 | HasGeek | 2023
+workshop: Midjourney | AI Enthusiasts Circle | 2024
 workshop: Design Lessons from Games | Lab59 | 2024
 workshop: Visual Storytelling | Goethe Institut, New Delhi | 2024 | https://www.goethe.de/ins/in/en/ver.cfm?event_id=25664310
 
