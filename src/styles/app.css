@@ -41,6 +41,11 @@
   font-weight: 300;
   color: #767676;
   letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.sidebar-name:visited {
+  color: #767676;
 }
 
 .sidebar-links {
