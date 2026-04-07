@@ -95,7 +95,28 @@
   color: #636363;
   letter-spacing: 0.02em;
   text-decoration: none;
-  padding-bottom: var(--space-sm);
+}
+
+.sidebar-email {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: #636363;
+  text-decoration: none;
+  margin-top: 0.1rem;
+}
+
+.sidebar-email:visited {
+  color: #636363;
+}
+
+.sidebar-email:hover {
+  color: #222;
+}
+
+.sidebar-email-icon {
+  display: none;
+  width: 18px;
+  height: 18px;
 }
 
 .sidebar-playground:visited {
@@ -110,7 +131,7 @@
 .sidebar-socials {
   display: flex;
   gap: 1rem;
-  padding-top: 2rem;
+  padding-top: 1.2rem;
 }
 
 .sidebar-socials a {
@@ -695,16 +716,19 @@ a.friend-project-tag:visited {
 }
 
 .contact-text {
-  color: #6b6b6b;
-  font-size: 1.1rem;
+  color: #555;
+  font-size: 1.4rem;
   font-weight: 300;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .contact-email {
   color: #222;
-  font-weight: 400;
+  font-size: 1.4rem;
+  font-weight: 600;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 .contact-email:visited {
@@ -1039,6 +1063,22 @@ a.talk-name:visited {
     font-weight: 600;
     padding: 0.3rem 0.4rem;
     margin: 0;
+  }
+
+  .sidebar-email {
+    padding: 0.3rem 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .sidebar-email-text {
+    display: none;
+  }
+
+  .sidebar-email-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
   }
 
   .content {
