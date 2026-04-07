@@ -2,3 +2,4 @@ name: Kahran Singh
 role: Writer & investor
 url: https://kahransingh.com
 description: Co-founder of Joyus Studio, General Partner at Tres Monos Capital, and author of the poetry collection How the World Works.
+project: The Line Before
