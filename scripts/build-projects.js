@@ -72,7 +72,7 @@ function parseInfo(filePath) {
 
 function parseFriendInfo(filePath) {
   const text = fs.readFileSync(filePath, 'utf-8').replace(/^\uFEFF/, '')
-  const result = { name: '', url: '', description: '', role: '' }
+  const result = { name: '', url: '', description: '', role: '', extraProjects: [] }
 
   for (const line of text.split('\n')) {
     const trimmed = line.trim()
@@ -88,6 +88,7 @@ function parseFriendInfo(filePath) {
     else if (key === 'url') result.url = value
     else if (key === 'description') result.description = value
     else if (key === 'role') result.role = value
+    else if (key === 'project') result.extraProjects.push(value)
     else console.warn(`Unknown key "${key}" in ${filePath}`)
   }
 
@@ -263,9 +264,9 @@ async function buildAll() {
       const basePath = `/friends/${friendDir}`
       const encodedBase = encodePath(basePath)
 
-      // Find projects this friend collaborated on
+      // Find projects this friend collaborated on + any manually listed
       const key = (info.name || friendDir).toLowerCase()
-      const projectList = collabProjects.get(key) || []
+      const projectList = [...(collabProjects.get(key) || []), ...info.extraProjects]
 
       friends.push({
         id: friendDir,
