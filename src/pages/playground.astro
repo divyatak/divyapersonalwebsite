@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro'
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+
+const experiments = [
+  {
+    title: 'The Line Before',
+    description: 'A 3D poetry garden — flowers bloom from words, petals drift with meaning. An interactive collaboration with Kahran Singh.',
+    url: 'https://divya.studiotypo.xyz',
+    image: `${base}/playground/the-line-before.webp`,
+  },
+  {
+    title: 'Webcam Magic',
+    description: 'Interactive webcam effects controlled by hand tracking. Your finger transforms a pixelated mirror — ripple, erase, paint, and more.',
+    url: 'https://divyatak.github.io/creative-visuals/webcam/',
+    image: `${base}/playground/webcam-magic.webp`,
+  },
+  {
+    title: '(un)seen Lenticular',
+    description: 'Photo-comics from sketch to final — move your mouse to shift between layers, like a lenticular print. The unseen emerges from the photograph.',
+    url: 'https://divyatak.github.io/creative-visuals/lenticular/',
+    image: `${base}/playground/lenticular.webp`,
+  },
+]
+---
+
+<Layout title="Playground — Divya" description="Interactive experiments and creative coding by Divya.">
+  <section aria-label="Playground">
+    <h1 class="section-title animate-in">playground</h1>
+    <p class="playground-intro animate-in" style="--enter-delay: 0.1s">
+      Experiments, prototypes, and things that move. Not all of these are finished — some are sketches, some are toys, some are just fun.
+    </p>
+    <div class="playground-list" data-stagger-children data-stagger-ms="80">
+      {experiments.map((exp) => (
+        <a href={exp.url} target="_blank" rel="noopener noreferrer" class="playground-item animate-in">
+          <img src={exp.image} alt={exp.title} class="playground-item-img" loading="lazy" />
+          <div class="playground-item-text">
+            <span class="playground-item-title">{exp.title}</span>
+            <span class="playground-item-desc">{exp.description}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
