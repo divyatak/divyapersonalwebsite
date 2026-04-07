@@ -11,7 +11,7 @@ description: Founder of Mee Studios. Has worked with Budweiser, OnePlus, Adobe, 
 name: Computational Mama
 role: Artist & creative technologist
 url: https://computationalmama.xyz/
-description: Co-founder of AjaibGhar. Builds products and experiences for arts and culture, bridging code and creativity.
+description: Co-founder of Ajaibghar. Builds products and experiences for arts and culture, bridging code and creativity.
 
 name: Samhita Arni
 role: Author & brand consultant
