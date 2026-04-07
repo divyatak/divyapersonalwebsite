@@ -39,13 +39,13 @@
 .sidebar-name {
   font-size: 1.1rem;
   font-weight: 300;
-  color: #767676;
+  color: #636363;
   letter-spacing: 0.02em;
   text-decoration: none;
 }
 
 .sidebar-name:visited {
-  color: #767676;
+  color: #636363;
 }
 
 .sidebar-links {
@@ -92,14 +92,14 @@
 .sidebar-playground {
   font-size: 1.1rem;
   font-weight: 300;
-  color: #767676;
+  color: #636363;
   letter-spacing: 0.02em;
   text-decoration: none;
   padding-bottom: var(--space-sm);
 }
 
 .sidebar-playground:visited {
-  color: #767676;
+  color: #636363;
 }
 
 .sidebar-playground:hover {
@@ -155,7 +155,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   text-transform: lowercase;
-  color: #767676;
+  color: #636363;
   letter-spacing: 0.03em;
   margin-bottom: var(--space-lg);
   border-bottom: 1px solid #eee;
@@ -190,7 +190,7 @@
 }
 
 .divya-intro {
-  color: #8a8a8a;
+  color: #6b6b6b;
   font-size: 2.2rem;
   font-weight: 300;
   line-height: 1.4;
@@ -198,7 +198,7 @@
 }
 
 .divya-intro-details {
-  color: #8a8a8a;
+  color: #6b6b6b;
   font-size: 1.3rem;
   font-weight: 300;
   line-height: 1.5;
@@ -258,7 +258,7 @@
 .timeline-year {
   font-size: 4rem;
   font-weight: 200;
-  color: #767676;
+  color: #636363;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -285,7 +285,7 @@
   font-family: inherit;
   font-size: 1.1rem;
   font-weight: 400;
-  color: #767676;
+  color: #636363;
   cursor: pointer;
   transition: color 0.15s var(--ease-settle);
 }
@@ -385,7 +385,7 @@
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 400;
-  color: #767676;
+  color: #636363;
   cursor: pointer;
   padding: 0;
   margin-bottom: var(--space-lg);
@@ -395,7 +395,7 @@
 }
 
 .back-link:visited {
-  color: #767676;
+  color: #636363;
 }
 
 .back-link:hover {
@@ -412,7 +412,7 @@
 }
 
 .project-detail-desc {
-  color: #8a8a8a;
+  color: #6b6b6b;
   font-size: 1.1rem;
   font-weight: 300;
   line-height: 1.4;
@@ -518,7 +518,7 @@
 
 .friend-role {
   font-size: 0.75rem;
-  color: #767676;
+  color: #636363;
   font-weight: 400;
   line-height: 1.2;
 }
@@ -608,7 +608,7 @@ a.friend-project-tag:visited {
 
 .mention-role {
   font-size: 0.75rem;
-  color: #767676;
+  color: #636363;
   font-weight: 400;
   line-height: 1.2;
   margin-top: 0.05rem;
@@ -616,7 +616,7 @@ a.friend-project-tag:visited {
 
 .mention-desc {
   font-size: 0.85rem;
-  color: #888;
+  color: #636363;
   font-weight: 400;
   margin-top: var(--space-xs);
 }
@@ -695,7 +695,7 @@ a.friend-project-tag:visited {
 }
 
 .contact-text {
-  color: #8a8a8a;
+  color: #6b6b6b;
   font-size: 1.1rem;
   font-weight: 300;
   line-height: 1.4;
@@ -764,7 +764,7 @@ a.talk-name:visited {
 .about-subheading {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #767676;
+  color: #636363;
   text-transform: lowercase;
   letter-spacing: 0.03em;
   margin-bottom: var(--space-md);
@@ -799,7 +799,7 @@ a.talk-name:visited {
 
 /* Playground */
 .playground-intro {
-  color: #8a8a8a;
+  color: #6b6b6b;
   font-size: 1.1rem;
   font-weight: 300;
   line-height: 1.5;
@@ -861,7 +861,7 @@ a.talk-name:visited {
 
 .playground-item-desc {
   font-size: 0.9rem;
-  color: #767676;
+  color: #636363;
   font-weight: 400;
   line-height: 1.5;
 }
