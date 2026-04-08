@@ -18,6 +18,8 @@ archive
 dist-ssr
 *.local
 Calligraphy.PNG
+brave_*.png
+brave_*.jpg
 
 # Editor directories and files
 .vscode/*
