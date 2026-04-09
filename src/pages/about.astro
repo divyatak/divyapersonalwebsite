@@ -10,7 +10,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
   <section aria-label="About" class="about-intro">
     <h1 class="sr-only">About</h1>
     {photo ? (
-      <img src={`${base}${photo}`} alt="Divya Tak" class="about-photo animate-in" style="--enter-scale: 0.97" loading="lazy" />
+      <img src={`${base}${photo}`} alt="Portrait of Divya Tak — multidisciplinary creative" class="about-photo animate-in" style="--enter-scale: 0.97" loading="lazy" />
     ) : (
       <div class="about-photo-placeholder"></div>
     )}
