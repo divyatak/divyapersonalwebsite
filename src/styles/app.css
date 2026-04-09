@@ -321,9 +321,9 @@
 }
 
 .category-sep {
-  color: #ccc;
-  font-size: 0.6rem;
-  padding: 0 0.5rem;
+  color: #aaa;
+  font-size: 1rem;
+  padding: 0 0.4rem;
   user-select: none;
 }
 

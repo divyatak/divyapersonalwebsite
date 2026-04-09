@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://divyatak.art/sitemap.xml
+Sitemap: https://divyatak.art/sitemap-index.xml
