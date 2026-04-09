@@ -64,9 +64,11 @@ const mediaContent = project.media.length > 0
             <img
               class="project-media-img animate-in"
               src={`${base}${m.src}`}
-              alt={`${project.title} ${i + 1}`}
+              alt={`${project.title} — image ${i + 1} of ${mediaContent.filter(x => x.type === 'image').length}`}
               loading="lazy"
               decoding="async"
+              width={m.width || undefined}
+              height={m.height || undefined}
             />
           )
         )}

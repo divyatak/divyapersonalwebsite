@@ -23,7 +23,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
               <img
                 class="friend-photo"
                 src={`${base}${f.photo}`}
-                alt={f.name}
+                alt={`Photo of ${f.name}`}
                 loading="lazy"
                 decoding="async"
               />
