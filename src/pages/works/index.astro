@@ -21,7 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
     <div class="timeline" id="works-timeline">
       {works.map((yearGroup) => (
         <div class="timeline-entry">
-          <div class="timeline-year animate-in" style="--enter-x: -12px; --enter-y: 0px">{yearGroup.label || yearGroup.year}</div>
+          <div class="timeline-year animate-in">{yearGroup.label || yearGroup.year}</div>
           <div class="timeline-body" data-stagger-children data-stagger-ms="80">
             {yearGroup.projects.map((p) => (
               <a

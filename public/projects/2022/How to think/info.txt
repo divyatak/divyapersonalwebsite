@@ -1,6 +1,7 @@
 title: How to think
 description: An illustrated zine for when you're stuck — exercises, nudges, and ways of looking at things sideways until something clicks
 category: zine
+category: illustration
 media: How to think zine_Page_01_Image_0001.webp
 media: How to think zine_Page_02_Image_0001.webp
 media: How to think zine_Page_03_Image_0001.webp
