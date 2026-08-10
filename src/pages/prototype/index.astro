@@ -1,0 +1,107 @@
+---
+// THROWAWAY PROTOTYPE — angle hypotheses overview. Delete this folder after a direction is chosen.
+// Four hypotheses for repositioning divyatak.art around "I make interactive things",
+// each with a distinct directorial point of view. Flip with ← → or the bottom bar on each page.
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Angle hypotheses — prototype</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', system-ui, sans-serif;
+      background: #fff; color: #222;
+      max-width: 1100px; margin: 0 auto; padding: 4rem 2rem 6rem;
+      line-height: 1.6;
+    }
+    .tag {
+      display: inline-block; font-family: monospace; font-size: 0.75rem;
+      background: #111; color: #fff; padding: 4px 10px; border-radius: 999px;
+      margin-bottom: 1.5rem;
+    }
+    h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .lede { color: #636363; max-width: 640px; margin-bottom: 3rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    a.card {
+      display: block; text-decoration: none; color: inherit;
+      border: 1px solid #eee; padding: 1.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .key { font-family: monospace; font-size: 0.8rem; color: #999; }
+    .card h2 { font-size: 1.25rem; font-weight: 800; margin: 0.25rem 0 0.75rem; }
+    .pov { font-style: italic; color: #444; margin-bottom: 1rem; }
+    .meta { font-size: 0.85rem; color: #636363; }
+    .meta strong { color: #222; font-weight: 600; }
+    .meta p { margin-bottom: 0.5rem; }
+    .note { margin-top: 3rem; font-size: 0.85rem; color: #999; max-width: 640px; }
+  </style>
+</head>
+<body>
+  <span class="tag">throwaway prototype · branch angle-hypotheses</span>
+  <h1>Four angles for the same person</h1>
+  <p class="lede">
+    Same content pool — the interactive works, (un)seen, the games, the bio — arranged under four
+    different directorial points of view. The question each page answers: <em>if this is the angle,
+    what does the site become?</em> Use ← → to flip between them.
+  </p>
+
+  <div class="grid">
+    <a class="card" href="/prototype/a/">
+      <span class="key">A</span>
+      <h2>No glass</h2>
+      <p class="pov">"The site is the first piece. You're already inside it."</p>
+      <div class="meta">
+        <p><strong>Highlights:</strong> the experiences themselves — everything is a door with a verb: enter, play, touch, look.</p>
+        <p><strong>Demotes:</strong> biography, credentials, chronology.</p>
+        <p><strong>Speaks to:</strong> audiences, juries, anyone who should <em>feel</em> the claim instead of reading it.</p>
+        <p><strong>Risk:</strong> a recruiter or curator in a hurry finds no resume surface.</p>
+      </div>
+    </a>
+
+    <a class="card" href="/prototype/b/">
+      <span class="key">B</span>
+      <h2>Ships builds</h2>
+      <p class="pov">"A maker who builds interactive things end to end. The proof is the list."</p>
+      <div class="meta">
+        <p><strong>Highlights:</strong> capability and cadence — dated rows, live links, stacks, self-built tools.</p>
+        <p><strong>Demotes:</strong> mood, atmosphere, long emotional copy.</p>
+        <p><strong>Speaks to:</strong> hirers, collaborators, fellowship panels who count shipped things.</p>
+        <p><strong>Risk:</strong> the feeling-first half of the practice reads as a footnote.</p>
+      </div>
+    </a>
+
+    <a class="card" href="/prototype/c/">
+      <span class="key">C</span>
+      <h2>Look again</h2>
+      <p class="pov">"One inquiry, many forms: what gets ignored, and what participation does to looking."</p>
+      <div class="meta">
+        <p><strong>Highlights:</strong> coherence — projects as chapters of one question; illustration fused in, not shelved.</p>
+        <p><strong>Demotes:</strong> stack-flexing, listings, anything catalogue-like.</p>
+        <p><strong>Speaks to:</strong> residency juries, curators, research fellowships.</p>
+        <p><strong>Risk:</strong> slower to read; "interactive" arrives late.</p>
+      </div>
+    </a>
+
+    <a class="card" href="/prototype/d/">
+      <span class="key">D</span>
+      <h2>Worlds, with people</h2>
+      <p class="pov">"Interactive worlds you can step into — each with its own feeling, most made with people she loves."</p>
+      <div class="meta">
+        <p><strong>Highlights:</strong> emotional range, narrative craft, collaborators credited on the work itself.</p>
+        <p><strong>Demotes:</strong> tech stacks, credentials, dates.</p>
+        <p><strong>Speaks to:</strong> narrative/game people, studios, kindred makers.</p>
+        <p><strong>Risk:</strong> least "engineer" signal of the four.</p>
+      </div>
+    </a>
+  </div>
+
+  <p class="note">
+    These are layout hypotheses, not designs — the winner (or the parts you steal from each) becomes
+    the brief for the real restructure. The whole <code>src/pages/prototype/</code> folder gets deleted after.
+  </p>
+</body>
+</html>

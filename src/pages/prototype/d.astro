@@ -1,0 +1,569 @@
+<!-- THROWAWAY PROTOTYPE — angle hypothesis D, delete after decision. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Divya Tak — worlds you can step into</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,340;0,9..144,540;0,9..144,640;1,9..144,340;1,9..144,540&family=Work+Sans:ital,wght@0,340;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+<style is:inline>
+/* ============ ground ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:#171310;
+  color:#f0e9dd;
+  font:400 17px/1.6 "Work Sans",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:#e8b04b;color:#171310}
+a{color:inherit}
+img{display:block;max-width:100%}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
+
+/* ============ hero ============ */
+.hero{padding:clamp(70px,12vh,140px) 0 clamp(48px,8vh,90px)}
+.hero .name{
+  font:500 13px/1 "Work Sans",sans-serif;
+  letter-spacing:.22em;text-transform:uppercase;color:#a2937e;
+  margin-bottom:34px;
+}
+.hero h1{
+  font:340 clamp(30px,4.6vw,52px)/1.22 "Fraunces",serif;
+  max-width:21em;color:#f7f1e6;
+}
+.hero h1 em{font-style:italic;font-weight:540;color:#e8b04b}
+.hero .then{
+  margin-top:26px;
+  font:400 clamp(17px,1.6vw,20px)/1.55 "Work Sans",sans-serif;
+  color:#c9bba4;max-width:34em;
+}
+.hero .then a{color:#e8b04b;text-decoration:none;border-bottom:1px solid rgba(232,176,75,.4)}
+.hero .then a:hover{border-bottom-color:#e8b04b}
+
+/* ============ shelves ============ */
+.shelves{padding-bottom:110px}
+.shelf{
+  display:flex;align-items:flex-end;gap:clamp(14px,2vw,26px);
+  padding-bottom:0;margin-bottom:8px;
+  position:relative;
+}
+/* the shelf edge the posters sit on */
+.shelf::after{
+  content:"";display:block;position:absolute;left:-8px;right:-8px;bottom:-8px;
+  height:5px;background:linear-gradient(#3a3128,#241e18);
+  border-radius:2px;
+  box-shadow:0 10px 22px rgba(0,0,0,.55);
+}
+.shelf + .shelf,.shelf + .between + .shelf{margin-top:64px}
+
+.between{
+  margin:80px auto 72px;max-width:30em;text-align:center;
+  font:340 clamp(20px,2.4vw,27px)/1.5 "Fraunces",serif;
+  font-style:italic;color:#cdbfa7;
+}
+.between .who{
+  display:block;margin-top:12px;font:400 12px/1 "Work Sans",sans-serif;
+  font-style:normal;letter-spacing:.18em;text-transform:uppercase;color:#7d7060;
+}
+
+/* ============ poster anatomy ============ */
+.poster{
+  position:relative;overflow:hidden;border-radius:3px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  box-shadow:0 14px 34px rgba(0,0,0,.5);
+  isolation:isolate;
+  transition:transform .35s ease,box-shadow .35s ease;
+}
+.poster:hover{transform:translateY(-7px);box-shadow:0 26px 48px rgba(0,0,0,.6)}
+.poster > img.art{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+  transition:transform .6s ease;
+}
+.poster:hover > img.art{transform:scale(1.035)}
+.scrim{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(10,8,6,0) 42%,rgba(10,8,6,.62) 74%,rgba(10,8,6,.88) 100%);
+}
+.plate{position:relative;z-index:2;padding:18px 20px 18px}
+.plate h2{font:540 clamp(20px,1.9vw,26px)/1.15 "Fraunces",serif;color:#fbf6ec}
+.plate .feel{margin-top:7px;font:400 14.5px/1.45 "Work Sans",sans-serif;color:rgba(248,242,230,.86);max-width:26em}
+.plate .credit{
+  margin-top:9px;font:500 12.5px/1.3 "Work Sans",sans-serif;
+  letter-spacing:.02em;color:#efc978;
+}
+.plate .credit a{color:inherit;text-decoration:none;border-bottom:1px dotted rgba(239,201,120,.55)}
+.plate .credit a:hover{border-bottom-style:solid}
+.plate .whisper{
+  margin-top:10px;font:400 11px/1 ui-monospace,"Cascadia Code",Consolas,monospace;
+  letter-spacing:.06em;color:rgba(240,233,221,.42);
+}
+.cta{
+  display:inline-block;margin-top:13px;
+  font:500 13px/1 "Work Sans",sans-serif;letter-spacing:.04em;
+  color:#171310;background:#f0e9dd;text-decoration:none;
+  padding:9px 15px;border-radius:999px;
+  transition:transform .2s ease,background .2s ease;
+}
+.cta:hover{transform:translateX(3px);background:#e8b04b}
+.soon{
+  display:inline-block;margin-top:13px;
+  font:500 12px/1 "Work Sans",sans-serif;letter-spacing:.14em;text-transform:uppercase;
+  color:#e8b04b;border:1px dashed rgba(232,176,75,.6);
+  padding:8px 13px;border-radius:999px;
+}
+/* whole-poster click where live */
+.poster .hitbox{position:absolute;inset:0;z-index:3;text-indent:-9999px;overflow:hidden}
+.poster .hitbox:focus-visible{outline:3px solid #e8b04b;outline-offset:-3px}
+.poster .cta,.poster .credit a{position:relative;z-index:4}
+
+/* entrance */
+.poster,.between,.made,.outro{opacity:0;transform:translateY(18px)}
+.in{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease}
+.no-observer .poster,.no-observer .between,.no-observer .made,.no-observer .outro{opacity:1;transform:none}
+
+/* ============ micro-palettes / CSS worlds ============ */
+
+/* — Metro Museum: spotlight over a missing exhibit — */
+.p-metro{flex:11 1 0;height:440px;background:
+  radial-gradient(120% 85% at 50% -10%,rgba(214,178,110,.32),rgba(214,178,110,0) 55%),
+  linear-gradient(180deg,#202b28 0%,#141c1a 70%,#0e1413 100%);}
+.p-metro .pedestal{
+  position:absolute;left:50%;bottom:128px;transform:translateX(-50%);
+  width:120px;height:52px;z-index:1;
+  background:linear-gradient(#2c3a36,#1a2320);
+  box-shadow:0 -1px 0 rgba(214,178,110,.35),0 16px 24px rgba(0,0,0,.5);
+}
+.p-metro .missing{
+  position:absolute;left:50%;bottom:184px;transform:translateX(-50%) rotate(-2deg);
+  width:84px;height:64px;z-index:1;
+  border:2px dashed rgba(233,222,196,.55);border-radius:4px;
+}
+.p-metro .tag{
+  position:absolute;left:50%;bottom:96px;transform:translateX(-50%);z-index:1;
+  font:400 10.5px/1 ui-monospace,Consolas,monospace;letter-spacing:.08em;
+  color:rgba(233,222,196,.6);background:rgba(20,28,26,.7);
+  padding:5px 9px;border:1px solid rgba(233,222,196,.18);
+  white-space:nowrap;
+}
+.p-metro .line{
+  position:absolute;left:0;right:0;top:44px;height:0;z-index:1;
+  border-top:2px dashed rgba(233,222,196,.2);
+}
+.p-metro .line i{
+  position:absolute;top:-6px;width:10px;height:10px;border-radius:50%;
+  background:#d6b26e;box-shadow:0 0 10px rgba(214,178,110,.7);
+}
+.p-metro .line i:nth-child(1){left:18%}
+.p-metro .line i:nth-child(2){left:52%;opacity:.55}
+.p-metro .line i:nth-child(3){left:83%;opacity:.3}
+
+/* — Everything Bazaar: vending slots, neon — */
+.p-bazaar{flex:10 1 0;height:378px;background:
+  radial-gradient(90% 60% at 50% 0%,rgba(255,77,166,.28),rgba(255,77,166,0) 60%),
+  linear-gradient(180deg,#26102b,#170a1c 75%);}
+.p-bazaar .slots{
+  position:absolute;inset:26px 26px auto;height:200px;z-index:1;
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 8px,rgba(255,77,166,.14) 8px 60px,rgba(255,255,255,0) 60px 68px),
+    repeating-linear-gradient(0deg,rgba(255,255,255,0) 0 6px,rgba(94,214,255,.10) 6px 52px,rgba(255,255,255,0) 52px 58px);
+  border:1px solid rgba(255,77,166,.35);border-radius:6px;
+  box-shadow:inset 0 0 40px rgba(255,77,166,.12);
+}
+.p-bazaar .coin{
+  position:absolute;right:40px;top:196px;z-index:1;
+  width:26px;height:26px;border-radius:50%;
+  border:2px solid rgba(94,214,255,.7);
+  box-shadow:0 0 14px rgba(94,214,255,.5);
+}
+.p-bazaar .coin::after{
+  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:3px;height:12px;background:rgba(94,214,255,.8);border-radius:2px;
+}
+
+/* — Bioluminescent Flow: dark sea — */
+.p-algae{flex:14 1 0;height:298px;background:
+  radial-gradient(60% 90% at 30% 70%,rgba(64,224,180,.25),rgba(64,224,180,0) 60%),
+  radial-gradient(50% 70% at 75% 30%,rgba(64,170,224,.18),rgba(64,170,224,0) 60%),
+  #05100e;}
+.p-algae .glow{
+  position:absolute;border-radius:50%;z-index:1;pointer-events:none;
+  background:radial-gradient(circle,rgba(112,255,208,.5),rgba(112,255,208,0) 70%);
+  animation:drift 9s ease-in-out infinite alternate;
+}
+.p-algae .glow:nth-child(1){width:90px;height:90px;left:14%;top:52%}
+.p-algae .glow:nth-child(2){width:50px;height:50px;left:56%;top:24%;animation-delay:-3s}
+.p-algae .glow:nth-child(3){width:34px;height:34px;left:76%;top:58%;animation-delay:-6s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(20px,-14px)}}
+
+/* — (un)seen: fanned photo-comic covers — */
+.p-unseen{flex:2 1 0;height:400px;flex-direction:row;align-items:flex-end;background:
+  linear-gradient(115deg,#2b241c 0%,#191410 60%,#131009 100%);}
+.p-unseen .plate{flex:0 0 46%;padding:26px 8px 22px 24px}
+.p-unseen .fan{
+  position:relative;flex:1;height:100%;z-index:1;
+}
+.p-unseen .fan img{
+  position:absolute;width:44%;aspect-ratio:3/4;object-fit:cover;
+  border:5px solid #f4eee2;box-shadow:0 10px 24px rgba(0,0,0,.55);
+  transition:transform .35s ease;
+}
+.p-unseen .fan img:nth-child(1){left:2%;bottom:16%;transform:rotate(-7deg)}
+.p-unseen .fan img:nth-child(2){left:24%;bottom:30%;transform:rotate(3deg);z-index:2}
+.p-unseen .fan img:nth-child(3){left:48%;bottom:12%;transform:rotate(-3deg);z-index:3}
+.p-unseen .fan img:nth-child(4){left:60%;bottom:36%;transform:rotate(8deg)}
+.p-unseen:hover .fan img:nth-child(1){transform:rotate(-9deg) translateY(-5px)}
+.p-unseen:hover .fan img:nth-child(2){transform:rotate(4deg) translateY(-7px)}
+.p-unseen:hover .fan img:nth-child(3){transform:rotate(-4deg) translateY(-5px)}
+.p-unseen:hover .fan img:nth-child(4){transform:rotate(10deg) translateY(-7px)}
+
+/* — The Line Before: garden dusk — */
+.p-line{flex:1 1 0;height:468px;background:
+  linear-gradient(180deg,#1c2431 0%,#232d2a 60%,#1a231c 100%);}
+
+/* — Webcam Magic — */
+.p-webcam{flex:10 1 0;height:330px;background:
+  linear-gradient(160deg,#2a1e33,#181022 70%);}
+
+/* — Titli Effect: wings — */
+.p-titli{flex:12 1 0;height:412px;background:
+  radial-gradient(80% 60% at 50% 100%,rgba(255,138,76,.22),rgba(255,138,76,0) 65%),
+  linear-gradient(180deg,#33202a,#1f141c 80%);}
+.p-titli .wing{
+  position:absolute;top:24%;width:74px;height:104px;z-index:1;
+  background:radial-gradient(circle at 30% 30%,rgba(255,170,120,.75),rgba(232,101,150,.45) 60%,rgba(232,101,150,0) 100%);
+  animation:flutter 5s ease-in-out infinite alternate;
+}
+.p-titli .wing.l{left:calc(50% - 76px);border-radius:80% 20% 60% 40%/70% 30% 70% 30%;transform-origin:right center}
+.p-titli .wing.r{left:calc(50% + 2px);border-radius:20% 80% 40% 60%/30% 70% 30% 70%;transform-origin:left center;animation-delay:-.4s}
+@keyframes flutter{from{transform:scaleX(1)}to{transform:scaleX(.82)}}
+.p-titli .laurel{
+  position:absolute;top:22px;right:20px;z-index:1;
+  font:400 10.5px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.05em;
+  color:rgba(255,196,150,.65);text-align:right;max-width:15em;
+}
+
+/* — Paper plane — */
+.p-plane{flex:9 1 0;height:358px;background:linear-gradient(180deg,#25303c,#161d26)}
+
+/* ============ the 2020 shelf ============ */
+.shelf-2020{align-items:flex-end}
+.shelf-2020 .yearlabel{
+  align-self:flex-end;flex:0 0 auto;padding:0 6px 10px 0;
+  font:340 22px/1.2 "Fraunces",serif;font-style:italic;color:#a2937e;
+  max-width:9em;
+}
+.shelf-2020 .yearlabel .whisper{
+  display:block;margin-top:8px;font:400 11px/1.5 ui-monospace,Consolas,monospace;
+  font-style:normal;color:rgba(240,233,221,.4);letter-spacing:.05em;
+}
+.mini{
+  position:relative;flex:0 0 150px;height:206px;overflow:hidden;border-radius:2px;
+  box-shadow:0 10px 22px rgba(0,0,0,.5);
+  transition:transform .3s ease;
+}
+.mini:hover{transform:translateY(-6px)}
+.mini img{width:100%;height:100%;object-fit:cover}
+.mini .label{
+  position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;
+  background:linear-gradient(rgba(10,8,6,0),rgba(10,8,6,.85));
+  font:500 12.5px/1.2 "Work Sans",sans-serif;color:#f0e9dd;
+}
+.spine{
+  flex:0 0 46px;height:180px;border-radius:2px;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font:500 13px/1 "Work Sans",sans-serif;letter-spacing:.08em;color:rgba(23,19,16,.85);
+  box-shadow:0 10px 22px rgba(0,0,0,.5);
+  transition:transform .3s ease;
+}
+.spine:hover{transform:rotate(180deg) translateY(6px)}
+.spine.s1{background:linear-gradient(#d9a04b,#c08536);height:196px}
+.spine.s2{background:linear-gradient(#9db6a0,#7f9a84)}
+.spine.s3{background:linear-gradient(#c98a9a,#ad6f81);height:168px}
+
+/* ============ made with ============ */
+.made{padding:96px 0 40px;border-top:1px solid rgba(240,233,221,.09)}
+.made h3{
+  font:340 clamp(24px,2.8vw,34px)/1.25 "Fraunces",serif;color:#f7f1e6;max-width:20em;
+}
+.made h3 em{font-style:italic;font-weight:540;color:#e8b04b}
+.people{display:flex;flex-wrap:wrap;gap:clamp(20px,3vw,44px);margin-top:44px}
+.person{flex:1 1 240px;max-width:330px}
+.person .pname{font:540 19px/1.2 "Fraunces",serif;color:#fbf6ec}
+.person .pname a{text-decoration:none;border-bottom:1px dotted rgba(232,176,75,.5)}
+.person .pname a:hover{border-bottom:1px solid #e8b04b;color:#e8b04b}
+.person p{margin-top:8px;font-size:14.5px;color:#c2b49d}
+.person .purl{
+  display:inline-block;margin-top:8px;
+  font:400 11.5px/1 ui-monospace,Consolas,monospace;letter-spacing:.05em;
+  color:rgba(240,233,221,.45);
+}
+
+/* ============ outro ============ */
+.outro{padding:80px 0 140px;text-align:center}
+.outro .say{font:400 16px/1.6 "Work Sans",sans-serif;color:#c9bba4}
+.outro .mail{
+  display:inline-block;margin-top:14px;
+  font:540 clamp(20px,2.4vw,28px)/1.2 "Fraunces",serif;color:#f7f1e6;
+  text-decoration:none;border-bottom:2px solid rgba(232,176,75,.45);
+  transition:color .2s ease,border-color .2s ease;
+}
+.outro .mail:hover{color:#e8b04b;border-color:#e8b04b}
+.outro .closing{
+  margin-top:56px;
+  font:340 clamp(22px,3vw,30px)/1.4 "Fraunces",serif;font-style:italic;color:#e8b04b;
+}
+
+/* ============ responsive ============ */
+@media (max-width:900px){
+  .shelf{flex-wrap:wrap;align-items:flex-end}
+  .shelf::after{display:none}
+  .poster{flex:1 1 100% !important;height:auto !important;min-height:300px}
+  .p-metro{min-height:400px}
+  .p-unseen{flex-direction:column;align-items:stretch;min-height:0}
+  .p-unseen .plate{flex:none;order:2;padding:18px 20px}
+  .p-unseen .fan{position:relative;height:260px;order:1}
+  .shelf-2020 .yearlabel{flex:1 1 100%;padding-bottom:4px}
+  .mini{flex:1 1 30%;height:170px}
+  .spine{height:150px}
+  .spine.s1{height:162px}.spine.s3{height:140px}
+}
+
+/* ============ motion respect ============ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .poster,.between,.made,.outro{opacity:1;transform:none}
+}
+</style>
+</head>
+<body class="no-observer">
+
+<header class="hero wrap">
+  <p class="name">Divya Tak</p>
+  <h1>&ldquo;Games were my first love. They made me feel things that <em>nothing else could</em>.&rdquo;</h1>
+  <p class="then">So now I build worlds you can step into — each with its own feeling, most made with <a href="#made-with">people I love</a>. Playful work about serious things, serious work about playful things.</p>
+</header>
+
+<main class="shelves wrap">
+
+  <!-- shelf 1: the new worlds -->
+  <section class="shelf" aria-label="New worlds">
+
+    <article class="poster p-metro">
+      <span class="line"><i></i><i></i><i></i></span>
+      <span class="missing" aria-hidden="true"></span>
+      <span class="pedestal" aria-hidden="true"></span>
+      <span class="tag">lost: one half-finished sandwich</span>
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>Metro Museum of the Forgotten</h2>
+        <p class="feel">A museum for things people lost on the Delhi Metro. A half-finished sandwich. An empty bag. Someone missed them once.</p>
+        <p class="whisper">2026 · in progress</p>
+        <span class="soon">opening soon</span>
+      </div>
+    </article>
+
+    <article class="poster p-bazaar">
+      <span class="slots" aria-hidden="true"></span>
+      <span class="coin" aria-hidden="true"></span>
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>Everything Bazaar</h2>
+        <p class="feel">Vending machines that sell feelings. You pick one, and catch yourself actually wanting it.</p>
+        <p class="whisper">2026 · browser</p>
+        <a class="cta" href="https://everythingbazaar.netlify.app">step in →</a>
+      </div>
+      <a class="hitbox" href="https://everythingbazaar.netlify.app">Everything Bazaar — live</a>
+    </article>
+
+    <article class="poster p-algae">
+      <span class="glow" aria-hidden="true"></span>
+      <span class="glow" aria-hidden="true"></span>
+      <span class="glow" aria-hidden="true"></span>
+      <img class="art" src="/playground/bioluminescent-flow.webp" alt="Glowing teal particles swirling in a dark sea" width="800" height="450" loading="lazy" onerror="this.remove()" />
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>Bioluminescent Flow</h2>
+        <p class="feel">A dark sea of glowing algae that ripples around your hand.</p>
+        <p class="whisper">2026 · browser</p>
+        <a class="cta" href="https://divyatak.github.io/creative-visuals/particles/">step in →</a>
+      </div>
+      <a class="hitbox" href="https://divyatak.github.io/creative-visuals/particles/">Bioluminescent Flow — live</a>
+    </article>
+
+  </section>
+
+  <p class="between">&ldquo;I want the viewer to feel like they&rsquo;re in it. Not just looking at it through glass.&rdquo;<span class="who">— which is the whole point of all of this</span></p>
+
+  <!-- shelf 2: drawn worlds -->
+  <section class="shelf" aria-label="Drawn worlds">
+
+    <article class="poster p-unseen">
+      <div class="plate">
+        <h2>(un)seen</h2>
+        <p class="feel">A world drawn over the real one. I draw into photographs of streets — Istanbul, Vietnam, the Emirates, home — until I can&rsquo;t walk past them anymore.</p>
+        <p class="whisper">2024–ongoing · photo-comic walks</p>
+        <a class="cta" href="https://divyatak.github.io/creative-visuals/lenticular/">walk through →</a>
+      </div>
+      <div class="fan" aria-hidden="true">
+        <img src="/projects/2024/(un)seen Istanbul/cover.webp" alt="" width="600" height="800" loading="lazy" onerror="this.remove()" />
+        <img src="/projects/2024/(un)seen Vietnam/cover.webp" alt="" width="600" height="800" loading="lazy" onerror="this.remove()" />
+        <img src="/projects/2025/(un)seen Emirates/cover.webp" alt="" width="600" height="800" loading="lazy" onerror="this.remove()" />
+        <img src="/projects/2026/(un)seen Life/cover.webp" alt="" width="600" height="800" loading="lazy" onerror="this.remove()" />
+      </div>
+    </article>
+
+    <article class="poster p-line">
+      <img class="art" src="/playground/the-line-before.webp" alt="A 3D garden where flowers bloom out of lines of poetry" width="600" height="800" loading="lazy" onerror="this.remove()" />
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>The Line Before</h2>
+        <p class="feel">A 3D poetry garden. Flowers bloom from words.</p>
+        <p class="credit">with <a href="https://joyus.studio">Kahran Singh</a></p>
+        <p class="whisper">2025 · three.js</p>
+        <a class="cta" href="https://divya.studiotypo.xyz">step in →</a>
+      </div>
+      <a class="hitbox" href="https://divya.studiotypo.xyz">The Line Before — live</a>
+    </article>
+
+  </section>
+
+  <p class="between">&ldquo;My games are mostly narrative-driven, and often a little irreverent. They&rsquo;re childlike, not childish.&rdquo;</p>
+
+  <!-- shelf 3: play worlds -->
+  <section class="shelf" aria-label="Play worlds">
+
+    <article class="poster p-webcam">
+      <img class="art" src="/playground/webcam-magic.webp" alt="A webcam mirror scattering into playful visual effects" width="800" height="500" loading="lazy" onerror="this.remove()" />
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>Webcam Magic</h2>
+        <p class="feel">A mirror that plays with you.</p>
+        <p class="whisper">2026 · webcam · browser</p>
+        <a class="cta" href="https://divyatak.github.io/creative-visuals/webcam/">step in →</a>
+      </div>
+      <a class="hitbox" href="https://divyatak.github.io/creative-visuals/webcam/">Webcam Magic — live</a>
+    </article>
+
+    <article class="poster p-titli">
+      <span class="wing l" aria-hidden="true"></span>
+      <span class="wing r" aria-hidden="true"></span>
+      <p class="laurel">2nd place —<br />Jennifer Ann Group<br />Connectedness jam</p>
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>The Titli Effect</h2>
+        <p class="feel">A narrative game about connection, made with my sister. Irreverent in the right places.</p>
+        <p class="credit">with my sister <a href="https://charutak.xyz">Charu</a></p>
+        <p class="whisper">2024 · narrative game</p>
+      </div>
+    </article>
+
+    <article class="poster p-plane">
+      <img class="art" src="/projects/2024/Journey of my paper plane/cover.webp" alt="A paper plane mid-flight against a soft sky" width="600" height="700" loading="lazy" onerror="this.remove()" />
+      <div class="scrim"></div>
+      <div class="plate">
+        <h2>Journey of my paper plane</h2>
+        <p class="feel">A small flight. It goes farther than you&rsquo;d think.</p>
+        <p class="whisper">2024</p>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- shelf 4: the 2020 shelf -->
+  <section class="shelf shelf-2020" aria-label="The 2020 shelf">
+    <p class="yearlabel">the 2020 shelf — six small games<span class="whisper">itch.io · six small worlds in one year</span></p>
+    <div class="mini">
+      <img src="/projects/2020/AI quit/cover.webp" alt="Cover art for AI quit" width="300" height="400" loading="lazy" onerror="this.remove()" />
+      <span class="label">AI quit</span>
+    </div>
+    <div class="mini">
+      <img src="/projects/2020/Boneyard/cover.webp" alt="Cover art for Boneyard" width="300" height="400" loading="lazy" onerror="this.remove()" />
+      <span class="label">Boneyard</span>
+    </div>
+    <div class="mini">
+      <img src="/projects/2020/Mark/cover.webp" alt="Cover art for Mark" width="300" height="400" loading="lazy" onerror="this.remove()" />
+      <span class="label">Mark</span>
+    </div>
+    <span class="spine s1">Misplaced</span>
+    <span class="spine s2">Proximity</span>
+    <span class="spine s3">Ruh and the glow</span>
+  </section>
+
+</main>
+
+<!-- made with -->
+<section class="made wrap" id="made-with">
+  <h3>None of these worlds were built alone. <em>Made with:</em></h3>
+  <div class="people">
+    <div class="person">
+      <p class="pname"><a href="https://charutak.xyz">Charu</a></p>
+      <p>My sister, and a game developer. The Titli Effect is ours, and games have been our shared language since the beginning.</p>
+      <span class="purl">charutak.xyz</span>
+    </div>
+    <div class="person">
+      <p class="pname"><a href="https://joyus.studio">Kahran Singh</a></p>
+      <p>Writer, and co-founder of our studio Joyus. His poems are what bloom in The Line Before.</p>
+      <span class="purl">joyus.studio</span>
+    </div>
+    <div class="person">
+      <p class="pname"><a href="https://varuns.work">Varun Ramanna</a></p>
+      <p>VFX collaborator — the shimmer, glow, and breathe department of these worlds.</p>
+      <span class="purl">varuns.work</span>
+    </div>
+  </div>
+</section>
+
+<!-- outro -->
+<footer class="outro wrap">
+  <p class="say">Want to build a world together, or just wander through one?</p>
+  <a class="mail" href="mailto:hello@divyatak.art">hello@divyatak.art</a>
+  <p class="closing">Come closer. Look again. Let&rsquo;s play.</p>
+</footer>
+
+<!-- prototype switcher -->
+<div class="proto-bar">
+  <a class="proto-arrow" href="/prototype/c/">←</a>
+  <span class="proto-label">D — worlds, with people</span>
+  <a class="proto-arrow" href="/prototype/a/">→</a>
+  <a class="proto-index" href="/prototype/">all</a>
+</div>
+<style is:inline>
+.proto-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:10px;background:#111;color:#fff;padding:8px 14px;border-radius:999px;font:600 13px/1 monospace;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.proto-bar a{color:#fff;text-decoration:none;padding:2px 6px}
+.proto-bar a:hover{background:#333;border-radius:6px}
+.proto-index{opacity:.6;font-weight:400}
+</style>
+<script is:inline>
+document.addEventListener('keydown',(e)=>{
+  const el=document.activeElement;
+  if(el&&(['INPUT','TEXTAREA'].includes(el.tagName)||el.isContentEditable))return;
+  if(e.key==='ArrowLeft')location.href='/prototype/c/';
+  if(e.key==='ArrowRight')location.href='/prototype/a/';
+});
+</script>
+
+<script is:inline>
+// gentle entrance: posters rise onto their shelves as you scroll
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced || !('IntersectionObserver' in window)) return; // body keeps .no-observer → everything visible
+  document.body.classList.remove('no-observer');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.poster,.between,.made,.outro').forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+</body>
+</html>
