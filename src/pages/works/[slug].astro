@@ -1,6 +1,7 @@
 ---
 /**
- * /works/[slug]/ — one work, told as What · Why · How.
+ * /works/[slug]/ — one work, told as three unlabelled paragraphs with pictures
+ * between them.
  *
  * Two sources feed this route:
  *   1. the build pipeline (src/data/generated-projects.json, made from public/projects/)
@@ -8,13 +9,22 @@
  * Both are normalised into one `work` shape before rendering, so the page never
  * has to know where an entry came from.
  *
- * The page reads top to bottom: hero · title + a quiet fact line · What / Why /
- * How · one plain link out where a live destination actually exists · the rest of
- * the media as a calm single-column strip.
+ * THE FORM. There are no What / Why / How headings and no label column. The
+ * page is prose: the first paragraph says what the thing is, the second how it
+ * is actually built, the third why it exists — and the reader is never told
+ * which is which. The order ends on the soul on purpose.
  *
- * Why and How are only ever printed when there is real written source material
- * behind them. Where there isn't, the section still appears, reserved and muted,
- * so the page shows the shape of what is missing instead of inventing it.
+ * Pictures do the work the labels used to do. A couple of images from the media
+ * strip are lifted into the gaps BETWEEN the paragraphs, so the reading is
+ * paced by the work itself rather than by typography; everything left over
+ * follows at the bottom as the calm strip. A work with no images beyond its
+ * hero simply reads as three paragraphs with air between them.
+ *
+ * Reserved writing. Why and How are only ever printed when there is real
+ * written source material behind them. Where there isn't, a single muted line
+ * stands in the paragraph's place — so the page shows where the words will go
+ * without inventing them, and without announcing an empty section. When BOTH
+ * are unwritten there is one muted line, not two.
  */
 import Layout from '../../layouts/Layout.astro'
 import works from '../../data/generated-projects.json'
@@ -114,13 +124,60 @@ const facts = [
   work.status === 'ongoing' ? 'Ongoing' : '',
 ].filter(Boolean)
 
-const sections = [
-  { label: 'What', body: work.what },
-  { label: 'Why', body: work.why },
-  { label: 'How', body: work.how },
-]
+const RESERVED = '— to be written —'
 
-const imageCount = work.strip.filter((m: any) => m.type === 'image').length
+/* ---------- the three paragraphs, in the order what → how → why ----------
+   Nothing is labelled, so a missing section cannot announce itself: it becomes
+   one muted line standing in the same place the writing will eventually go.
+   Two missing sections would be two identical muted lines saying the same
+   nothing twice, so they collapse into one. */
+const paragraphs: any[] = []
+if (work.what) paragraphs.push({ reserved: false, body: work.what })
+
+if (!work.how && !work.why) {
+  paragraphs.push({ reserved: true, body: RESERVED })
+} else {
+  paragraphs.push(
+    work.how ? { reserved: false, body: work.how } : { reserved: true, body: RESERVED }
+  )
+  paragraphs.push(
+    work.why ? { reserved: false, body: work.why } : { reserved: true, body: RESERVED }
+  )
+}
+
+/* ---------- the pictures that go between them ----------
+   Only still images are lifted into the prose: a video or an embed asks to be
+   started, and nothing in the middle of a paragraph should ask for anything.
+   Those wait in the strip.
+
+   One image to a gap normally; two when the work has enough pictures that a
+   single one would read as an accident. Whatever is left stays in the tail, so
+   a work with thirty images still gives the prose only four. */
+const stripImages = work.strip.filter((m: any) => m.type === 'image')
+const imageCount = stripImages.length
+const altFor = (m: any) =>
+  m.alt || `${work.title}, image ${stripImages.indexOf(m) + 1} of ${imageCount}`
+
+const gaps = Math.max(0, paragraphs.length - 1)
+const perGap = imageCount >= 5 ? 2 : 1
+
+const betweens: any[][] = []
+let taken = 0
+for (let g = 0; g < gaps; g++) {
+  const slice = stripImages.slice(taken, taken + perGap)
+  betweens.push(slice)
+  taken += slice.length
+}
+
+// one flat run of blocks, so the whole article is a single grid
+const flow: any[] = []
+paragraphs.forEach((p, i) => {
+  flow.push({ kind: 'para', ...p })
+  ;(betweens[i] || []).forEach((m: any) => flow.push({ kind: 'plate', media: m }))
+})
+
+const lifted = new Set(betweens.flat().map((m: any) => m.src))
+const tail = work.strip.filter((m: any) => !lifted.has(m.src))
 const metaDescription = work.what
   ? work.what.length > 155 ? `${work.what.slice(0, 152).trimEnd()}...` : work.what
   : `${work.title} by Divya`
@@ -148,15 +205,23 @@ const metaDescription = work.what
       )}
     </header>
 
-    <div class="wk-body">
-      {sections.map((s) => (
-        <section class="wk-sec">
-          <h2 class="wk-label">{s.label}</h2>
-          {s.body
-            ? <p class="wk-prose">{s.body}</p>
-            : <p class="wk-prose reserved">— to be written —</p>}
-        </section>
-      ))}
+    <div class="wk-flow">
+      {flow.map((b: any) =>
+        b.kind === 'para' ? (
+          <p class:list={['wk-prose', { reserved: b.reserved }]}>{b.body}</p>
+        ) : (
+          <figure class="wk-plate">
+            <img
+              src={`${base}${b.media.src}`}
+              alt={altFor(b.media)}
+              loading="lazy"
+              decoding="async"
+              width={b.media.width || undefined}
+              height={b.media.height || undefined}
+            />
+          </figure>
+        )
+      )}
     </div>
 
     {work.url && (
@@ -176,10 +241,10 @@ const metaDescription = work.what
       </div>
     )}
 
-    {work.strip.length > 0 && (
+    {tail.length > 0 && (
       <div class="wk-strip">
         <div class="wk-strip-inner">
-          {work.strip.map((m: any, i: number) =>
+          {tail.map((m: any, i: number) =>
             m.type === 'youtube' ? (
               <div class="wk-embed">
                 <iframe
@@ -200,7 +265,7 @@ const metaDescription = work.what
             ) : (
               <img
                 src={`${base}${m.src}`}
-                alt={`${work.title}, image ${i + 1} of ${imageCount}`}
+                alt={altFor(m)}
                 loading="lazy"
                 decoding="async"
                 width={m.width || undefined}
@@ -224,11 +289,16 @@ const metaDescription = work.what
      THE SEED. --r = 1.5rem = 24px. It is the column gutter, one line of
      body text, and the unit every vertical space is a multiple of.
 
-     THE COLUMNS. Three, inside the layout's content box. Two axes and no
-     more: the labels hang on column 1's left line, everything that is read
-     (prose, the link out, the media strip) hangs on column 2's. So the
-     reading column is one straight edge from the first word of What down
-     to the last image.
+     THE COLUMNS. Three, inside the layout's content box. ONE axis now: with
+     the labels gone there is no second column to answer to, so every line on
+     the page — the title, the first word of the prose, the left edge of every
+     picture, the link out — hangs on column 1's left line, which is the same
+     line the top bar's wordmark hangs on.
+
+     TWO WIDTHS ON THAT ONE AXIS. Prose is capped at a reading measure (34em);
+     pictures run two columns of three. So the images are wider than the text
+     without ever becoming full-bleed, and the difference between reading and
+     looking is carried by width alone — no rules, no labels, no frames.
 
      Nothing here transitions or animates on load.
      ===================================================================== */
@@ -251,7 +321,7 @@ const metaDescription = work.what
 
   /* every row of the page stands on the same three columns */
   .wk-head,
-  .wk-sec,
+  .wk-flow,
   .wk-out,
   .wk-strip {
     display: grid;
@@ -317,30 +387,46 @@ const metaDescription = work.what
     font-weight: 400;
   }
 
-  /* ---------- What · Why · How ---------- */
-  .wk-body { margin-top: calc(var(--r) * 4); }
-  .wk-sec + .wk-sec { margin-top: calc(var(--r) * 3); }
+  /* ---------- the prose, and the pictures set into it ----------
+     Three paragraphs and nothing telling you what they are. Paragraph to
+     paragraph is two rhythm units of air; a picture between them takes three,
+     because a picture has to be finished before the next sentence starts. */
+  .wk-flow { margin-top: calc(var(--r) * 4); }
 
-  .wk-label {
-    grid-column: 1;
-    margin: 0;
-    font-weight: 600;
-  }
   .wk-prose {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
     margin: 0;
-    max-width: 32em;
+    max-width: 34em;
   }
-  /* held in reserve: the section exists, the writing hasn't happened yet */
+  .wk-prose + .wk-prose { margin-top: calc(var(--r) * 2); }
+
+  /* held in reserve: this is where the writing will go, said once and quietly */
   .wk-prose.reserved {
     color: var(--faint);
     letter-spacing: 0.04em;
   }
 
+  /* a picture lifted out of the strip and set between two paragraphs.
+     Two columns of three, its own natural ratio, no frame and no caption. */
+  .wk-plate {
+    grid-column: 1 / 3;
+    margin: calc(var(--r) * 3) 0 0;
+  }
+  /* a pair of pictures is one beat, so they sit closer to each other than
+     either of them sits to the writing */
+  .wk-plate + .wk-plate { margin-top: calc(var(--r) * 1.5); }
+  .wk-plate + .wk-prose { margin-top: calc(var(--r) * 3); }
+  .wk-plate img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #f4f4f4;
+  }
+
   /* ---------- the way out: one plain, prominent link ---------- */
   .wk-out { margin-top: calc(var(--r) * 4); }
   .wk-out > a {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
     justify-self: start;
     font-size: clamp(1.05rem, 1.6vw, 1.4rem);
     font-weight: 600;
@@ -356,7 +442,7 @@ const metaDescription = work.what
   /* the six 2020 games have no page URL of their own, only an itch widget,
      so the widget itself is the way out */
   .wk-itch {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
     width: 100%;
     max-width: 34rem;
   }
@@ -368,10 +454,10 @@ const metaDescription = work.what
     border: 0;
   }
 
-  /* ---------- the rest of the media: one calm column, on the reading axis ---------- */
+  /* ---------- whatever the prose didn't use: one calm column, same axis, same width ---------- */
   .wk-strip { margin-top: calc(var(--r) * 6); }
   .wk-strip-inner {
-    grid-column: 2 / -1;
+    grid-column: 1 / 3;
     display: flex;
     flex-direction: column;
     gap: calc(var(--r) * 3);
@@ -402,23 +488,24 @@ const metaDescription = work.what
      Below 900px the three columns become one and the two axes merge. */
   @media (max-width: 900px) {
     .wk-head,
-    .wk-sec,
+    .wk-flow,
     .wk-out,
     .wk-strip {
       grid-template-columns: 1fr;
     }
     .wk-title,
     .wk-facts,
-    .wk-label,
     .wk-prose,
+    .wk-plate,
     .wk-out > a,
     .wk-itch,
     .wk-strip-inner {
       grid-column: 1;
     }
-    .wk-label { margin-bottom: calc(var(--r) * 0.5); }
     .wk-hero.portrait { width: 100%; }
-    .wk-body { margin-top: calc(var(--r) * 3); }
+    .wk-flow { margin-top: calc(var(--r) * 3); }
+    .wk-plate { margin-top: calc(var(--r) * 2.5); }
+    .wk-plate + .wk-prose { margin-top: calc(var(--r) * 2.5); }
     .wk-strip { margin-top: calc(var(--r) * 4); }
     .wk-strip-inner { gap: calc(var(--r) * 2); }
   }
