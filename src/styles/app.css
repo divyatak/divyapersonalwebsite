@@ -20,15 +20,20 @@
   top: 0;
 }
 
-/* Top bar nav — wordmark + links spread across the full width */
+/* =====================================================================
+   TOP BAR — the same three columns the pages under it are set on, so the
+   wordmark hangs on column 1's line and the links spread across columns
+   2–3: the first opens on column 2's line, the last closes on the right
+   edge. White ground, ink text, one family (Sora, from the Layout head).
+   ===================================================================== */
 .topbar {
   position: sticky;
   top: 0;
   z-index: 10;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 1.5rem;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
   max-width: 1420px;
   margin: 0 auto;
   padding: 1.6rem 3rem;
@@ -36,24 +41,34 @@
 }
 
 .wordmark {
-  font-size: 0.95rem;
-  font-weight: 800;
+  grid-column: 1;
+  justify-self: start;
+  font-size: 0.875rem;
+  font-weight: 700;
   color: #222;
-  letter-spacing: -0.01em;
-  text-transform: lowercase;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .wordmark:visited {
   color: #222;
 }
 
+.nav-links {
+  grid-column: 2 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
 .nav-link {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 400;
   color: #636363;
-  letter-spacing: 0.08em;
-  text-transform: lowercase;
+  letter-spacing: 0.06em;
   text-decoration: none;
   white-space: nowrap;
   transition: color var(--hover-off) var(--ease-out-soft);
@@ -69,10 +84,13 @@
   transition-timing-function: var(--ease-settle);
 }
 
+/* No weight change on the active state: in a proportional face that widens the
+   word and shoves the rest of the row off its line. Colour and a rule carry it. */
 .nav-link.active,
 .nav-link.active:visited {
   color: #222;
-  font-weight: 600;
+  border-bottom: 1px solid #222;
+  padding-bottom: 0.2rem;
 }
 
 /* Focus indicators for keyboard navigation */
@@ -95,7 +113,6 @@
 .section-title {
   font-size: 0.85rem;
   font-weight: 600;
-  text-transform: lowercase;
   color: #636363;
   letter-spacing: 0.03em;
   margin-bottom: var(--space-lg);
@@ -710,7 +727,6 @@ a.talk-name:visited {
   font-size: 0.85rem;
   font-weight: 600;
   color: #636363;
-  text-transform: lowercase;
   letter-spacing: 0.03em;
   margin-bottom: var(--space-md);
 }
@@ -846,25 +862,14 @@ a.talk-name:visited {
   transition: opacity 0.4s var(--ease-bounce), transform 0.4s var(--ease-bounce);
 }
 
-/* Top bar first-visit entrance */
-.topbar--entering .nav-link {
-  opacity: 0;
-  transform: translateY(-6px);
-}
+/* View transition: the content swaps instantly.
 
-.topbar--entered .nav-link {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.6s var(--ease-settle), transform 0.6s var(--ease-settle);
-}
-
-.topbar--entered .nav-link:nth-of-type(2) { transition-delay: 0.3s; }
-.topbar--entered .nav-link:nth-of-type(3) { transition-delay: 0.38s; }
-.topbar--entered .nav-link:nth-of-type(4) { transition-delay: 0.46s; }
-.topbar--entered .nav-link:nth-of-type(5) { transition-delay: 0.54s; }
-
-/* View transition: top bar persists, content swaps instantly */
-.topbar { view-transition-name: topbar; }
+   The top bar deliberately has NO view-transition-name. It carries
+   transition:persist, so the same DOM node survives the swap and simply stays
+   put. Naming it as well lifted it out of the page into the transition layer
+   for every navigation, and because it is position:sticky its snapshot was
+   captured at the outgoing page's scroll offset — which is how a bar that
+   never moves ended up flickering and landing in the wrong place. */
 .content { view-transition-name: main-content; }
 
 ::view-transition-old(main-content) {
@@ -874,9 +879,6 @@ a.talk-name:visited {
 ::view-transition-new(main-content) {
   animation: none;
 }
-::view-transition-group(topbar) {
-  animation: none;
-}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -884,10 +886,6 @@ a.talk-name:visited {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-  .topbar--entering .nav-link {
-    opacity: 1;
-    transform: none;
   }
 }
 
@@ -916,7 +914,7 @@ a.talk-name:visited {
 
   .topbar {
     padding: 1.3rem 1.6rem;
-    gap: 1.2rem;
+    column-gap: 1.2rem;
   }
 
   .content {
@@ -924,17 +922,26 @@ a.talk-name:visited {
   }
 }
 
-/* Mobile — top bar wraps */
+/* Mobile — the wordmark takes its own line and the links spread beneath it,
+   rather than the whole bar wrapping mid-run. */
 @media (max-width: 768px) {
   .topbar {
-    flex-wrap: wrap;
-    column-gap: 1.1rem;
-    row-gap: 0.5rem;
+    grid-template-columns: 1fr;
+    row-gap: 0.75rem;
     padding: 1rem 1.2rem;
     padding-top: calc(1rem + env(safe-area-inset-top));
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+  }
+
+  .wordmark,
+  .nav-links {
+    grid-column: 1;
+  }
+
+  .nav-links {
+    gap: 1rem;
   }
 
   .content {
@@ -1090,13 +1097,8 @@ a.talk-name:visited {
     height: 40vh;
   }
 
-  .topbar {
-    justify-content: flex-start;
-    column-gap: 1rem;
-  }
-
-  .wordmark {
-    flex: 0 0 100%;
+  .nav-links {
+    gap: 0.75rem;
   }
 
   .nav-link {

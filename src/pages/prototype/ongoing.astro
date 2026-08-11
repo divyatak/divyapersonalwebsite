@@ -131,10 +131,10 @@ const fromPipeline = generated.flatMap((group) =>
 const works = [...additions, ...fromPipeline].sort((a, b) => b.year - a.year);
 
 const navLinks = [
-  { label: 'works', href: '#works' },
-  { label: 'friends', href: '/friends/' },
-  { label: 'about', href: '/about/' },
-  { label: 'contact', href: 'mailto:hello@divyatak.art' },
+  { label: 'Works', href: '#works' },
+  { label: 'Friends', href: '/friends/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Contact', href: 'mailto:hello@divyatak.art' },
 ];
 ---
 <html lang="en">
@@ -142,7 +142,7 @@ const navLinks = [
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-<title>divya tak</title>
+<title>Divya Tak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- One family, three weights. Sora carries the voice AND the label layer. -->
@@ -170,12 +170,22 @@ const navLinks = [
      email follow the same axis to the bottom.
 
      4. DISPLAY TYPE IS MEASURED IN COLUMNS. Four strings are sized so their
-     ink spans an exact number of columns:
-         the name at rest   = 3 columns      the subtitle = columns 1–2
-         the name docked    = 1 column       "works"      = 3 columns
+     ink spans an exact run of the grid:
+         the name at rest   = 3 columns      the subtitle = 1½ columns
+         the name docked    = 1 column       "Works"      = 1½ columns
      The name's journey is a division of the grid, not a shrink to an
      arbitrary size, and it pivots on column 1's left line, which it never
      leaves.
+
+     THE HALF COLUMN IS NOT A FUDGE. --span-1h runs from column 1's left line
+     to column 2's CENTRE line — the folio's other axis, the one the captions
+     and the more control already stand on. Both the subtitle and the chapter
+     word used to run past it (the subtitle to column 2's right, "works" to
+     column 3's right) and both were shouting: the subtitle over the docked
+     name, the chapter word over the hero. Pulling them back to the same
+     centre line drops the subtitle ~24% and the chapter word ~50%, which
+     puts "Works" cap-height just under the hero name's — one clear step
+     each, and they now close on a line the page already uses.
 
      THE NAME IS SET IN CAPS, and caps cost width: "DIVYA TAK" runs 5.339em
      against the lowercase 4.346em, so filling the same three columns makes
@@ -199,9 +209,17 @@ const navLinks = [
      6. KEEPING THE LABELS INSTRUMENTAL WITHOUT A MONOSPACE. Losing the mono
      removes the thing that made a label look like a label, so three other
      axes do that work instead — and deliberately, not by accident:
-         CASE      nav, wordmark, micro labels and dates go UPPERCASE.
-                   Lenses stay lowercase: "interactive pieces" is too wide in
-                   caps, and the copy may not be reworded.
+         CASE      SENTENCE/TITLE CASE IS THE DEFAULT NOW. Nothing on this
+                   page is lowercased by CSS any more: names, titles, chapter
+                   and control words are set the way they are written. Caps
+                   survive in exactly two places, both of them deliberate —
+                   the wordmark ("DIVYA TAK", the name is a mark), and the
+                   smallest readouts (dates, provenance, the foot), where
+                   tracked caps at --t-quiet/--t-micro read as an imprint
+                   rather than as words. Things a person reads as WORDS — nav,
+                   lenses, "Lately", "More", captions — are Title Case, and
+                   their tracking closes to the bottom of the label range,
+                   because Title Case does not want caps' airiness.
          TRACKING  the label layer runs 0.06em → 0.22em, opening as it
                    shrinks; the voice layer runs -0.035em → 0. Nothing in the
                    middle. That gap is what separates the two registers.
@@ -230,6 +248,9 @@ const navLinks = [
     --span-all: calc(100vw - 2 * var(--edge));
     --col: calc((var(--span-all) - 2 * var(--gutter)) / 3);
     --span-2: calc(2 * var(--col) + var(--gutter));
+    /* column 1's left line → column 2's CENTRE line: the display run that the
+       subtitle and the chapter word are measured against */
+    --span-1h: calc(1.5 * var(--col) + var(--gutter));
     --dock-w: var(--col);              /* the name shrinks to exactly one column */
     --dock-gap: calc(var(--r) * 1.5);
 
@@ -240,15 +261,15 @@ const navLinks = [
        sidebearing (which becomes a negative indent, so the INK hangs on the
        line rather than the invisible box) */
     --run-name: 5.339;   --ti-name: 0.082;   /* "DIVYA TAK" 700 @ -0.015em */
-    --run-works: 2.792;  --ti-works: 0.026;  /* "works"     400 @ -0.040em */
+    --run-works: 2.906;  --ti-works: 0.020;  /* "Works"     400 @ -0.040em */
     --run-sub: 15.480;   --ti-sub: 0.052;    /* the subtitle 500 @ -0.020em */
     --label-adv: 0.5774;                     /* a–z average at 400 */
 
     /* ---------- display, measured in columns ---------- */
     --t-name:  calc(var(--span-all) / var(--run-name));
     --t-dock:  calc(var(--dock-w) / var(--run-name));
-    --t-works: calc(var(--span-all) / var(--run-works));
-    --t-sub:   calc(var(--span-2) / var(--run-sub));
+    --t-works: calc(var(--span-1h) / var(--run-works));
+    --t-sub:   calc(var(--span-1h) / var(--run-sub));
 
     /* ---------- the ruler: N average characters to a column ---------- */
     --n-caption: 50;
@@ -266,6 +287,12 @@ const navLinks = [
        Sized against the column it sits in, leading locked to the module, and
        capped at a real measure — 26em is ~51 characters at every breakpoint. */
     --t-body: clamp(14px, calc(var(--col) / 28), 16px);
+    /* the intro is the one place the page is actually SPOKEN, so it reads one
+       step above the page's body size — same derivation, a wider character:
+       28 to a column becomes 24, which is 16px → 18px at full width. Its
+       leading opens to 1.25×--r so the bigger face still lands on the module. */
+    --t-read: clamp(15px, calc(var(--col) / 24), 18px);
+    --lh-read: calc(var(--r) * 1.25);
     --measure: 26em;
     --lh-body: var(--r);                 /* one body line   = one rhythm unit  */
     --lh-label: calc(var(--r) * 0.75);   /* four label lines = three body lines */
@@ -346,7 +373,6 @@ const navLinks = [
     font-size: var(--t-nav);
     font-weight: 500;
     letter-spacing: 0.16em;
-    text-transform: uppercase;
     transition: background-color 0.25s ease, border-color 0.25s ease;
     border-bottom: 1px solid transparent;
   }
@@ -362,10 +388,14 @@ const navLinks = [
   }
   /* on screen 1 the big name is the wordmark, so the bar keeps quiet */
   body:not(.docked) .bar .wordmark { opacity: 0; pointer-events: none; }
+  /* the wordmark is a MARK and keeps its caps; the links are WORDS, so they are
+     set as written and their tracking closes to the bottom of the label range —
+     caps tracking on Title Case reads as a stutter. */
   .bar .links {
     grid-column: 2 / -1;
     display: flex;
     justify-content: space-between;
+    letter-spacing: 0.06em;
   }
   .bar a { color: rgba(255,255,255,0.72); transition: color 0.25s ease; }
   .bar a:hover { color: #fff; }
@@ -467,6 +497,12 @@ const navLinks = [
     align-items: start;
     max-width: none;
   }
+  /* NO TRACK MAY BE WIDENED BY ITS CONTENTS. A 1fr track is minmax(auto, 1fr),
+     so anything with a stubborn min-content width — the nowrap subtitle, a
+     lately pattern with a long unbroken run — would steal width from the other
+     two and move the whole block. This is what kept the lately slot changing
+     shape between patterns. */
+  .intro-cols > * { min-width: 0; }
   .intro {
     grid-column: 1 / span 2;
     display: grid;
@@ -482,8 +518,13 @@ const navLinks = [
      column it is measured against — min-content must not win here */
   .intro > * { min-width: 0; }
   .intro p { margin-bottom: 0; }
+  /* the spoken paragraphs: one step up from the page's body size */
   .intro > p:nth-of-type(3),
-  .intro > p:nth-of-type(4) { max-width: var(--measure); }
+  .intro > p:nth-of-type(4) {
+    max-width: var(--measure);
+    font-size: var(--t-read);
+    line-height: var(--lh-read);
+  }
 
   /* name docks on column 1 · subtitle spans 1–2 · BOTH body paragraphs stack in
      column 1, so the reading is one continuous column and column 2 becomes the
@@ -533,7 +574,7 @@ const navLinks = [
      LATELY — column 3. No rule, no label, no card box. Three different
      STRUCTURES for one living update, switched from the tooling picker:
 
-       1 WOVEN    the update as prose in the intro's own register — a
+       1 WOVEN    the update in the intro's own speaking register — a
                   sentence that happens to be this week's fact, with the
                   artefact set inline in the line of text like a word.
        2 ARTIFACT the object almost alone: a square, chromeless, with one
@@ -543,27 +584,37 @@ const navLinks = [
                   rule IS the idea, because an index entry is a thing you
                   read between two lines.
 
-     Its top aligns with the body's first line (dock + gap + subtitle + its
-     margin), so the slot reads as the third column of the same block. Depth
-     is pinned so switching patterns never shifts the column.
+     THE SLOT IS THE CONSTANT; THE PATTERN IS THE VARIABLE. All three are
+     column-3 blocks starting at the same anchor — the body's first line
+     (dock + gap + subtitle + its margin) — inside a box of FIXED height, so
+     the three of them are three fillings of one hole. Nothing about the
+     switch is allowed to reach the layout: the height cannot change (fixed,
+     not min-), the width cannot change (min-width:0 on the track), and
+     therefore neither the intro, the name's dock, nor the vertical centring
+     of the whole screen can move. Woven used to break all three at once by
+     asking for a prose measure wider than its own column.
      ===================================================================== */
   .lately {
     grid-column: 3;
+    min-width: 0;
     margin-top: calc(
       var(--t-dock) + var(--dock-gap) +
       var(--t-sub) * 1.02 + var(--r) * 2.5
     );
-    min-height: calc(var(--r) * 14);
+    height: calc(var(--r) * 14);   /* fixed, not min-: the slot never breathes */
   }
+  .lately-view { max-width: 100%; }
   .lately-view[hidden] { display: none; }
 
   /* ---- 1 · WOVEN ---- */
+  /* the measure here is the COLUMN, not the reading measure — this is a block
+     in column 3 like the other two, it just happens to be made of sentence. */
   .woven {
     font-size: calc(var(--t-body) * 1.15);
     line-height: calc(var(--r) * 1.5);
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.88);
-    max-width: var(--measure);
+    max-width: 100%;
   }
   .woven a { border-bottom: 1px solid rgba(255,255,255,0.4); }
   .woven a:hover { border-bottom-color: #fff; }
@@ -639,8 +690,7 @@ const navLinks = [
     gap: var(--r);
     font-size: var(--t-quiet);
     font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    letter-spacing: 0.1em;   /* "Lately" is a word, not an imprint of one */
     color: rgba(255,255,255,0.45);
   }
   .stamp .subject {
@@ -686,9 +736,11 @@ const navLinks = [
     column-gap: var(--gutter);
     padding-bottom: calc(var(--r) * 4);
   }
-  /* a whole row of type where a whole row of tiles is about to be. Sized from the
-     grid, weighted DOWN to 400 so it stays quieter than the name despite being
-     larger — size comes from the columns, hierarchy from the weight. */
+  /* the chapter word. It runs to column 2's centre line, not off the end of the
+     grid: a chapter opening should be the largest thing in the FOLIO without
+     being the largest thing on the PAGE — that is still the name. Weight stays
+     at 400, so size and weight now pull the same way instead of against each
+     other. */
   .works-head h2 {
     grid-column: 1 / -1;
     font-size: var(--t-works);
@@ -697,7 +749,6 @@ const navLinks = [
     letter-spacing: -0.04em;
     text-indent: calc(var(--ti-works) * -1em);
     white-space: nowrap;
-    text-transform: lowercase;
     color: #222;
   }
 
@@ -724,8 +775,7 @@ const navLinks = [
     font-family: inherit;
     font-size: var(--t-lens);
     font-weight: 400;
-    text-transform: lowercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.08em;
     color: #999;
     background: none;
     border: none;
@@ -794,8 +844,7 @@ const navLinks = [
     text-align: center;
     font-size: var(--t-caption);
     font-weight: 400;
-    letter-spacing: 0.06em;
-    text-transform: lowercase;
+    letter-spacing: 0.04em;
     color: #222;
   }
   .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
@@ -809,8 +858,7 @@ const navLinks = [
     font-family: inherit;
     font-size: var(--t-micro);
     font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: #bbb;
     background: none;
     border: none;
@@ -859,7 +907,9 @@ const navLinks = [
     .scroll-cue { grid-column: 2; }
     .intro-cols { grid-template-columns: repeat(2, 1fr); }
     .intro { grid-column: 1 / -1; }
-    .lately { grid-column: 1 / -1; margin-top: calc(var(--r) * 3.5); min-height: 0; }
+    /* stacked under the intro now, so there is no third column to protect and
+       the slot can take the height its pattern needs */
+    .lately { grid-column: 1 / -1; margin-top: calc(var(--r) * 3.5); height: auto; }
     .works-head { grid-template-columns: repeat(2, 1fr); }
   }
 
@@ -875,6 +925,10 @@ const navLinks = [
     :root {
       --col: var(--span-all);
       --span-2: var(--span-all);
+      /* one column IS the width, so the half-column run collapses onto it —
+         otherwise the subtitle and the chapter word would be measured against
+         one and a half screens */
+      --span-1h: var(--span-all);
       /* one column is now the whole width, so the dock is set as a fraction of it
          — otherwise the name would have nowhere to shrink to */
       --dock-w: calc(var(--span-all) * 0.46);
@@ -942,7 +996,7 @@ const navLinks = [
   <!-- ============ one nav bar, white over the video, ink over the folio ============ -->
   <header class="bar" id="bar">
     <a class="wordmark" href="/prototype/ongoing/">divya tak</a>
-    <nav class="links" aria-label="site">
+    <nav class="links" aria-label="Site">
       {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
   </header>
@@ -976,7 +1030,7 @@ const navLinks = [
 
           <!-- LATELY — three structures for one living update. All content is
                SAMPLE; each pattern says so quietly in its own register. -->
-          <aside class="lately" aria-label="lately">
+          <aside class="lately" aria-label="Lately">
 
             <!-- 1 · WOVEN: the update as a sentence, artefact set inline -->
             <article class="lately-view" data-view="1">
@@ -994,7 +1048,7 @@ const navLinks = [
               <figure class="artifact" tabindex="0">
                 <img src="/playground/lenticular.webp" alt="A lenticular print test, sample image standing in for a recent post" width="480" height="480" loading="lazy" />
                 <figcaption>
-                  <span class="word">lenticular</span>
+                  <span class="word">Lenticular</span>
                   <span class="when">06 aug &middot; mock</span>
                   <span class="whence">instagram</span>
                 </figcaption>
@@ -1005,10 +1059,10 @@ const navLinks = [
             <article class="lately-view" data-view="3" hidden>
               <div class="stamp">
                 <span class="imprint">
-                  <span>lately</span>
+                  <span>Lately</span>
                   <span>2026 &middot; 08 &middot; 09</span>
                 </span>
-                <p class="subject">notes from the metro museum build</p>
+                <p class="subject">Notes from the Metro Museum build</p>
                 <span class="whence">substack &middot; mock</span>
               </div>
             </article>
@@ -1022,21 +1076,21 @@ const navLinks = [
   <!-- ============ the folio: white ground slides over the video ============ -->
   <main class="ground" id="ground">
 
-    <section class="works" id="works" aria-label="works">
+    <section class="works" id="works" aria-label="Works">
       <div class="works-head">
-        <h2>works</h2>
+        <h2>Works</h2>
 
         <div class="lenses">
-          <div class="lens-row" role="group" aria-label="filter by kind">
-            <button class="lens" data-bucket="all" aria-pressed="true">all</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-bucket="games" aria-pressed="false">games</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-bucket="interactive pieces" aria-pressed="false">interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-bucket="comics" aria-pressed="false">comics</button>
+          <div class="lens-row" role="group" aria-label="Filter by kind">
+            <button class="lens" data-bucket="all" aria-pressed="true">All</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="games" aria-pressed="false">Games</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="interactive pieces" aria-pressed="false">Interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="comics" aria-pressed="false">Comics</button>
           </div>
-          <div class="lens-row quiet" role="group" aria-label="filter by status">
-            <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-status="ongoing" aria-pressed="false">ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-status="finished" aria-pressed="false">finished</button>
+          <div class="lens-row quiet" role="group" aria-label="Filter by status">
+            <button class="lens" data-status="latest" aria-pressed="true">Latest</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="ongoing" aria-pressed="false">Ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="finished" aria-pressed="false">Finished</button>
           </div>
         </div>
       </div>
@@ -1071,10 +1125,10 @@ const navLinks = [
         ))}
       </div>
 
-      <p class="empty" id="empty" hidden>nothing under this lens yet.</p>
+      <p class="empty" id="empty" hidden>Nothing under this lens yet.</p>
 
       <div class="more-wrap">
-        <button class="more" id="more" type="button" hidden>more</button>
+        <button class="more" id="more" type="button" hidden>More</button>
       </div>
     </section>
 
@@ -1099,19 +1153,34 @@ const navLinks = [
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
-  // 12 cuts of 5.2s each, composed offline with ffmpeg at a uniform 1920x1080.
-  // Sources 5 and 6 no longer exist in /clips/, so they are not in the order.
-  var order = ['2a','7a','1a','4a','8b','3a','2b','7b','1b','4b','8a','3b'];
-  var MONTAGE_SECONDS = 62.4;
+  // 8 cuts of 5.2s each, composed offline with ffmpeg at a uniform 1920x1080.
+  // The order below is informational — it is baked into the file.
+  var order = ['2a','4a','7a','1a','3a','4b','7b','2b'];
+  var MONTAGE_SECONDS = 41.6;
   var CUT = MONTAGE_SECONDS / order.length; // 5.2s
 
   var vid = document.getElementById('vid');
 
+  // A LOOP THAT ALWAYS OPENS ON THE SAME FRAME becomes the page's face, and
+  // 41.6s is short enough that a returning visitor would learn it. So each load
+  // enters the loop on a different cut: seek first, THEN reveal and play, so the
+  // seek is never seen. The seek is on a cut boundary, so it lands on a first
+  // frame, not mid-shot.
+  function enterMontage() {
+    try { vid.currentTime = CUT * Math.floor(Math.random() * order.length); } catch (err) {}
+    vid.classList.add('on');
+    vid.play().catch(function () {});
+  }
+
   // Under reduced motion nothing plays and nothing is offered: the poster still
   // shows, via the backdrop's CSS background and the untouched poster attribute.
   if (!prefersReduced) {
-    vid.classList.add('on');
-    vid.play().catch(function () {});
+    // readyState >= HAVE_METADATA means duration and seeking are already usable
+    if (vid.readyState >= 1) {
+      enterMontage();
+    } else {
+      vid.addEventListener('loadedmetadata', enterMontage, { once: true });
+    }
   }
 
   /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
@@ -1198,7 +1267,7 @@ const navLinks = [
   // in CSS, so it is the UPPERCASE string that has to be measured.
   var MEASURED = [
     { v: 'name',  weight: 700, text: 'DIVYA TAK',                       ls: -0.015 },
-    { v: 'works', weight: 400, text: 'works',                           ls: -0.040 },
+    { v: 'works', weight: 400, text: 'Works',                           ls: -0.040 },
     { v: 'sub',   weight: 500, text: 'Creative technologist and artist', ls: -0.020 }
   ];
 

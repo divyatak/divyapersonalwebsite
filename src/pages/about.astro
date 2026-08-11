@@ -27,15 +27,8 @@ const logos = [
 ---
 
 <Layout title="About — Divya" description="Divya Tak is a multidisciplinary creative whose work spans film, games, comics, interactive systems, and generative media.">
-  <!-- Sora is not in the shared Layout head yet (it still preloads Montserrat),
-       so this page asks for its own face. rel=stylesheet is body-ok in HTML. -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap"
-  />
-
   <div class="page">
-    <h1 class="chapter">about</h1>
+    <h1 class="chapter">About</h1>
 
     <!-- ---- the statement: columns 1-2, the portrait on column 3 ---- -->
     <section class="intro" aria-label="Artist statement">
@@ -61,7 +54,7 @@ const logos = [
 
     {email && (
       <section class="block" aria-labelledby="lbl-contact">
-        <h2 class="label" id="lbl-contact">for queries &amp; commissions</h2>
+        <h2 class="label" id="lbl-contact">For queries &amp; commissions</h2>
         <p class="contact-lead">Reach out at</p>
         <p class="contact"><a href={`mailto:${email}`}>{email}</a></p>
       </section>
@@ -77,7 +70,7 @@ const logos = [
     </section>
 
     <section class="block" aria-labelledby="lbl-talks">
-      <h2 class="label" id="lbl-talks">talks &amp; panels</h2>
+      <h2 class="label" id="lbl-talks">Talks &amp; panels</h2>
       <ul class="index">
         {talks.map((t) => (
           <li class="row">
@@ -96,7 +89,7 @@ const logos = [
     </section>
 
     <section class="block" aria-labelledby="lbl-workshops">
-      <h2 class="label" id="lbl-workshops">workshops</h2>
+      <h2 class="label" id="lbl-workshops">Workshops</h2>
       <ul class="index">
         {workshops.map((t) => (
           <li class="row">
@@ -116,7 +109,7 @@ const logos = [
 
     {press.length > 0 && (
       <section class="block" aria-labelledby="lbl-press">
-        <h2 class="label" id="lbl-press">publications &amp; features</h2>
+        <h2 class="label" id="lbl-press">Press</h2>
         <ul class="index">
           {press.map((p) => (
             <li class="row">
@@ -179,7 +172,6 @@ const logos = [
     font-weight: 700;
     line-height: 0.86;
     letter-spacing: -0.045em;
-    text-transform: lowercase;
     color: var(--ink);
     margin-bottom: calc(var(--r) * 4);
   }
@@ -222,8 +214,9 @@ const logos = [
   .label {
     font-size: 0.75rem;      /* 12px */
     font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: lowercase;
+    /* sentence case now, so the tracking comes back in a little — 0.18em was
+       set for an all-lowercase run and gaps a capital badly */
+    letter-spacing: 0.12em;
     color: var(--quiet);
     border-top: 1px solid var(--hair);
     padding-top: calc(var(--r) * 0.75);

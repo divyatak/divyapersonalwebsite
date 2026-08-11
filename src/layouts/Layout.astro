@@ -17,10 +17,10 @@ const ogImageUrl = ogImage ? `${siteUrl}${ogImage}` : `${siteUrl}/og-image.png`
 
 const navItems = [
   // works points at the new landing's folio section while the redesign lives at /prototype/
-  { label: 'works', href: `${base}/prototype/ongoing/#works` },
-  { label: 'friends', href: `${base}/friends/` },
-  { label: 'about', href: `${base}/about/` },
-  { label: 'contact', href: 'mailto:hello@divyatak.art', external: true },
+  { label: 'Works', href: `${base}/prototype/ongoing/#works` },
+  { label: 'Friends', href: `${base}/friends/` },
+  { label: 'About', href: `${base}/about/` },
+  { label: 'Contact', href: 'mailto:hello@divyatak.art', external: true },
 ]
 
 function isActive(href: string) {
@@ -39,8 +39,10 @@ function isActive(href: string) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600;700;800&display=swap" /></noscript>
+    <!-- One family for the whole site, loaded once, in the head. The pages used to
+         pull Sora in from their own body while this bar sat in Montserrat, which is
+         why the shell read as a different site to the page under it. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#ffffff" />
@@ -70,16 +72,18 @@ function isActive(href: string) {
     <div class="layout">
       <a href="#main-content" class="skip-link">Skip to main content</a>
       <nav class="topbar" transition:persist aria-label="Main navigation">
-        <a href={`${base}/prototype/ongoing/`} class="wordmark">divya tak</a>
-        {navItems.map(item => (
-          <a
-            href={item.href}
-            class:list={['nav-link', { active: isActive(item.href) }]}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        ))}
+        <a href={`${base}/prototype/ongoing/`} class="wordmark">DIVYA TAK</a>
+        <div class="nav-links">
+          {navItems.map(item => (
+            <a
+              href={item.href}
+              class:list={['nav-link', { active: isActive(item.href) }]}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
       </nav>
       <main class="content" id="main-content">
         <slot />
@@ -92,19 +96,11 @@ function isActive(href: string) {
   function initAnimations() {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Top bar first-visit entrance
-    const topbar = document.querySelector('.topbar')
-    if (topbar) {
-      if (!sessionStorage.getItem('topbar-entered')) {
-        topbar.classList.add('topbar--entering')
-        // Trigger reflow, then start animation
-        requestAnimationFrame(() => {
-          topbar.classList.remove('topbar--entering')
-          topbar.classList.add('topbar--entered')
-          sessionStorage.setItem('topbar-entered', '1')
-        })
-      }
-    }
+    // NOTE: the top bar used to run a first-visit entrance here. It added a class
+    // and removed it inside the same requestAnimationFrame, so the stagger never
+    // painted — all it ever left behind were transition-delays on the links (up to
+    // 0.54s) and a transition list that overrode their hover colour. The bar is
+    // wayfinding; it is present from the first frame now.
 
     // Scroll-triggered animations
     if (prefersReduced) {

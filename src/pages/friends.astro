@@ -12,18 +12,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <Layout title="Friends — Divya" description="Friends and collaborators of Divya.">
-  <!-- Sora is not in the shared Layout head yet (it still preloads Montserrat),
-       so this page asks for its own face. rel=stylesheet is body-ok in HTML. -->
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap"
-  />
-
   <div class="page">
-    <h1 class="chapter">friends</h1>
+    <h1 class="chapter">Friends</h1>
 
     <section class="block" aria-labelledby="lbl-collaborators">
-      <h2 class="label" id="lbl-collaborators">collaborators</h2>
+      <h2 class="label" id="lbl-collaborators">Collaborators</h2>
 
       <div class="mates">
         {collaborators.map((f) => (
@@ -72,7 +65,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 
     {mentions.length > 0 && (
       <section class="block" aria-labelledby="lbl-mentions">
-        <h2 class="label" id="lbl-mentions">cool friends who do cool things</h2>
+        <h2 class="label" id="lbl-mentions">Cool friends who do cool things</h2>
 
         <ul class="pals">
           {mentions.map((f) => (
@@ -150,7 +143,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
     font-weight: 700;
     line-height: 0.86;
     letter-spacing: -0.045em;
-    text-transform: lowercase;
     color: var(--ink);
     margin-bottom: calc(var(--r) * 4);
   }
@@ -161,8 +153,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
   .label {
     font-size: 0.75rem;      /* 12px */
     font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: lowercase;
+    /* sentence case now, so the tracking comes back in a little — 0.18em was
+       set for an all-lowercase run and gaps a capital badly */
+    letter-spacing: 0.12em;
     color: var(--quiet);
     border-top: 1px solid var(--hair);
     padding-top: calc(var(--r) * 0.75);
