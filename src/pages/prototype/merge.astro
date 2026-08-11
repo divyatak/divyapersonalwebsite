@@ -1,0 +1,658 @@
+<!-- THROWAWAY PROTOTYPE — spine variant MERGE, delete after decision -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>merge — divyatak.art prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style is:global>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #222;
+      background: #fff;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: #222; }
+    a:hover { color: #636363; }
+    button { font-family: inherit; }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 72px 24px 150px;
+    }
+
+    /* identity: chrome, inert, greyscale */
+    .identity { margin-bottom: 56px; }
+    .identity .name {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: #999;
+      margin-bottom: 14px;
+    }
+    .identity h1 {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+    .identity .more {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #636363;
+      max-width: 44ch;
+    }
+    .order-note {
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 0.04em;
+      margin-bottom: 28px;
+    }
+
+    /* the record: one continuous rail, entries hang off it */
+    .record {
+      border-left: 1px solid #eee;
+      padding-left: 32px;
+    }
+    .entry {
+      position: relative;
+      padding: 22px 0;
+    }
+    .entry .marker {
+      position: absolute;
+      left: -37px;
+      top: 30px;
+      width: 9px;
+      height: 9px;
+      background: #fff;
+      border: 1px solid #bbb;
+    }
+    .entry.acted .marker {
+      background: #222;
+      border-color: #222;
+    }
+    .meta {
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #999;
+    }
+    .meta .t {
+      font-weight: 600;
+      color: #222;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+    .flatline {
+      font-size: 13px;
+      color: #636363;
+    }
+    .flatline .t { font-weight: 600; color: #222; }
+
+    /* containers take the shape their tier supports */
+    .box {
+      margin-top: 12px;
+      padding: 22px;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.09), 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+    .label {
+      font-size: 15px;
+      font-weight: 500;
+      max-width: 52ch;
+    }
+    .hook {
+      margin-top: 8px;
+      font-size: 13.5px;
+      color: #636363;
+      max-width: 56ch;
+    }
+    .plainlink {
+      margin-top: 14px;
+      font-size: 13px;
+    }
+
+    /* metro museum: T1, records faint/dashed, resolve on held attention */
+    .mm-list {
+      list-style: none;
+      margin-top: 18px;
+    }
+    .rec {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      border-bottom: 1px dashed #d9d9d9;
+      padding: 10px 2px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #b8b8b8;
+      cursor: pointer;
+    }
+    .mm-list li:last-child .rec { border-bottom-width: 0; }
+    .rec .ri { font-weight: 600; letter-spacing: 0.02em; }
+    .rec .rev { display: none; }
+    .rec:focus-visible { outline: 1px solid #222; outline-offset: 2px; }
+    .mm-list.live .rec { transition: color 0.7s linear; }
+    .rec.holding { color: #222; }
+    .rec.resolved {
+      color: #222;
+      cursor: default;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .rec.resolved .rev { display: inline; }
+    .rec.resolved .rs, .rec.resolved .rd { color: #636363; }
+    .rec .rc { font-style: italic; }
+
+    /* klydo: testimony block */
+    .testimony {
+      margin-top: 12px;
+      padding-left: 18px;
+      border-left: 1px solid #ddd;
+      font-size: 14px;
+      color: #222;
+      max-width: 54ch;
+    }
+
+    /* everything bazaar: typographic pick */
+    .eb-pair {
+      display: flex;
+      gap: 36px;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      min-height: 48px;
+    }
+    .feel {
+      background: none;
+      border: none;
+      padding: 0 0 3px;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #222;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .feel:hover { border-bottom-color: #222; }
+    .feel:focus-visible { outline: 1px solid #222; outline-offset: 3px; }
+    .eb-pair.live .feel { transition: font-size 0.25s ease, color 0.25s ease; }
+    .feel.picked { border-bottom-color: #222; cursor: default; }
+    .feel.closed {
+      font-size: 12px;
+      font-weight: 400;
+      color: #c9c9c9;
+      text-decoration: line-through;
+      cursor: default;
+      border-bottom-color: transparent;
+    }
+    .eb-link { margin-top: 16px; font-size: 13px; }
+    .eb-link[hidden] { display: none; }
+
+    /* T0: thumb + link */
+    .thumb {
+      display: block;
+      max-width: 440px;
+      margin-top: 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+    .thumb:hover { opacity: 0.92; }
+
+    /* (un)seen: whole and generous */
+    .unseen-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .unseen-grid figure a { display: block; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); }
+    .unseen-grid figcaption {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 0.03em;
+    }
+    .lent {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #eee;
+    }
+    .lent a.lent-thumb { flex: 0 0 120px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+    .lent .lent-text { font-size: 13px; color: #636363; }
+    .lent .lent-text .t2 { font-weight: 600; color: #222; display: block; font-size: 13px; }
+
+    /* flat runs and strips */
+    .run { list-style: none; margin-top: 10px; }
+    .run li { font-size: 13px; color: #636363; padding: 2px 0; }
+    .run .yr { color: #999; display: inline-block; min-width: 44px; }
+    .striplinks { margin-top: 8px; font-size: 13px; color: #999; }
+    .covers {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .covers a {
+      display: block;
+      width: 132px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+    .covers a:hover { opacity: 0.92; }
+
+    /* closing facts strip: printable-flat */
+    .facts {
+      margin-top: 56px;
+      border-top: 1px solid #eee;
+      padding-top: 24px;
+      font-size: 13px;
+      color: #636363;
+    }
+    .facts p { padding: 2px 0; }
+    .facts .apx-label {
+      margin-top: 20px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #999;
+    }
+    .facts .apx { list-style: none; margin-top: 4px; }
+    .facts .apx li { font-size: 13px; color: #636363; padding: 2px 0; }
+    .facts .apx .yr { color: #999; display: inline-block; min-width: 44px; }
+
+    /* proto switcher: tooling chrome */
+    .proto-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: #fff;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    .proto-bar a { color: #fff; text-decoration: none; }
+    .proto-bar a:hover { color: #bbb; }
+    .proto-bar .idx { opacity: 0.55; }
+
+    @media (max-width: 560px) {
+      .unseen-grid { grid-template-columns: 1fr; }
+      .eb-pair { gap: 22px; }
+      .feel { font-size: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mm-list.live .rec, .eb-pair.live .feel { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <header class="identity">
+      <p class="name">divya tak · divyatak.art</p>
+      <h1>I make interactive things.</h1>
+      <p class="more">I want the viewer to feel like they're in it. Not just looking at it through glass.</p>
+    </header>
+
+    <p class="order-note">one record. ordered by last use, newest at the top. made dates in the data.</p>
+
+    <div class="record">
+
+      <!-- this site: the record lists itself, flat -->
+      <section class="entry" data-entry="site">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="flatline"><span class="t">this site</span> · made 2026 · in use: you, now</p>
+      </section>
+
+      <!-- metro museum: T1, the rule runs small on real records -->
+      <section class="entry" data-entry="mm">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">metro museum of the forgotten</span> · made 2026 · in progress · act: hold</p>
+        <div class="box">
+          <p class="label">A museum built from 24,646 things people lost on the Delhi Metro.</p>
+          <p class="hook">people lose whole days on the metro and file a report hoping. I am sorting every report into wings I named myself: tiffin, worn-body, against-weather. six of the 24,646 are below.</p>
+          <ul class="mm-list" id="mm-list">
+            <li><button class="rec" aria-expanded="false">
+              <span class="ri">BLACK PURSE</span> · <span class="rs">PUNJABI BAGH</span><span class="rev"> · &ldquo;purse with cash&rdquo; · <span class="rc">currency</span> · <span class="rd">01/12/2024</span></span>
+            </button></li>
+            <li><button class="rec" aria-expanded="false">
+              <span class="ri">POLYBAG</span> · <span class="rs">RAMAKRISHNA ASHRAM MARG</span><span class="rev"> · &ldquo;old clothes&rdquo; · <span class="rc">worn-body</span> · <span class="rd">01/12/2024</span></span>
+            </button></li>
+            <li><button class="rec" aria-expanded="false">
+              <span class="ri">BAG WITH</span> · <span class="rs">MILLENNIUM CITY CENTRE GURUGRAM</span><span class="rev"> · &ldquo;lunch box, bottle&rdquo; · <span class="rc">tiffin</span> · <span class="rd">27/11/2024</span></span>
+            </button></li>
+            <li><button class="rec" aria-expanded="false">
+              <span class="ri">JUTI</span> · <span class="rs">SHASTRI NAGAR</span><span class="rev"> · &ldquo;juti&rdquo; · <span class="rc">unclaimed</span> · <span class="rd">29/11/2024</span></span>
+            </button></li>
+            <li><button class="rec" aria-expanded="false">
+              <span class="ri">BAG</span> · <span class="rs">SAROJINI NAGAR</span><span class="rev"> · &ldquo;jackets, shirts &amp; overcoat&rdquo; · <span class="rc">against-weather</span> · <span class="rd">30/11/2024</span></span>
+            </button></li>
+            <li><button class="rec" aria-expanded="false">
+              <span class="ri">WATCH &amp; NECKBAND</span> · <span class="rs">KARKARDUMA</span><span class="rev"> · <span class="rc">listening-ear</span> · <span class="rd">29/11/2024</span></span>
+            </button></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- klydo: testimony, the only container that fits it -->
+      <section class="entry" data-entry="klydo">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">klydo</span> · ongoing · act: read</p>
+        <blockquote class="testimony">
+          <p>I lead product design at Klydo. That is close to a decade of work and none of it fits on a page like this. The evidence is plainer than a portfolio: things people opened every working day, for years, until they stopped noticing them. That is the only kind of review I trust.</p>
+        </blockquote>
+      </section>
+
+      <!-- everything bazaar: T1, one exclusive pick, typographic only -->
+      <section class="entry" data-entry="eb">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">everything bazaar</span> · made 2026 · live · act: pick one</p>
+        <div class="box">
+          <p class="label">A bazaar that trades in feelings.</p>
+          <p class="hook">you tell it how you feel and it gives you a thing for it. it is stocked for two feelings today.</p>
+          <div class="eb-pair" id="eb-pair">
+            <button class="feel" data-feel="loneliness" aria-pressed="false">loneliness</button>
+            <button class="feel" data-feel="boredom" aria-pressed="false">boredom</button>
+          </div>
+          <p class="eb-link" id="eb-link" hidden><a href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener">everythingbazaar.netlify.app</a></p>
+        </div>
+      </section>
+
+      <!-- bioluminescent flow: T0, the thing linked live -->
+      <section class="entry" data-entry="bio">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">bioluminescent flow</span> · made 2026 · live · act: disturb</p>
+        <div class="box">
+          <p class="hook">bioluminescent algae glow when something moves through them. here the something is your hand, over webcam.</p>
+          <a class="thumb" href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">
+            <img src="/playground/bioluminescent-flow.webp" alt="Bioluminescent Flow: a dark field of glowing blue particles" loading="lazy" />
+          </a>
+          <p class="plainlink"><a href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">divyatak.github.io/creative-visuals/particles</a></p>
+        </div>
+      </section>
+
+      <!-- webcam magic: T0 -->
+      <section class="entry" data-entry="webcam">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">webcam magic</span> · made 2026 · live · act: point</p>
+        <div class="box">
+          <p class="hook">a pixelated mirror that follows your finger. you can ripple it, erase it, paint on it.</p>
+          <a class="thumb" href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener">
+            <img src="/playground/webcam-magic.webp" alt="Webcam Magic: a pixelated webcam mirror mid-effect" loading="lazy" />
+          </a>
+          <p class="plainlink"><a href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener">divyatak.github.io/creative-visuals/webcam</a></p>
+        </div>
+      </section>
+
+      <!-- (un)seen: looked at, whole and generous -->
+      <section class="entry" data-entry="unseen">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">(un)seen</span> · begun 2024, still going · act: looked at</p>
+        <div class="box">
+          <p class="label">A world drawn over the real one.</p>
+          <p class="hook">&ldquo;I draw into photographs of streets I'd have walked straight past, until I can't walk past them anymore.&rdquo;</p>
+          <div class="unseen-grid">
+            <figure>
+              <a href="/works/unseen-istanbul/"><img src="/projects/2024/(un)seen Istanbul/cover.webp" alt="(un)seen Istanbul cover: illustration drawn over a photograph of an Istanbul street" loading="lazy" /></a>
+              <figcaption>istanbul · 2024</figcaption>
+            </figure>
+            <figure>
+              <a href="/works/unseen-vietnam/"><img src="/projects/2024/(un)seen Vietnam/cover.webp" alt="(un)seen Vietnam cover: illustration drawn over a photograph of a Vietnam street" loading="lazy" /></a>
+              <figcaption>vietnam · 2024</figcaption>
+            </figure>
+            <figure>
+              <a href="/works/unseen-emirates/"><img src="/projects/2025/(un)seen Emirates/cover.webp" alt="(un)seen Emirates cover: illustration drawn over a photograph from the Emirates" loading="lazy" /></a>
+              <figcaption>emirates · 2025</figcaption>
+            </figure>
+            <figure>
+              <a href="/works/unseen-life/"><img src="/projects/2026/(un)seen Life/cover.webp" alt="(un)seen Life cover: illustration drawn over an everyday photograph" loading="lazy" /></a>
+              <figcaption>life · 2026</figcaption>
+            </figure>
+          </div>
+          <div class="lent">
+            <a class="lent-thumb" href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener">
+              <img src="/playground/lenticular.webp" alt="(un)seen lenticular edition: a photograph mid-shift into its drawing" loading="lazy" />
+            </a>
+            <p class="lent-text">
+              <span class="t2">lenticular edition · live</span>
+              the photograph and the drawing in one plate. the shift between them happens there, not here.<br />
+              <a href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener">divyatak.github.io/creative-visuals/lenticular</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- talks: flat dated lines, one run -->
+      <section class="entry" data-entry="talks">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">talks</span> · 2022 to 2026</p>
+        <ul class="run">
+          <li><span class="yr">2026</span> Algorithm and Art · NGMA Bangalore</li>
+          <li><span class="yr">2024</span> Games and Literature · Goethe Institut</li>
+          <li><span class="yr">2024</span> The Innovative Power of AI in Creative Industries · IIM Bangalore</li>
+          <li><span class="yr">2023</span> AI and Copyright · Fifth Elephant</li>
+          <li><span class="yr">2022</span> Product Design Learnings · UXDX</li>
+        </ul>
+      </section>
+
+      <!-- the line before: T0 -->
+      <section class="entry" data-entry="lb">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">the line before</span> · made 2025 · live · act: wander</p>
+        <div class="box">
+          <p class="hook">a garden in 3D where the flowers grow out of poems. made with Kahran. it still lives at my old address.</p>
+          <a class="thumb" href="https://divya.studiotypo.xyz" target="_blank" rel="noopener">
+            <img src="/playground/the-line-before.webp" alt="The Line Before: a 3D garden of glowing flowers grown from lines of poetry" loading="lazy" />
+          </a>
+          <p class="plainlink"><a href="https://divya.studiotypo.xyz" target="_blank" rel="noopener">divya.studiotypo.xyz</a></p>
+        </div>
+      </section>
+
+      <!-- titli: data plus facts -->
+      <section class="entry" data-entry="titli">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><a class="t" href="/works/the-titli-effect/">the titli effect</a> · made 2024 · with my sister Charu · act: choose</p>
+        <p class="hook">you make small choices for a girl called Titli and her life keeps every one of them.</p>
+        <p class="flatline">2nd place · Jennifer Ann Group Connectedness game jam</p>
+      </section>
+
+      <!-- zines and comics: compact strip -->
+      <section class="entry" data-entry="zines">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">zines and comics</span> · 2016 to 2022 · act: read</p>
+        <p class="hook">paper holds still, which is sometimes the point.</p>
+        <p class="striplinks">
+          <a href="/works/how-to-think/">how to think, 2022</a> ·
+          <a href="/works/common/">common, 2021</a> ·
+          <a href="/works/wonderful-worlds/">wonderful worlds, 2019</a> ·
+          <a href="/works/pi-of-life/">pi of life, 2016</a>
+        </p>
+      </section>
+
+      <!-- six 2020 games: compact strip with real covers -->
+      <section class="entry" data-entry="games">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="meta"><span class="t">six games in six months</span> · made 2020 · with Charu · act: play</p>
+        <p class="hook">one game a month for six months. we called it Game'd.</p>
+        <div class="covers">
+          <a href="/works/ai-quit/"><img src="/projects/2020/AI quit/cover.webp" alt="AI quit cover art: a tiny robot escaping a toaster factory" loading="lazy" /></a>
+          <a href="/works/boneyard/"><img src="/projects/2020/Boneyard/cover.webp" alt="Boneyard cover art: skulls and a sword" loading="lazy" /></a>
+          <a href="/works/mark/"><img src="/projects/2020/Mark/cover.webp" alt="Mark cover art: a bouncing ball platformer" loading="lazy" /></a>
+        </div>
+        <p class="striplinks">
+          <a href="/works/misplaced/">misplaced</a> ·
+          <a href="/works/proximity/">proximity</a> ·
+          <a href="/works/ruh-and-the-glow/">ruh and the glow</a>
+        </p>
+      </section>
+
+      <!-- physics: the bottom of the record, flat -->
+      <section class="entry" data-entry="physics">
+        <span class="marker" aria-hidden="true"></span>
+        <p class="flatline"><span class="t">physics</span> · IIT Kharagpur</p>
+      </section>
+
+    </div>
+
+    <!-- closing facts strip: printable-flat -->
+    <footer class="facts">
+      <p><a href="mailto:hello@divyatak.art">hello@divyatak.art</a></p>
+      <p><a href="/friends/">friends</a></p>
+      <p class="apx-label">made about me by other people</p>
+      <ul class="apx">
+        <li><span class="yr">2021</span> Common published in the INKLAB anthology · <a href="https://www.amazon.in/INKLAB-Adhiraj-Arunachalam-Shikhant-Sablania/dp/B08WPZ73YP" target="_blank" rel="noopener">amazon.in</a></li>
+        <li><span class="yr"></span> illustration feature · Creative Gaga · <a href="https://www.creativegaga.com/design/graphic-design/instincts-brocade" target="_blank" rel="noopener">creativegaga.com</a></li>
+        <li><span class="yr"></span> podcast · <a href="https://open.spotify.com/episode/1T3uIPziUpoETZr2fm8zbf" target="_blank" rel="noopener">spotify</a></li>
+      </ul>
+    </footer>
+
+  </div>
+
+  <div class="proto-bar"><a href="/prototype/record/">←</a><span>merge — the flow is the record</span><a href="/prototype/flow/">→</a><a class="idx" href="/prototype/">all</a></div>
+
+  <script is:inline>
+    (function () {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var HOLD = 700;
+
+      function loadSet(key) {
+        try { return JSON.parse(sessionStorage.getItem(key) || '[]'); } catch (e) { return []; }
+      }
+      function saveSet(key, arr) {
+        try { sessionStorage.setItem(key, JSON.stringify(arr)); } catch (e) {}
+      }
+
+      /* residue: acted entries stay quietly marked, session only, uncounted, unremarked */
+      var residue = loadSet('proto-merge-residue');
+      function markEntry(id) {
+        if (!id) return;
+        if (residue.indexOf(id) === -1) {
+          residue.push(id);
+          saveSet('proto-merge-residue', residue);
+        }
+        var el = document.querySelector('[data-entry="' + id + '"]');
+        if (el) el.classList.add('acted');
+      }
+      residue.forEach(function (id) {
+        var el = document.querySelector('[data-entry="' + id + '"]');
+        if (el) el.classList.add('acted');
+      });
+
+      /* any real link inside an entry marks the entry when used */
+      document.querySelectorAll('.entry a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          var e = a.closest('.entry');
+          if (e) markEntry(e.getAttribute('data-entry'));
+        });
+      });
+
+      /* metro museum: held attention resolves a record; resolved records stay resolved */
+      var mmList = document.getElementById('mm-list');
+      var recs = Array.prototype.slice.call(mmList.querySelectorAll('.rec'));
+      var mmResolved = loadSet('proto-merge-mm');
+
+      function resolveRec(btn, i, fromRestore) {
+        if (btn.classList.contains('resolved')) return;
+        btn.classList.remove('holding');
+        btn.classList.add('resolved');
+        btn.setAttribute('aria-expanded', 'true');
+        if (!fromRestore) {
+          if (mmResolved.indexOf(i) === -1) {
+            mmResolved.push(i);
+            saveSet('proto-merge-mm', mmResolved);
+          }
+          markEntry('mm');
+        }
+      }
+
+      recs.forEach(function (btn, i) {
+        if (mmResolved.indexOf(i) !== -1) resolveRec(btn, i, true);
+
+        var timer = null;
+        function beginHold() {
+          if (btn.classList.contains('resolved') || reduced) return;
+          btn.classList.add('holding');
+          timer = setTimeout(function () { resolveRec(btn, i); }, HOLD);
+        }
+        function cancelHold() {
+          if (timer) { clearTimeout(timer); timer = null; }
+          btn.classList.remove('holding');
+        }
+        btn.addEventListener('mouseenter', beginHold);
+        btn.addEventListener('mouseleave', cancelHold);
+        btn.addEventListener('pointerdown', function (ev) {
+          if (ev.pointerType === 'touch') beginHold();
+        });
+        btn.addEventListener('pointerup', function (ev) {
+          if (ev.pointerType === 'touch') cancelHold();
+        });
+        btn.addEventListener('pointercancel', cancelHold);
+        /* instant on focus, instant on click (keyboard and reduced-motion) */
+        btn.addEventListener('focus', function () { resolveRec(btn, i); });
+        btn.addEventListener('click', function () { resolveRec(btn, i); });
+      });
+      /* transitions only arm after any restored state is painted: resting page stays still */
+      requestAnimationFrame(function () { mmList.classList.add('live'); });
+
+      /* everything bazaar: one exclusive pick, the other closes for the session */
+      var ebPair = document.getElementById('eb-pair');
+      var ebLink = document.getElementById('eb-link');
+      var feels = Array.prototype.slice.call(ebPair.querySelectorAll('.feel'));
+
+      function applyPick(feel, fromRestore) {
+        feels.forEach(function (b) {
+          if (b.getAttribute('data-feel') === feel) {
+            b.classList.add('picked');
+            b.setAttribute('aria-pressed', 'true');
+            b.disabled = true;
+          } else {
+            b.classList.add('closed');
+            b.setAttribute('aria-pressed', 'false');
+            b.disabled = true;
+          }
+        });
+        ebLink.hidden = false;
+        if (!fromRestore) {
+          try { sessionStorage.setItem('proto-merge-eb', feel); } catch (e) {}
+          markEntry('eb');
+        }
+      }
+
+      var storedPick = null;
+      try { storedPick = sessionStorage.getItem('proto-merge-eb'); } catch (e) {}
+      if (storedPick) applyPick(storedPick, true);
+
+      feels.forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (b.disabled) return;
+          applyPick(b.getAttribute('data-feel'));
+        });
+      });
+      requestAnimationFrame(function () { ebPair.classList.add('live'); });
+
+      /* switcher keyboard nav */
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        var t = e.target;
+        if (t && (/^(input|textarea|select)$/i.test(t.tagName) || t.isContentEditable)) return;
+        window.location.href = e.key === 'ArrowLeft' ? '/prototype/record/' : '/prototype/flow/';
+      });
+    })();
+  </script>
+</body>
+</html>

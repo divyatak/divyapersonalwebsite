@@ -1,0 +1,537 @@
+<!-- THROWAWAY PROTOTYPE — spine variant FLOW, delete after decision -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>divya tak · works</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #222;
+      background: #fff;
+      min-height: 100vh;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: #222; text-decoration: underline; text-decoration-color: #c9c9c9; text-underline-offset: 3px; }
+    a:hover { text-decoration-color: #222; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #222; outline-offset: 2px; }
+    button { font: inherit; color: inherit; background: none; border: 0; }
+
+    .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+    /* ---------- chrome (inert) ---------- */
+    .site-head {
+      display: flex; flex-wrap: wrap; gap: 12px 32px;
+      align-items: baseline; justify-content: space-between;
+      padding-top: 52px;
+    }
+    .wordmark { font-size: 0.85rem; letter-spacing: 0.2em; color: #636363; }
+    .site-nav { display: flex; gap: 22px; font-size: 0.85rem; }
+    .site-nav a { text-decoration: none; color: #636363; }
+    .site-nav a:hover { color: #222; text-decoration: underline; text-decoration-color: #222; }
+    .site-nav .current { color: #222; }
+
+    .claim { margin-top: 72px; font-size: clamp(1.5rem, 3.6vw, 2.1rem); font-weight: 600; line-height: 1.25; }
+    .claim-follow { margin-top: 10px; color: #636363; max-width: 36em; }
+
+    /* ---------- flow of entries ---------- */
+    main { padding-bottom: 140px; }
+    .entry { margin-top: 110px; }
+    .entry-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+    .dot {
+      display: inline-block; width: 8px; height: 8px; flex: none;
+      border: 1px solid #bbb; border-radius: 50%;
+      margin-right: 4px; align-self: center;
+    }
+    .inked .dot, .inked > .dot { background: #222; border-color: #222; }
+    .title { font-weight: 600; font-size: 1.15rem; line-height: 1.3; }
+    .title a { text-decoration: none; }
+    .title a:hover { text-decoration: underline; text-decoration-color: #222; }
+    .year { color: #999; font-size: 0.88rem; font-weight: 400; }
+    .hook { margin-top: 6px; color: #636363; max-width: 42em; }
+    .note { margin-top: 4px; color: #999; font-size: 0.85rem; }
+    .live-line { margin-top: 12px; font-size: 0.88rem; }
+
+    /* ---------- metro museum (T1, flagship) ---------- */
+    .flagship { margin-top: 88px; }
+    .flagship .title { font-size: clamp(1.25rem, 2.8vw, 1.55rem); }
+    .metro-list { list-style: none; margin-top: 30px; }
+    .record {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 0;
+      width: 100%; text-align: left; cursor: pointer;
+      padding: 13px 2px;
+      border-bottom: 1px dashed #e7e7e7;
+      font-family: ui-monospace, 'Cascadia Mono', Consolas, Menlo, monospace;
+      font-size: 0.82rem; line-height: 1.7;
+      color: #d6d6d6;
+    }
+    .record > span + span::before { content: '\00B7'; margin: 0 0.9em; color: inherit; }
+    .r-cat { font-weight: 700; }
+    .record:not(.resolved):hover { color: #b9b9b9; }
+    .record.resolved { color: #222; cursor: default; border-bottom: 1px solid #222; }
+    .record.resolved .r-contents, .record.resolved .r-date { color: #636363; }
+
+    /* ---------- everything bazaar (T1) ---------- */
+    .stock { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 28px; }
+    .feeling {
+      flex: 1 1 260px; min-height: 190px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      padding: 34px 20px; cursor: pointer; background: #fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 8px 28px rgba(0,0,0,0.06);
+    }
+    .feeling:not(:disabled):hover { box-shadow: 0 2px 4px rgba(0,0,0,0.07), 0 14px 40px rgba(0,0,0,0.10); }
+    .feel-a { font-weight: 300; letter-spacing: 0.34em; font-size: clamp(1.35rem, 3.4vw, 2.1rem); }
+    .feel-b { font-weight: 700; letter-spacing: -0.01em; font-size: clamp(1.6rem, 4vw, 2.5rem); }
+    .feel-state { display: none; font-size: 0.72rem; letter-spacing: 0.22em; color: #999; }
+    .feeling.closed { opacity: 0.35; box-shadow: none; cursor: default; }
+    .feeling.closed .feel-word { text-decoration: line-through; text-decoration-thickness: 1px; }
+    .feeling.closed .feel-state { display: block; }
+    .bazaar-after { margin-top: 22px; font-size: 0.88rem; color: #636363; }
+
+    /* ---------- T0 pieces ---------- */
+    .t0-link { display: block; margin-top: 24px; }
+    .t0-link img { width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 12px 34px rgba(0,0,0,0.08); }
+    .t0-link:hover img { box-shadow: 0 2px 4px rgba(0,0,0,0.07), 0 18px 48px rgba(0,0,0,0.12); }
+    .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .duo .entry { margin-top: 110px; }
+
+    /* ---------- (un)seen (T2, generous) ---------- */
+    .unseen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 28px; }
+    .unseen-grid figure img { width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.07); }
+    .unseen-grid figcaption { margin-top: 9px; font-size: 0.8rem; color: #999; }
+    .unseen-caption { margin-top: 26px; color: #636363; max-width: 38em; }
+
+    /* ---------- titli + games strip (T2) ---------- */
+    .titli-body { display: grid; grid-template-columns: 270px 1fr; gap: 36px; align-items: start; margin-top: 24px; }
+    .titli-body img { width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 10px 28px rgba(0,0,0,0.07); }
+    .strip { display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-start; margin-top: 26px; }
+    .game-card { width: 168px; text-decoration: none; }
+    .game-card img { width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 8px 24px rgba(0,0,0,0.07); }
+    .game-card:hover img { box-shadow: 0 2px 4px rgba(0,0,0,0.07), 0 12px 34px rgba(0,0,0,0.11); }
+    .g-title { display: flex; align-items: center; gap: 8px; margin-top: 9px; font-size: 0.85rem; }
+    .strip-rest { list-style: none; align-self: center; }
+    .strip-rest li { padding: 5px 0; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+
+    /* ---------- zines line (T2, compact) ---------- */
+    .zine-line { margin-top: 24px; font-size: 0.95rem; line-height: 2.1; }
+    .zine-line .sep { color: #ccc; margin: 0 0.6em; }
+    .zine-line a { text-decoration-color: #d7d7d7; }
+    .zine-line a.inked { text-decoration-color: #222; }
+    .zine-line .year { font-size: 0.8rem; }
+
+    /* ---------- flat facts ---------- */
+    .flat { margin-top: 140px; border-top: 1px solid #eee; padding-top: 56px; }
+    .microlabel { font-size: 0.72rem; letter-spacing: 0.24em; color: #999; }
+    .flat-block { margin-top: 40px; }
+    .flat p { max-width: 44em; }
+    .flat ul { list-style: none; margin-top: 14px; }
+    .flat li { padding: 5px 0; }
+    .talk-where { color: #636363; }
+    .talk-year { color: #999; }
+    .flat .quote { color: #636363; margin-top: 6px; max-width: 42em; }
+
+    /* ---------- proto switcher (tooling chrome) ---------- */
+    .proto-bar {
+      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 14px;
+      background: #111; color: #fff;
+      font-family: ui-monospace, 'Cascadia Mono', Consolas, Menlo, monospace;
+      font-size: 13px; padding: 9px 16px; border-radius: 999px;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.28); z-index: 99; white-space: nowrap;
+    }
+    .proto-bar a { color: #fff; text-decoration: none; }
+    .proto-bar a:hover { text-decoration: underline; }
+    .proto-bar .idx { opacity: 0.6; }
+
+    /* transitions only when motion is welcome; interactions stay, as instant state changes */
+    @media (prefers-reduced-motion: no-preference) {
+      .record { transition: color 0.25s ease, border-color 0.25s ease; }
+      .feeling { transition: box-shadow 0.2s ease, opacity 0.2s ease; }
+      .t0-link img, .game-card img { transition: box-shadow 0.2s ease; }
+      a { transition: text-decoration-color 0.15s ease, color 0.15s ease; }
+    }
+
+    @media (max-width: 700px) {
+      .duo { grid-template-columns: 1fr; }
+      .duo .entry { margin-top: 90px; }
+      .unseen-grid { grid-template-columns: 1fr; }
+      .titli-body { grid-template-columns: 1fr; }
+      .entry { margin-top: 90px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="site-head">
+      <span class="wordmark">divya tak</span>
+      <nav class="site-nav" aria-label="site">
+        <span class="current" aria-current="page">works</span>
+        <a href="/friends/">friends</a>
+        <a href="#about">about</a>
+        <a href="mailto:hello@divyatak.art">contact</a>
+      </nav>
+    </header>
+
+    <p class="claim">I make interactive things.</p>
+    <p class="claim-follow">I want the viewer to feel like they're in it. Not just looking at it through glass.</p>
+
+    <main>
+
+      <!-- METRO MUSEUM · T1 · flagship -->
+      <section class="entry flagship" id="metro" data-entry="metro" aria-labelledby="metro-t">
+        <div class="entry-head">
+          <span class="dot" aria-hidden="true"></span>
+          <h2 class="title" id="metro-t">Metro Museum of the Forgotten</h2>
+          <span class="year">2026, in progress</span>
+        </div>
+        <p class="hook">A museum built from 24,646 things people lost on the Delhi Metro.</p>
+        <p class="note">six records from the ledger. stay with one and it resolves.</p>
+        <ul class="metro-list">
+          <li><button type="button" class="record" data-rec="r1">
+            <span class="r-item">BLACK PURSE</span><span class="r-contents">purse with cash</span><span class="r-cat">currency</span><span class="r-station">PUNJABI BAGH</span><span class="r-date">01/12/2024</span>
+          </button></li>
+          <li><button type="button" class="record" data-rec="r2">
+            <span class="r-item">POLYBAG</span><span class="r-contents">old clothes</span><span class="r-cat">worn-body</span><span class="r-station">RAMAKRISHNA ASHRAM MARG</span><span class="r-date">01/12/2024</span>
+          </button></li>
+          <li><button type="button" class="record" data-rec="r3">
+            <span class="r-item">BAG WITH</span><span class="r-contents">lunch box, bottle</span><span class="r-cat">tiffin</span><span class="r-station">MILLENNIUM CITY CENTRE GURUGRAM</span><span class="r-date">27/11/2024</span>
+          </button></li>
+          <li><button type="button" class="record" data-rec="r4">
+            <span class="r-item">JUTI</span><span class="r-contents">juti</span><span class="r-cat">unclaimed</span><span class="r-station">SHASTRI NAGAR</span><span class="r-date">29/11/2024</span>
+          </button></li>
+          <li><button type="button" class="record" data-rec="r5">
+            <span class="r-item">BAG</span><span class="r-contents">jackets, shirts &amp; overcoat</span><span class="r-cat">against-weather</span><span class="r-station">SAROJINI NAGAR</span><span class="r-date">30/11/2024</span>
+          </button></li>
+          <li><button type="button" class="record" data-rec="r6">
+            <span class="r-item">WATCH &amp; NECKBAND</span><span class="r-cat">listening-ear</span><span class="r-station">KARKARDUMA</span><span class="r-date">29/11/2024</span>
+          </button></li>
+        </ul>
+      </section>
+
+      <!-- EVERYTHING BAZAAR · T1 -->
+      <section class="entry" id="bazaar" data-entry="bazaar" aria-labelledby="bazaar-t">
+        <div class="entry-head">
+          <span class="dot" aria-hidden="true"></span>
+          <h2 class="title" id="bazaar-t">Everything Bazaar</h2>
+          <span class="year">2026</span>
+        </div>
+        <p class="hook">A bazaar where the products are feelings.</p>
+        <p class="note">two in stock. take one, the other closes.</p>
+        <div class="stock">
+          <button type="button" class="feeling" data-feel="loneliness">
+            <span class="feel-word feel-a">loneliness</span>
+            <span class="feel-state">closed</span>
+          </button>
+          <button type="button" class="feeling" data-feel="boredom">
+            <span class="feel-word feel-b">boredom</span>
+            <span class="feel-state">closed</span>
+          </button>
+        </div>
+        <p class="bazaar-after" id="bazaar-after" hidden>the full machines: <a href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener" data-mark="bazaar">everythingbazaar.netlify.app</a></p>
+      </section>
+
+      <!-- THE LINE BEFORE · T0 -->
+      <section class="entry" id="line-before" data-entry="line-before" aria-labelledby="lb-t">
+        <div class="entry-head">
+          <span class="dot" aria-hidden="true"></span>
+          <h2 class="title" id="lb-t">The Line Before</h2>
+          <span class="year">2025, with Kahran Singh</span>
+        </div>
+        <p class="hook">a 3d poetry garden; flowers bloom from words</p>
+        <a class="t0-link" href="https://divya.studiotypo.xyz" target="_blank" rel="noopener" data-mark="line-before" aria-label="Open The Line Before, running live">
+          <img src="/playground/the-line-before.webp" alt="The Line Before: a garden of blooming flowers grown from lines of poetry" loading="lazy" />
+        </a>
+        <p class="live-line">live: <a href="https://divya.studiotypo.xyz" target="_blank" rel="noopener" data-mark="line-before">divya.studiotypo.xyz</a></p>
+      </section>
+
+      <div class="duo">
+        <!-- BIOLUMINESCENT FLOW · T0 -->
+        <section class="entry" id="bioluminescent" data-entry="bioluminescent" aria-labelledby="bf-t">
+          <div class="entry-head">
+            <span class="dot" aria-hidden="true"></span>
+            <h2 class="title" id="bf-t">Bioluminescent Flow</h2>
+            <span class="year">2026</span>
+          </div>
+          <p class="hook">bioluminescent algae that glow when disturbed; move your hand through the field</p>
+          <a class="t0-link" href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener" data-mark="bioluminescent" aria-label="Open Bioluminescent Flow, running live">
+            <img src="/playground/bioluminescent-flow.webp" alt="Bioluminescent Flow: glowing particles rippling around a hand" loading="lazy" />
+          </a>
+          <p class="live-line">live: <a href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener" data-mark="bioluminescent">divyatak.github.io/creative-visuals/particles</a></p>
+        </section>
+
+        <!-- WEBCAM MAGIC · T0 -->
+        <section class="entry" id="webcam" data-entry="webcam" aria-labelledby="wm-t">
+          <div class="entry-head">
+            <span class="dot" aria-hidden="true"></span>
+            <h2 class="title" id="wm-t">Webcam Magic</h2>
+            <span class="year">2026</span>
+          </div>
+          <p class="hook">your finger transforms a pixelated mirror: ripple, erase, paint</p>
+          <a class="t0-link" href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener" data-mark="webcam" aria-label="Open Webcam Magic, running live">
+            <img src="/playground/webcam-magic.webp" alt="Webcam Magic: a pixelated mirror image being reshaped by a fingertip" loading="lazy" />
+          </a>
+          <p class="live-line">live: <a href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener" data-mark="webcam">divyatak.github.io/creative-visuals/webcam</a></p>
+        </section>
+      </div>
+
+      <!-- (UN)SEEN · T2, shown whole and generous -->
+      <section class="entry" id="unseen" data-entry="unseen" aria-labelledby="us-t">
+        <div class="entry-head">
+          <span class="dot" aria-hidden="true"></span>
+          <h2 class="title" id="us-t">(un)seen</h2>
+          <span class="year">2024, ongoing</span>
+        </div>
+        <p class="hook">a world drawn over the real one</p>
+        <div class="unseen-grid">
+          <figure>
+            <img src="/projects/2024/(un)seen Istanbul/cover.webp" alt="(un)seen Istanbul: a drawn world layered over a photograph of an Istanbul street" loading="lazy" />
+            <figcaption>Istanbul, 2024</figcaption>
+          </figure>
+          <figure>
+            <img src="/projects/2024/(un)seen Vietnam/cover.webp" alt="(un)seen Vietnam: a drawn world layered over a photograph of a Vietnamese street" loading="lazy" />
+            <figcaption>Vietnam, 2024</figcaption>
+          </figure>
+          <figure>
+            <img src="/projects/2025/(un)seen Emirates/cover.webp" alt="(un)seen Emirates: a drawn world layered over a photograph from the Emirates" loading="lazy" />
+            <figcaption>Emirates, 2025</figcaption>
+          </figure>
+          <figure>
+            <img src="/projects/2026/(un)seen Life/cover.webp" alt="(un)seen Life: a drawn world layered over a photograph of everyday life" loading="lazy" />
+            <figcaption>Life, 2026</figcaption>
+          </figure>
+        </div>
+        <p class="unseen-caption">&ldquo;I draw into photographs of streets I'd have walked straight past, until I can't walk past them anymore.&rdquo;</p>
+        <p class="live-line">the lenticular edition, its own thing, on screen: <a href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener" data-mark="unseen">divyatak.github.io/creative-visuals/lenticular</a></p>
+      </section>
+
+      <!-- THE TITLI EFFECT · T2 -->
+      <section class="entry" id="titli" data-entry="titli" aria-labelledby="tt-t">
+        <div class="entry-head">
+          <span class="dot" aria-hidden="true"></span>
+          <h2 class="title" id="tt-t"><a href="/works/the-titli-effect/" data-mark="titli">The Titli Effect</a></h2>
+          <span class="year">2024, with my sister Charu</span>
+        </div>
+        <p class="hook">a girl called Titli; every choice you make ripples through her life</p>
+        <div class="titli-body">
+          <a href="/works/the-titli-effect/" data-mark="titli" aria-label="The Titli Effect, full project on this site">
+            <img src="/projects/2024/The titli effect/titli-title.webp" alt="The Titli Effect title screen" loading="lazy" />
+          </a>
+          <div>
+            <p class="note">2nd place, Jennifer Ann Group Connectedness jam.</p>
+            <p class="live-line"><a href="/works/the-titli-effect/" data-mark="titli">the full project</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIX 2020 GAMES · T2 strip -->
+      <section class="entry" id="gamed" aria-labelledby="gd-t">
+        <div class="entry-head">
+          <h2 class="title" id="gd-t">Game'd</h2>
+          <span class="year">2020</span>
+        </div>
+        <p class="hook">six games in six months, made with Charu Tak and friends</p>
+        <div class="strip">
+          <a class="game-card" href="/works/ai-quit/" data-entry="g-ai-quit" data-mark="g-ai-quit">
+            <img src="/projects/2020/AI quit/cover.webp" alt="AI quit cover: a tiny robot escaping a toaster factory" loading="lazy" />
+            <span class="g-title"><span class="dot" aria-hidden="true"></span>AI quit</span>
+          </a>
+          <a class="game-card" href="/works/boneyard/" data-entry="g-boneyard" data-mark="g-boneyard">
+            <img src="/projects/2020/Boneyard/cover.webp" alt="Boneyard cover: skulls and a sword" loading="lazy" />
+            <span class="g-title"><span class="dot" aria-hidden="true"></span>Boneyard</span>
+          </a>
+          <a class="game-card" href="/works/mark/" data-entry="g-mark" data-mark="g-mark">
+            <img src="/projects/2020/Mark/cover.webp" alt="Mark cover: a bouncing ball among keys and enemies" loading="lazy" />
+            <span class="g-title"><span class="dot" aria-hidden="true"></span>Mark</span>
+          </a>
+          <ul class="strip-rest">
+            <li data-entry="g-misplaced"><span class="dot" aria-hidden="true"></span><a href="/works/misplaced/" data-mark="g-misplaced">Misplaced</a></li>
+            <li data-entry="g-proximity"><span class="dot" aria-hidden="true"></span><a href="/works/proximity/" data-mark="g-proximity">Proximity</a></li>
+            <li data-entry="g-ruh"><span class="dot" aria-hidden="true"></span><a href="/works/ruh-and-the-glow/" data-mark="g-ruh">Ruh and the glow</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ZINES & COMICS · T2 compact line -->
+      <section class="entry" id="paper" aria-labelledby="zp-t">
+        <div class="entry-head">
+          <h2 class="title" id="zp-t">on paper</h2>
+        </div>
+        <p class="hook">zines and comics, drawn by hand</p>
+        <p class="zine-line">
+          <a href="/works/how-to-think/" data-mark="z-how" data-entry="z-how">How to think</a> <span class="year">2022</span><span class="sep" aria-hidden="true">&middot;</span>
+          <a href="/works/common/" data-mark="z-common" data-entry="z-common">Common</a> <span class="year">2021</span><span class="sep" aria-hidden="true">&middot;</span>
+          <a href="/works/wonderful-worlds/" data-mark="z-worlds" data-entry="z-worlds">Wonderful Worlds</a> <span class="year">2019</span><span class="sep" aria-hidden="true">&middot;</span>
+          <a href="/works/pi-of-life/" data-mark="z-pi" data-entry="z-pi">Pi of life</a> <span class="year">2016</span>
+        </p>
+      </section>
+
+      <!-- FLAT FACTS -->
+      <section class="flat" id="about" aria-labelledby="about-t">
+        <p class="microlabel" id="about-t">about</p>
+
+        <div class="flat-block">
+          <p>I lead product design at Klydo. Before that, a decade of product design and game design: things people used daily, for years.</p>
+        </div>
+
+        <div class="flat-block">
+          <p class="microlabel">talks</p>
+          <ul>
+            <li>Algorithm and Art <span class="talk-where">&middot; NGMA Bangalore</span> <span class="talk-year">&middot; 2026</span></li>
+            <li>The Innovative Power of AI in Creative Industries <span class="talk-where">&middot; IIM Bangalore</span> <span class="talk-year">&middot; 2024</span></li>
+            <li>Games and Literature <span class="talk-where">&middot; Goethe Institut</span> <span class="talk-year">&middot; 2024</span></li>
+            <li>AI and Copyright <span class="talk-where">&middot; Fifth Elephant</span> <span class="talk-year">&middot; 2023</span></li>
+            <li>Product Design Learnings <span class="talk-where">&middot; UXDX</span> <span class="talk-year">&middot; 2022</span></li>
+          </ul>
+        </div>
+
+        <div class="flat-block">
+          <p class="microlabel">education</p>
+          <ul>
+            <li>physics, IIT Kharagpur</li>
+          </ul>
+          <p class="quote">&ldquo;I came to all of it from physics, and I've never learned to keep the physicist and the artist in separate rooms.&rdquo;</p>
+        </div>
+
+        <div class="flat-block">
+          <p class="microlabel">contact</p>
+          <ul>
+            <li><a href="mailto:hello@divyatak.art">hello@divyatak.art</a></li>
+            <li><a href="/friends/">friends</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="proto-bar"><a href="/prototype/merge/">←</a><span>flow — works forward</span><a href="/prototype/record/">→</a><a class="idx" href="/prototype/">all</a></div>
+
+  <script is:inline>
+    (function () {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var K_RESIDUE = 'flow:residue';
+      var K_RECORDS = 'flow:metro-resolved';
+      var K_PICK = 'flow:bazaar-pick';
+
+      function loadSet(key) {
+        try { return new Set(JSON.parse(sessionStorage.getItem(key) || '[]')); }
+        catch (e) { return new Set(); }
+      }
+      function saveSet(key, set) {
+        try { sessionStorage.setItem(key, JSON.stringify(Array.from(set))); } catch (e) {}
+      }
+
+      /* residue: opened entries keep their mark; never counted, never mentioned */
+      var residue = loadSet(K_RESIDUE);
+      function applyResidue(id) {
+        var nodes = document.querySelectorAll('[data-entry="' + id + '"]');
+        for (var i = 0; i < nodes.length; i++) nodes[i].classList.add('inked');
+      }
+      function mark(id) {
+        if (!id) return;
+        if (!residue.has(id)) { residue.add(id); saveSet(K_RESIDUE, residue); }
+        applyResidue(id);
+      }
+      residue.forEach(applyResidue);
+
+      /* links that count as opening the entry */
+      var markLinks = document.querySelectorAll('[data-mark]');
+      for (var i = 0; i < markLinks.length; i++) {
+        (function (el) {
+          el.addEventListener('click', function () { mark(el.getAttribute('data-mark')); });
+        })(markLinks[i]);
+      }
+
+      /* metro: a record resolves only if you attend.
+         hover-hold ~700ms; press-and-hold on touch; instant on reduced motion,
+         keyboard focus, or Enter/click. resolved records stay resolved (residue). */
+      var resolvedRecs = loadSet(K_RECORDS);
+      var records = document.querySelectorAll('.record');
+      for (var r = 0; r < records.length; r++) {
+        (function (btn) {
+          var id = btn.getAttribute('data-rec');
+          var timer = null;
+          function resolve() {
+            if (btn.classList.contains('resolved')) return;
+            btn.classList.add('resolved');
+            if (!resolvedRecs.has(id)) { resolvedRecs.add(id); saveSet(K_RECORDS, resolvedRecs); }
+            mark('metro');
+          }
+          function cancel() { if (timer) { clearTimeout(timer); timer = null; } }
+          if (resolvedRecs.has(id)) btn.classList.add('resolved');
+
+          btn.addEventListener('mouseenter', function () {
+            if (reduced.matches) { resolve(); return; }
+            cancel();
+            timer = setTimeout(resolve, 700);
+          });
+          btn.addEventListener('mouseleave', cancel);
+          btn.addEventListener('pointerdown', function (e) {
+            if (e.pointerType === 'mouse') return;
+            if (reduced.matches) { resolve(); return; }
+            cancel();
+            timer = setTimeout(resolve, 700);
+          });
+          btn.addEventListener('pointerup', cancel);
+          btn.addEventListener('pointercancel', cancel);
+          btn.addEventListener('pointerleave', cancel);
+          btn.addEventListener('focus', function () {
+            try { if (btn.matches(':focus-visible')) resolve(); } catch (e) { resolve(); }
+          });
+          btn.addEventListener('click', resolve); /* Enter/Space via keyboard, or a plain click: both answer */
+        })(records[r]);
+      }
+
+      /* bazaar: a single exclusive pick; the other closes and stays closed for the session */
+      var feelings = document.querySelectorAll('.feeling');
+      var afterLine = document.getElementById('bazaar-after');
+      function applyPick(picked) {
+        for (var f = 0; f < feelings.length; f++) {
+          var b = feelings[f];
+          if (b.getAttribute('data-feel') === picked) {
+            b.classList.add('taken');
+          } else {
+            b.classList.add('closed');
+            b.disabled = true;
+          }
+        }
+        if (afterLine) afterLine.hidden = false;
+        mark('bazaar');
+      }
+      var storedPick = null;
+      try { storedPick = sessionStorage.getItem(K_PICK); } catch (e) {}
+      if (storedPick) applyPick(storedPick);
+      for (var f = 0; f < feelings.length; f++) {
+        (function (b) {
+          b.addEventListener('click', function () {
+            var already = null;
+            try { already = sessionStorage.getItem(K_PICK); } catch (e) {}
+            if (already) return;
+            var feel = b.getAttribute('data-feel');
+            try { sessionStorage.setItem(K_PICK, feel); } catch (e) {}
+            applyPick(feel);
+          });
+        })(feelings[f]);
+      }
+
+      /* prototype switcher: arrow keys, skipped while typing */
+      document.addEventListener('keydown', function (e) {
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+        var t = e.target;
+        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+        if (e.key === 'ArrowLeft') window.location.href = '/prototype/merge/';
+        if (e.key === 'ArrowRight') window.location.href = '/prototype/record/';
+      });
+    })();
+  </script>
+</body>
+</html>
