@@ -23,10 +23,14 @@ const yearOf = (p, group) => {
   return m ? Number(m[1]) : group.year;
 };
 
+// credits are kept in the data but are NOT shown in the folio any more —
+// they belong on the work detail pages.
 const WITH_CHARU = [
   'ai-quit', 'boneyard', 'mark', 'misplaced', 'proximity', 'ruh-and-the-glow',
   'the-titli-effect',
 ];
+
+const CURRENT_YEAR = 2026;
 
 /* ---------- the five that are not in the pipeline ---------- */
 const bazaar = 'https://everythingbazaar.netlify.app';
@@ -46,7 +50,6 @@ const additions = [
     clip: '/clips/cut-7a.mp4',
     href: null,
     with: '',
-    links: [],
   },
   {
     id: 'everything-bazaar',
@@ -59,7 +62,6 @@ const additions = [
     clip: null,
     href: bazaar,
     with: '',
-    links: [{ label: 'play ↗', href: bazaar }],
   },
   {
     id: 'bioluminescent-flow',
@@ -72,7 +74,6 @@ const additions = [
     clip: '/clips/cut-2a.mp4',
     href: flow,
     with: '',
-    links: [{ label: 'open ↗', href: flow }],
   },
   {
     id: 'webcam-magic',
@@ -85,7 +86,6 @@ const additions = [
     clip: '/clips/cut-1a.mp4',
     href: webcam,
     with: '',
-    links: [{ label: 'open ↗', href: webcam }],
   },
   {
     id: 'the-line-before',
@@ -98,26 +98,29 @@ const additions = [
     clip: null,
     href: lineBefore,
     with: 'with Kahran Singh',
-    links: [{ label: 'open ↗', href: lineBefore }],
   },
 ];
 
 /* ---------- everything the pipeline knows about ---------- */
 const fromPipeline = generated.flatMap((group) =>
-  group.projects.map((p) => ({
-    id: p.slug,
-    title: p.title,
-    year: yearOf(p, group),
-    // the (un)seen series is still being added to; everything else has landed
-    status: p.slug.indexOf('unseen') === 0 ? 'ongoing' : 'finished',
-    bucket: bucketFor(p.categories),
-    img: p.cover,
-    alt: `Cover image for ${p.title}`,
-    clip: null,
-    href: `/works/${p.slug}/`,
-    with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
-    links: [{ label: 'more →', href: `/works/${p.slug}/` }],
-  }))
+  group.projects.map((p) => {
+    const year = yearOf(p, group);
+    return {
+      id: p.slug,
+      title: p.title,
+      year,
+      // only the current year's (un)seen edition is still being added to;
+      // every earlier edition is closed, like everything else in the pipeline
+      status:
+        p.slug.indexOf('unseen') === 0 && year === CURRENT_YEAR ? 'ongoing' : 'finished',
+      bucket: bucketFor(p.categories),
+      img: p.cover,
+      alt: `Cover image for ${p.title}`,
+      clip: null,
+      href: `/works/${p.slug}/`,
+      with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
+    };
+  })
 );
 
 // newest first; the sort is stable, so the additions sit ahead of pipeline entries
@@ -295,11 +298,46 @@ const navLinks = [
       rgba(0,0,0,0.95) 100%
     );
   }
+  /* intro on the left (~2/3), the reserved slot on the right (~1/3) */
+  .intro-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 3rem;
+    /* held in from the shell's full width so the 2/3 column stays close to the
+       intro's own 54ch measure — otherwise the ratio reads as a void */
+    max-width: 940px;
+  }
   .intro {
     color: rgba(255,255,255,0.76);
     max-width: 54ch;
   }
   .intro p { margin-bottom: 1rem; }
+
+  /* ---------- the reserved slot: held space, on purpose ----------
+     A rule, a label, and nothing else. The height is the point. */
+  .lately {
+    margin-top: 2.6rem;   /* drops the rule to the lead's line, past the docked name */
+    padding-top: 0.75rem;
+    min-height: 22rem;
+    border-top: 1px solid rgba(255,255,255,0.28);
+  }
+  .lately .label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
+    color: rgba(255,255,255,0.5);
+  }
+  /* one hairline far below, so the emptiness reads as measured, not missing */
+  .lately::after {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    margin-top: 15rem;
+    background: rgba(255,255,255,0.16);
+  }
   .intro a {
     color: #fff;
     border-bottom: 1px solid rgba(255,255,255,0.35);
@@ -371,40 +409,31 @@ const navLinks = [
     background: #fff;
   }
 
-  .works { padding-top: 8rem; scroll-margin-top: 3.5rem; }
-  .works-head {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 2rem;
-    padding-bottom: 3.5rem;
+  /* the folio runs edge to edge; only a small gutter holds it off the viewport */
+  .works {
+    padding: 8rem 1.75rem 0;
+    scroll-margin-top: 3.5rem;
   }
+  .works-head { padding-bottom: 3rem; }
+  /* a chapter opening, not a label */
   .works-head h2 {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
     text-transform: lowercase;
-    letter-spacing: 0.14em;
     color: #222;
+    margin-bottom: 1.75rem;
   }
 
   /* ---------- lenses ---------- */
-  .lenses { text-align: right; }
   .lens-row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
     align-items: baseline;
     gap: 0.5rem;
   }
   .lens-row + .lens-row { margin-top: 0.5rem; }
-  .lens-row .cluster {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.5rem;
-  }
-  .lens-row .cluster + .cluster { margin-left: 2rem; }
   .lens {
     font-family: 'Montserrat', sans-serif;
     font-size: 12px;
@@ -424,15 +453,14 @@ const navLinks = [
   .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
   .lens-row .sep { color: #ddd; font-size: 12px; }
 
-  /* ---------- view: grid ---------- */
-  .view[hidden] { display: none; }
+  /* ---------- the grid: the only view ---------- */
   .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     align-items: start;
-    column-gap: 3rem;
-    row-gap: 4rem;
-    padding-bottom: 8rem;
+    column-gap: 1.5rem;
+    row-gap: 2.5rem;
+    padding-bottom: 3.5rem;
   }
   .entry[hidden] { display: none; }
 
@@ -470,47 +498,36 @@ const navLinks = [
   }
   .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
 
-  .whisper {
-    margin-top: 0.25rem;
+  /* ---------- nine at a time ---------- */
+  .more-wrap {
+    text-align: center;
+    padding-bottom: 8rem;
+  }
+  .more {
+    font-family: 'Montserrat', sans-serif;
     font-size: 11px;
-    letter-spacing: 0.06em;
-    color: #bbb;
+    letter-spacing: 0.14em;
     text-transform: lowercase;
+    color: #bbb;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 0 0 3px;
+    cursor: pointer;
   }
-  .whisper .dot { padding: 0 0.35rem; color: #ddd; }
-
-  /* ---------- view: list ---------- */
-  .rows { padding-bottom: 8rem; }
-  .row {
-    display: grid;
-    grid-template-columns: minmax(0, 1.6fr) 5rem 7rem minmax(0, 1fr) minmax(0, 1.3fr);
-    gap: 1.5rem;
-    align-items: baseline;
-    padding: 0.75rem 0;
-    border-top: 1px solid #eee;
-    font-size: 13px;
-  }
-  .row[hidden] { display: none; }
-  .rows .row:last-of-type { border-bottom: 1px solid #eee; }
-  .row .r-title { font-weight: 500; color: #222; }
-  .row.seen .r-title::after { content: ' \00b7'; color: #ccc; }
-  .row .r-year, .row .r-status { font-size: 11px; letter-spacing: 0.06em; color: #999; }
-  .row .r-with { font-size: 11px; letter-spacing: 0.06em; color: #636363; }
-  .row .r-links { font-size: 12px; color: #999; }
-  .row .r-links a { color: #636363; border-bottom: 1px solid #eee; }
-  .row .r-links a:hover { color: #222; border-bottom-color: #222; }
-  .row .r-links .dot { color: #ddd; padding: 0 0.25rem; }
+  .more:hover { color: #222; border-bottom-color: #222; }
+  .more[hidden] { display: none; }
 
   .empty {
     font-size: 12px;
     color: #999;
-    padding: 2rem 0 8rem;
+    padding: 2rem 0;
   }
   .empty[hidden] { display: none; }
 
   /* ---------- foot ---------- */
   .foot {
-    padding: 0 0 6rem;
+    padding: 0 1.75rem 6rem;
     font-size: 12px;
     letter-spacing: 0.06em;
     color: #999;
@@ -519,8 +536,8 @@ const navLinks = [
   .foot a:hover { color: #222; }
   .foot .dot { margin: 0 0.5rem; color: #ddd; }
 
-  @media (min-width: 1600px) {
-    .grid { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 900px) {
@@ -529,13 +546,16 @@ const navLinks = [
     .bar { gap: 1.5rem; font-size: 11px; letter-spacing: 0.04em; }
     .bar .links { gap: 1rem; }
     .overlay { padding: 7rem 0 7rem; }
-    .grid { grid-template-columns: 1fr; row-gap: 3.5rem; }
-    .works { padding-top: 6rem; }
-    .works-head { flex-direction: column; align-items: flex-start; }
-    .lenses { text-align: left; }
-    .lens-row { justify-content: flex-start; }
-    .lens-row .cluster + .cluster { margin-left: 1rem; }
-    .row { grid-template-columns: 1fr; gap: 0.25rem; }
+    /* the reserved slot stacks under the intro */
+    .intro-cols { grid-template-columns: 1fr; gap: 3.5rem; }
+    .lately { margin-top: 0; min-height: 14rem; }
+    .lately::after { margin-top: 9rem; }
+    .works { padding: 6rem 1.25rem 0; }
+    .foot { padding-left: 1.25rem; padding-right: 1.25rem; }
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; row-gap: 3rem; }
   }
 </style>
 </head>
@@ -568,19 +588,27 @@ const navLinks = [
     <!-- ============ screen 2: docked name + intro ============ -->
     <section class="overlay" id="intro">
       <div class="shell narrow">
-        <div class="intro">
-          <!-- the slot the fixed name lands in; it holds space and nothing else -->
-          <p class="name-slot" id="name-slot" aria-hidden="true">divya tak</p>
-          <p class="lead">I make interactive things.</p>
-          <p>Hi! Hello! I'm Divya. I am a cross domain creative human. I love making many things with many people.</p>
-          <p>
-            I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener">Joyus</a>
-            with my friend <a href="https://kahransingh.com" target="_blank" rel="noopener">Kahran</a>.
-            I lead product design for Klydo. I make games with
-            <a href="https://charutak.xyz" target="_blank" rel="noopener">Charu</a>.
-            I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener">Varun Ramanna</a> on VFX projects.
-          </p>
-          <p class="coda">You are at the home of some of my creations.</p>
+        <div class="intro-cols">
+          <div class="intro">
+            <!-- the slot the fixed name lands in; it holds space and nothing else -->
+            <p class="name-slot" id="name-slot" aria-hidden="true">divya tak</p>
+            <p class="lead">I make interactive things.</p>
+            <p>Hi! Hello! I'm Divya. I am a cross domain creative human. I love making many things with many people.</p>
+            <p>
+              I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener">Joyus</a>
+              with my friend <a href="https://kahransingh.com" target="_blank" rel="noopener">Kahran</a>.
+              I make games with <a href="https://charutak.xyz" target="_blank" rel="noopener">Charu</a>.
+              I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener">Varun Ramanna</a> on VFX projects.
+            </p>
+            <p class="coda">You are at the home of some of my creations.</p>
+          </div>
+
+          <!-- RESERVED SLOT — "lately / new stuff".
+               The space is intentional and stays empty until its design exists.
+               Do not fill this with a list, a feed, or placeholder content. -->
+          <aside class="lately" aria-label="lately">
+            <span class="label">lately</span>
+          </aside>
         </div>
       </div>
     </section>
@@ -592,99 +620,70 @@ const navLinks = [
 
   <!-- ============ the folio: white ground slides over the video ============ -->
   <main class="ground" id="ground">
-    <div class="shell">
 
-      <section class="works" id="works" aria-label="works">
-        <div class="works-head">
-          <h2>works</h2>
+    <section class="works" id="works" aria-label="works">
+      <div class="works-head">
+        <h2>works</h2>
 
-          <div class="lenses">
-            <div class="lens-row" role="group" aria-label="filter by kind">
-              <button class="lens" data-bucket="all" aria-pressed="true">all</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="lens" data-bucket="games" aria-pressed="false">games</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="lens" data-bucket="interactive pieces" aria-pressed="false">interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="lens" data-bucket="on paper" aria-pressed="false">on paper</button>
-            </div>
-            <div class="lens-row quiet">
-              <div class="cluster" role="group" aria-label="filter by status">
-                <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
-                <button class="lens" data-status="in progress" aria-pressed="false">in progress</button><span class="sep" aria-hidden="true">&middot;</span>
-                <button class="lens" data-status="ongoing" aria-pressed="false">ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
-                <button class="lens" data-status="finished" aria-pressed="false">finished</button>
-              </div>
-              <div class="cluster" role="group" aria-label="choose a view">
-                <button class="lens" data-view="grid" aria-pressed="true">grid</button><span class="sep" aria-hidden="true">&middot;</span>
-                <button class="lens" data-view="list" aria-pressed="false">list</button>
-              </div>
-            </div>
+        <div class="lenses">
+          <div class="lens-row" role="group" aria-label="filter by kind">
+            <button class="lens" data-bucket="all" aria-pressed="true">all</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="games" aria-pressed="false">games</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="interactive pieces" aria-pressed="false">interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="on paper" aria-pressed="false">on paper</button>
+          </div>
+          <div class="lens-row quiet" role="group" aria-label="filter by status">
+            <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="in progress" aria-pressed="false">in progress</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="ongoing" aria-pressed="false">ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="finished" aria-pressed="false">finished</button>
           </div>
         </div>
+      </div>
 
-        <!-- ---- view: grid ---- -->
-        <div class="view grid" id="view-grid">
-          {works.map((w) => (
-            <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
-              {w.href ? (
-                <a
-                  class="tile"
-                  href={w.href}
-                  target={isExt(w.href) ? '_blank' : undefined}
-                  rel={isExt(w.href) ? 'noopener' : undefined}
-                >
-                  <span class="media">
-                    <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
-                    {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
-                  </span>
-                  <h3>{w.title}</h3>
-                </a>
-              ) : (
-                <div class="tile">
-                  <span class="media">
-                    <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
-                    {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
-                  </span>
-                  <h3>{w.title}</h3>
-                </div>
-              )}
-              <p class="whisper">{w.year}<span class="dot" aria-hidden="true">&middot;</span>{w.status}</p>
-            </article>
-          ))}
-        </div>
+      <!-- ---- the grid: image + title, nothing else ---- -->
+      <div class="grid" id="grid">
+        {works.map((w) => (
+          <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
+            {w.href ? (
+              <a
+                class="tile"
+                href={w.href}
+                target={isExt(w.href) ? '_blank' : undefined}
+                rel={isExt(w.href) ? 'noopener' : undefined}
+              >
+                <span class="media">
+                  <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                  {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+                </span>
+                <h3>{w.title}</h3>
+              </a>
+            ) : (
+              <div class="tile">
+                <span class="media">
+                  <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                  {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+                </span>
+                <h3>{w.title}</h3>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
 
-        <!-- ---- view: list ---- -->
-        <div class="view rows" id="view-list" hidden>
-          {works.map((w) => (
-            <div class="row" id={`row-${w.id}`} data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
-              <span class="r-title">{w.title}</span>
-              <span class="r-year">{w.year}</span>
-              <span class="r-status">{w.status}</span>
-              <span class="r-with">{w.with || ''}</span>
-              <span class="r-links">
-                {w.links.map((ln, i) => (
-                  <>
-                    {i > 0 && <span class="dot" aria-hidden="true">&middot;</span>}
-                    <a
-                      href={ln.href}
-                      target={isExt(ln.href) ? '_blank' : undefined}
-                      rel={isExt(ln.href) ? 'noopener' : undefined}
-                    >{ln.label}</a>
-                  </>
-                ))}
-              </span>
-            </div>
-          ))}
-        </div>
+      <p class="empty" id="empty" hidden>nothing under this lens yet.</p>
 
-        <p class="empty" id="empty" hidden>nothing under this lens yet.</p>
-      </section>
+      <div class="more-wrap">
+        <button class="more" id="more" type="button" hidden>more</button>
+      </div>
+    </section>
 
-      <footer class="foot">
-        <a href="/friends/">friends</a><span class="dot" aria-hidden="true">&middot;</span>
-        <a href="/about/">about</a><span class="dot" aria-hidden="true">&middot;</span>
-        <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
-      </footer>
+    <footer class="foot">
+      <a href="/friends/">friends</a><span class="dot" aria-hidden="true">&middot;</span>
+      <a href="/about/">about</a><span class="dot" aria-hidden="true">&middot;</span>
+      <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
+    </footer>
 
-    </div>
   </main>
 
 <script is:inline>
@@ -829,37 +828,31 @@ const navLinks = [
     }, { passive: false });
   }
 
-  /* ---------- folio: lenses (bucket, status) and views ---------- */
+  /* ---------- folio: lenses (bucket, status) + nine at a time ---------- */
   var bucketBtns = document.querySelectorAll('.lens[data-bucket]');
   var statusBtns = document.querySelectorAll('.lens[data-status]');
-  var viewBtns = document.querySelectorAll('.lens[data-view]');
-  var items = document.querySelectorAll('.entry, .row');
-  var viewEls = {
-    grid: document.getElementById('view-grid'),
-    list: document.getElementById('view-list')
-  };
+  var items = document.querySelectorAll('.entry');
   var emptyEl = document.getElementById('empty');
+  var moreBtn = document.getElementById('more');
   var bucket = 'all';
   var status = 'latest';
-  var view = 'grid';
 
-  function applyLenses() {
+  var PAGE = 9;
+  var shown = PAGE;
+
+  // keepPage=true when the visitor asked for more; any lens change starts over
+  function apply(keepPage) {
+    if (!keepPage) shown = PAGE;
+    var matched = 0;
     items.forEach(function (el) {
       var bOk = bucket === 'all' || el.dataset.bucket === bucket;
       var sOk = status === 'latest' || el.dataset.status === status;
-      el.hidden = !(bOk && sOk);
+      var hit = bOk && sOk;
+      if (hit) matched++;
+      el.hidden = !(hit && matched <= shown);
     });
-    var visible = viewEls[view].querySelectorAll('.entry:not([hidden]), .row:not([hidden])');
-    emptyEl.hidden = visible.length > 0;
-  }
-
-  function setView(name) {
-    view = name;
-    Object.keys(viewEls).forEach(function (k) { viewEls[k].hidden = k !== name; });
-    viewBtns.forEach(function (b) {
-      b.setAttribute('aria-pressed', b.dataset.view === name ? 'true' : 'false');
-    });
-    applyLenses();
+    emptyEl.hidden = matched > 0;
+    moreBtn.hidden = matched <= shown; // no counts, it just goes quiet when done
   }
 
   bucketBtns.forEach(function (b) {
@@ -868,7 +861,7 @@ const navLinks = [
       bucketBtns.forEach(function (o) {
         o.setAttribute('aria-pressed', o.dataset.bucket === bucket ? 'true' : 'false');
       });
-      applyLenses();
+      apply(false);
     });
   });
 
@@ -878,15 +871,16 @@ const navLinks = [
       statusBtns.forEach(function (o) {
         o.setAttribute('aria-pressed', o.dataset.status === status ? 'true' : 'false');
       });
-      applyLenses();
+      apply(false);
     });
   });
 
-  viewBtns.forEach(function (b) {
-    b.addEventListener('click', function () { setView(b.dataset.view); });
+  moreBtn.addEventListener('click', function () {
+    shown += PAGE;
+    apply(true);
   });
 
-  applyLenses();
+  apply(false);
 
   /* ---------- hover footage: only where a real clip exists ---------- */
   if (!prefersReduced) {
