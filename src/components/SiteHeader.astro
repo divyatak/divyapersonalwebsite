@@ -1,0 +1,239 @@
+---
+/**
+ * SiteHeader — the ONE bar for the whole site.
+ *
+ * There used to be two: Layout.astro's .topbar and the landing's bespoke .bar.
+ * They drifted, because nothing held them together. This is the single
+ * implementation; both consumers render it and neither styles it.
+ *
+ * THE SHAPE is the landing's: the site's three columns, wordmark hung on
+ * column 1's left line, the four links spread across columns 2–3 so the first
+ * opens exactly on column 2's line and the last closes on column 3's right.
+ *
+ * PROPS
+ *   variant: 'overlay' — white type, transparent ground, fixed. The landing's
+ *                        dark act. The landing toggles the class `ink` on this
+ *                        element as the white folio slides under it, which
+ *                        turns it to ink-on-white without swapping components.
+ *            'ink'     — ink on white, sticky, aligned to the Layout's content
+ *                        box. Every subpage.
+ *
+ * The element always carries id="site-header" and class "site-header", which
+ * is the hook the landing's scroll script drives.
+ *
+ * transition:persist is written on the <header> itself, NOT on the <SiteHeader/>
+ * tag: Astro does not forward the directive from a component tag onto its root,
+ * so declaring it in Layout.astro silently did nothing. The bar is wayfinding —
+ * it must survive a view transition rather than re-enter on every page. It emits
+ * a persist id only; the bar is never given a transition name, so nothing about
+ * it is animated. Inert on the landing, which has no view-transition router.
+ *
+ * SIZING borrows the host page's grid variables where they exist (--r, --edge,
+ * --gutter, --t-nav on the landing) and falls back to the Layout's own metrics
+ * everywhere else, so one stylesheet serves both without a second breakpoint
+ * system.
+ */
+interface Props {
+  variant?: 'overlay' | 'ink'
+}
+
+const { variant = 'ink' } = Astro.props
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const pathname = Astro.url.pathname
+
+// On the landing the folio is on this page, so Works is an anchor. Everywhere
+// else it is a trip back to the landing's folio.
+const onLanding = pathname.startsWith(`${base}/prototype/ongoing`)
+
+const links = [
+  { label: 'Works', href: onLanding ? '#works' : `${base}/prototype/ongoing/#works` },
+  { label: 'Friends', href: `${base}/friends/` },
+  { label: 'About', href: `${base}/about/` },
+  { label: 'Contact', href: 'mailto:hello@divyatak.art' },
+]
+
+// Minimal by design: an anchor into another page's section is never "active",
+// so Works simply never lights up on a subpage.
+const isActive = (href: string) =>
+  !href.startsWith('mailto:') && !href.includes('#') && pathname.startsWith(href)
+---
+
+<header
+  transition:persist
+  id="site-header"
+  class:list={['site-header', variant === 'overlay' ? 'v-overlay' : 'v-ink']}
+  aria-label="Main navigation"
+>
+  <a class="wordmark" href={`${base}/prototype/ongoing/`}>DIVYA TAK</a>
+  <nav class="links" aria-label="Site">
+    {links.map((l) => (
+      <a
+        href={l.href}
+        class:list={['nav-link', { active: isActive(l.href) }]}
+        aria-current={isActive(l.href) ? 'page' : undefined}
+      >
+        {l.label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<style>
+  /* =====================================================================
+     One bar, two grounds. Everything structural is shared; only the ground,
+     the ink and where the bar is anchored change with the variant.
+     ===================================================================== */
+  .site-header {
+    /* the component carries its own box model: the landing's reset is scoped to
+       the landing's own elements and never reaches in here, and a fixed bar with
+       left:0/right:0 plus content-box padding would run past the viewport */
+    box-sizing: border-box;
+    margin: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter, 1.5rem);
+    align-items: baseline;
+    font-size: var(--t-nav, 0.8125rem);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    line-height: calc(var(--r, 1.5rem) * 0.75);
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* the wordmark is a MARK and keeps its caps */
+  .wordmark {
+    grid-column: 1;
+    justify-self: start;
+    font-size: inherit;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.3s ease, color 0.25s ease;
+  }
+
+  /* the links are WORDS, so they are set as written and their tracking closes
+     to the bottom of the label range — caps tracking on Title Case stutters */
+  .links {
+    grid-column: 2 / -1;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--gutter, 1.5rem);
+    letter-spacing: 0.06em;
+  }
+
+  .nav-link {
+    font-weight: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+  }
+
+  /* NO weight change on the active state: in a proportional face that widens
+     the word and shoves the rest of the row off its line. Colour and a rule
+     carry it. */
+  .nav-link.active {
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.2rem;
+  }
+
+  .wordmark:focus-visible,
+  .nav-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  /* ---------- overlay: the landing's dark act ---------- */
+  .v-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 6;
+    padding: calc(var(--r, 1.5rem) * 0.75) var(--edge, 1.875rem);
+  }
+  .v-overlay .wordmark { color: #fff; opacity: 1; }
+  .v-overlay .nav-link { color: rgba(255, 255, 255, 0.72); }
+  .v-overlay .nav-link:hover { color: #fff; }
+
+  /* on screen 1 the big name IS the wordmark, so the bar keeps quiet */
+  :global(body:not(.docked)) .v-overlay .wordmark {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ---------- ink: subpages, and the landing once the folio is under it ---------- */
+  .v-ink {
+    position: sticky;
+    top: 0;
+    max-width: 1420px;
+    margin: 0 auto;
+    padding: 1.6rem 3rem;
+    background: #fff;
+  }
+  .v-overlay.ink {
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom-color: #eee;
+  }
+  .v-ink .wordmark,
+  .v-overlay.ink .wordmark { color: #222; }
+  .v-ink .nav-link,
+  .v-overlay.ink .nav-link { color: #999; }
+  .v-ink .nav-link:hover,
+  .v-overlay.ink .nav-link:hover { color: #222; }
+  .v-ink .nav-link.active { color: #222; }
+
+  /* ================= narrowing ================= */
+  @media (max-width: 1100px) {
+    .v-overlay { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 1024px) {
+    .v-ink { padding: 1.3rem 1.6rem; column-gap: 1.2rem; }
+  }
+
+  @media (max-width: 768px) {
+    .v-ink {
+      grid-template-columns: 1fr;
+      row-gap: 0.75rem;
+      padding: 1rem 1.2rem;
+      padding-top: calc(1rem + env(safe-area-inset-top));
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .v-ink .wordmark,
+    .v-ink .links { grid-column: 1; }
+    .v-ink .links { gap: 1rem; }
+  }
+
+  @media (max-width: 700px) {
+    .v-overlay {
+      display: flex;
+      gap: calc(var(--r, 1.5rem) * 0.75);
+      align-items: baseline;
+      letter-spacing: 0.08em;
+    }
+    .v-overlay .links { flex: 1; }
+  }
+
+  @media (max-width: 600px) {
+    .v-ink .links { gap: 0.75rem; }
+    .v-ink .nav-link { font-size: 0.75rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header,
+    .wordmark,
+    .nav-link { transition: none; }
+  }
+</style>

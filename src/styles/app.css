@@ -21,81 +21,13 @@
 }
 
 /* =====================================================================
-   TOP BAR — the same three columns the pages under it are set on, so the
-   wordmark hangs on column 1's line and the links spread across columns
-   2–3: the first opens on column 2's line, the last closes on the right
-   edge. White ground, ink text, one family (Sora, from the Layout head).
+   THE TOP BAR LIVES IN src/components/SiteHeader.astro — one component for
+   the whole site, styled entirely inside itself. It used to be written out
+   twice (here, and again on the landing) and the two drifted apart. Nothing
+   in this stylesheet may style it.
    ===================================================================== */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 1.5rem;
-  align-items: baseline;
-  max-width: 1420px;
-  margin: 0 auto;
-  padding: 1.6rem 3rem;
-  background: #fff;
-}
-
-.wordmark {
-  grid-column: 1;
-  justify-self: start;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #222;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.wordmark:visited {
-  color: #222;
-}
-
-.nav-links {
-  grid-column: 2 / -1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.nav-link {
-  font-size: 0.8125rem;
-  font-weight: 400;
-  color: #636363;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color var(--hover-off) var(--ease-out-soft);
-}
-
-.nav-link:visited {
-  color: #636363;
-}
-
-.nav-link:hover {
-  color: #222;
-  transition-duration: var(--hover-on);
-  transition-timing-function: var(--ease-settle);
-}
-
-/* No weight change on the active state: in a proportional face that widens the
-   word and shoves the rest of the row off its line. Colour and a rule carry it. */
-.nav-link.active,
-.nav-link.active:visited {
-  color: #222;
-  border-bottom: 1px solid #222;
-  padding-bottom: 0.2rem;
-}
 
 /* Focus indicators for keyboard navigation */
-.wordmark:focus-visible,
-.nav-link:focus-visible,
 .project-thumb:focus-visible,
 .back-link:focus-visible {
   outline: 2px solid #222;
@@ -912,38 +844,12 @@ a.talk-name:visited {
     width: 300px;
   }
 
-  .topbar {
-    padding: 1.3rem 1.6rem;
-    column-gap: 1.2rem;
-  }
-
   .content {
     padding: 1.2rem 1.6rem 4rem;
   }
 }
 
-/* Mobile — the wordmark takes its own line and the links spread beneath it,
-   rather than the whole bar wrapping mid-run. */
 @media (max-width: 768px) {
-  .topbar {
-    grid-template-columns: 1fr;
-    row-gap: 0.75rem;
-    padding: 1rem 1.2rem;
-    padding-top: calc(1rem + env(safe-area-inset-top));
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  .wordmark,
-  .nav-links {
-    grid-column: 1;
-  }
-
-  .nav-links {
-    gap: 1rem;
-  }
-
   .content {
     padding: 1rem 1.2rem 3rem;
   }
@@ -1095,14 +1001,6 @@ a.talk-name:visited {
 
   .home-hero {
     height: 40vh;
-  }
-
-  .nav-links {
-    gap: 0.75rem;
-  }
-
-  .nav-link {
-    font-size: 0.75rem;
   }
 }
 

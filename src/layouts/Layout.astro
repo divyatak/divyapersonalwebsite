@@ -1,5 +1,8 @@
 ---
 import { ViewTransitions } from 'astro:transitions'
+// ONE header for the whole site. The bar used to be written out here AND again
+// on the landing; the two drifted. Both now render this component.
+import SiteHeader from '../components/SiteHeader.astro'
 
 interface Props {
   title?: string
@@ -14,19 +17,6 @@ const siteUrl = 'https://divyatak.art'
 const pathname = Astro.url.pathname
 const canonicalUrl = `${siteUrl}${pathname}`
 const ogImageUrl = ogImage ? `${siteUrl}${ogImage}` : `${siteUrl}/og-image.png`
-
-const navItems = [
-  // works points at the new landing's folio section while the redesign lives at /prototype/
-  { label: 'Works', href: `${base}/prototype/ongoing/#works` },
-  { label: 'Friends', href: `${base}/friends/` },
-  { label: 'About', href: `${base}/about/` },
-  { label: 'Contact', href: 'mailto:hello@divyatak.art', external: true },
-]
-
-function isActive(href: string) {
-  if (href.startsWith('mailto:')) return false
-  return pathname.startsWith(href)
-}
 ---
 
 <!DOCTYPE html>
@@ -71,20 +61,9 @@ function isActive(href: string) {
   <body>
     <div class="layout">
       <a href="#main-content" class="skip-link">Skip to main content</a>
-      <nav class="topbar" transition:persist aria-label="Main navigation">
-        <a href={`${base}/prototype/ongoing/`} class="wordmark">DIVYA TAK</a>
-        <div class="nav-links">
-          {navItems.map(item => (
-            <a
-              href={item.href}
-              class:list={['nav-link', { active: isActive(item.href) }]}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
+      <!-- transition:persist is declared inside the component, on its root
+           element — Astro will not forward it from this tag. -->
+      <SiteHeader variant="ink" />
       <main class="content" id="main-content">
         <slot />
       </main>

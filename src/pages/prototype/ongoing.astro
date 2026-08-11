@@ -6,6 +6,9 @@
 // Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
 
 import generated from '../../data/generated-projects.json';
+// ONE header for the whole site. This page used to carry its own .bar; the
+// Layout carried a second one; they drifted. Both render this now.
+import SiteHeader from '../../components/SiteHeader.astro';
 
 const isExt = (h) => typeof h === 'string' && h.indexOf('http') === 0;
 
@@ -33,11 +36,11 @@ const WITH_CHARU = [
 
 const CURRENT_YEAR = 2026;
 
-/* ---------- the five that are not in the pipeline ---------- */
-const bazaar = 'https://everythingbazaar.netlify.app';
-const flow = 'https://divyatak.github.io/creative-visuals/particles/';
-const webcam = 'https://divyatak.github.io/creative-visuals/webcam/';
-const lineBefore = 'https://divya.studiotypo.xyz';
+/* ---------- the five that are not in the pipeline ----------
+   They have real work pages now (src/data/extra-works.js feeds /works/[slug]),
+   so like every other tile they point at their OWN page. THE FOLIO NEVER LEAVES
+   THE SITE: the live "Play it / Open it" link belongs on the work page, which
+   is the thing that can introduce the work before handing you off. */
 
 // STATUS is two-valued now: something is either still moving or it is closed.
 // "in progress" and "ongoing" said the same thing, so there is one word for it.
@@ -51,7 +54,7 @@ const additions = [
     img: '/clips/poster-7.jpg',
     alt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
     clip: '/clips/cut-7a.mp4',
-    href: null,
+    href: '/works/metro-museum/',
     with: '',
   },
   {
@@ -63,7 +66,7 @@ const additions = [
     img: '/clips/poster-6.jpg',
     alt: 'A dark shop screen with a product box, from Everything Bazaar',
     clip: null,
-    href: bazaar,
+    href: '/works/everything-bazaar/',
     with: '',
   },
   {
@@ -75,7 +78,7 @@ const additions = [
     img: '/playground/bioluminescent-flow.webp',
     alt: 'Glowing particle trails on a dark field, from Bioluminescent Flow',
     clip: '/clips/cut-2a.mp4',
-    href: flow,
+    href: '/works/bioluminescent-flow/',
     with: '',
   },
   {
@@ -87,7 +90,7 @@ const additions = [
     img: '/playground/webcam-magic.webp',
     alt: 'A face rendered as a pixel mirror, from Webcam Magic',
     clip: '/clips/cut-1a.mp4',
-    href: webcam,
+    href: '/works/webcam-magic/',
     with: '',
   },
   {
@@ -99,7 +102,7 @@ const additions = [
     img: '/playground/the-line-before.webp',
     alt: 'A scene from The Line Before',
     clip: null,
-    href: lineBefore,
+    href: '/works/the-line-before/',
     with: 'with Kahran Singh',
   },
 ];
@@ -130,12 +133,52 @@ const fromPipeline = generated.flatMap((group) =>
 // from the same year.
 const works = [...additions, ...fromPipeline].sort((a, b) => b.year - a.year);
 
-const navLinks = [
-  { label: 'Works', href: '#works' },
-  { label: 'Friends', href: '/friends/' },
-  { label: 'About', href: '/about/' },
-  { label: 'Contact', href: 'mailto:hello@divyatak.art' },
-];
+/* ---------- LATELY: a list, not a single fact ----------
+   The slot holds a RUN of recent things, newest first. Everything each of the
+   three patterns needs is here, so switching pattern is a change of structure
+   and never a change of content:
+     short   the one-line form every compact pattern uses
+     word    the noun the artifact pattern hangs off its picture
+     when    the short date · stamp the long one
+     whence  where the thing lives
+   Sample content, marked as such in every pattern. The slot renders at most
+   LATELY_MAX and is designed to sit still at 1, 2 or 3. */
+const LATELY_MAX = 3;
+const lately = [
+  {
+    short: 'Fogging the east hall of the Metro Museum',
+    word: 'Metro Museum',
+    when: '09 aug',
+    stamp: '2026 · 08 · 09',
+    whence: 'build notes',
+    href: '/works/metro-museum/',
+    img: '/clips/poster-7.jpg',
+    alt: 'A fogged museum hall from the Metro Museum build',
+  },
+  {
+    short: 'Everything Bazaar is live',
+    word: 'Everything Bazaar',
+    when: '06 aug',
+    stamp: '2026 · 08 · 06',
+    whence: 'netlify',
+    href: 'https://everythingbazaar.netlify.app',
+    img: '/clips/poster-6.jpg',
+    alt: 'A dark shop screen with a product box, from Everything Bazaar',
+  },
+  {
+    short: 'A lenticular edition to peruse',
+    word: 'Lenticular',
+    when: '02 aug',
+    stamp: '2026 · 08 · 02',
+    whence: 'instagram',
+    href: 'https://www.instagram.com/divyatakart/',
+    img: '/playground/lenticular.webp',
+    alt: 'A lenticular print test',
+  },
+].slice(0, LATELY_MAX);
+
+const latelyLead = lately[0];
+const latelyRest = lately.slice(1);
 ---
 <html lang="en">
 <head>
@@ -318,12 +361,12 @@ const navLinks = [
   }
   /* THE LABEL LAYER — one line box for everything that labels rather than
      speaks, so the whole instrument layer stacks on the same baseline. */
-  .bar, .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue,
+  .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue,
   .woven-foot, .artifact figcaption, .stamp {
     line-height: var(--lh-label);
   }
   /* light type over moving video blooms; hold the strokes thin */
-  .bar, .lately, .scroll-cue, .intro, .name {
+  .lately, .scroll-cue, .intro, .name {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -354,61 +397,13 @@ const navLinks = [
     background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.34) 100%);
   }
 
-  /* ---------- one nav bar, hung on the same three columns ----------
-     wordmark on column 1; the four links spread across columns 2–3 so the first
-     opens exactly on column 2's line and the last closes on column 3's right.
-     Uppercase and widely tracked: this is the instrument register, and the bar
-     is chrome, so it stays tight while the rest of the page opens up. */
-  .bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 6;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--gutter);
-    align-items: baseline;
-    padding: calc(var(--r) * 0.75) var(--edge);
-    font-size: var(--t-nav);
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    transition: background-color 0.25s ease, border-color 0.25s ease;
-    border-bottom: 1px solid transparent;
-  }
-  .bar .wordmark {
-    grid-column: 1;
-    font-size: var(--t-nav);
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #fff;
-    opacity: 1;
-    transition: opacity 0.3s ease, color 0.25s ease;
-  }
-  /* on screen 1 the big name is the wordmark, so the bar keeps quiet */
-  body:not(.docked) .bar .wordmark { opacity: 0; pointer-events: none; }
-  /* the wordmark is a MARK and keeps its caps; the links are WORDS, so they are
-     set as written and their tracking closes to the bottom of the label range —
-     caps tracking on Title Case reads as a stutter. */
-  .bar .links {
-    grid-column: 2 / -1;
-    display: flex;
-    justify-content: space-between;
-    letter-spacing: 0.06em;
-  }
-  .bar a { color: rgba(255,255,255,0.72); transition: color 0.25s ease; }
-  .bar a:hover { color: #fff; }
-  /* once the white ground is under the bar, the bar turns to ink */
-  .bar.ink {
-    background: rgba(255,255,255,0.86);
-    backdrop-filter: saturate(140%) blur(10px);
-    -webkit-backdrop-filter: saturate(140%) blur(10px);
-    border-bottom-color: #eee;
-  }
-  .bar.ink .wordmark { color: #222; }
-  .bar.ink a { color: #999; }
-  .bar.ink a:hover { color: #222; }
+  /* ---------- the nav bar is NOT here any more ----------
+     It is src/components/SiteHeader.astro — the one bar the whole site uses.
+     This page renders it in overlay mode and toggles the class `ink` on it as
+     the white ground slides under; the component owns every other rule,
+     including the wordmark's silence while the big name is still on screen 1.
+     Nothing on this page may style it: that is exactly how the two bars drifted
+     apart the first time. */
 
   /* ---------- the one name: a full row of caps that divides down to one column ----------
      The box is 100vw − 2×edge, which is what makes the morph script's centring
@@ -572,27 +567,38 @@ const navLinks = [
 
   /* =====================================================================
      LATELY — column 3. No rule, no label, no card box. Three different
-     STRUCTURES for one living update, switched from the tooling picker:
+     STRUCTURES for one RUN of recent things (1, 2 or 3 of them), switched
+     from the tooling picker:
 
-       1 WOVEN    the update in the intro's own speaking register — a
-                  sentence that happens to be this week's fact, with the
-                  artefact set inline in the line of text like a word.
-       2 ARTIFACT the object almost alone: a square, chromeless, with one
-                  word and a date hanging off its bottom edge on the column
-                  line. The source is withheld until you hover it.
-       3 STAMP    a dated imprint. Two hairlines and nothing else — here the
-                  rule IS the idea, because an index entry is a thing you
-                  read between two lines.
+       1 WOVEN    the updates in the intro's own speaking register — a short
+                  run of lines, the first with its artefact set inline like a
+                  word. Read as speech, not as a list.
+       2 ARTIFACT the newest thing is an object: a square, chromeless, with
+                  one word and a date hanging off its bottom edge on the
+                  column line, its source withheld until you hover it. What
+                  came before it follows as compact lines underneath, so the
+                  picture stays the only picture.
+       3 STAMP    a dated index. Two hairlines around the run and a thin one
+                  between entries — here the rule IS the idea, because an
+                  index entry is a thing you read between two lines.
 
-     THE SLOT IS THE CONSTANT; THE PATTERN IS THE VARIABLE. All three are
-     column-3 blocks starting at the same anchor — the body's first line
-     (dock + gap + subtitle + its margin) — inside a box of FIXED height, so
-     the three of them are three fillings of one hole. Nothing about the
-     switch is allowed to reach the layout: the height cannot change (fixed,
-     not min-), the width cannot change (min-width:0 on the track), and
-     therefore neither the intro, the name's dock, nor the vertical centring
-     of the whole screen can move. Woven used to break all three at once by
-     asking for a prose measure wider than its own column.
+     THE SLOT IS THE CONSTANT; THE PATTERN AND THE COUNT ARE THE VARIABLES.
+     All three are column-3 blocks starting at the same anchor — the body's
+     first line (dock + gap + subtitle + its margin) — inside a box of FIXED
+     height, so they are three fillings of one hole. Nothing about the switch
+     is allowed to reach the layout: the height cannot change (fixed, not
+     min-), the width cannot change (min-width:0 on the track), and therefore
+     neither the intro, the name's dock, nor the vertical centring of the
+     whole screen can move.
+
+     THE HEIGHT IS 15×--r, RAISED ONCE FROM 14 for all three at the same
+     time when the slot went from one item to three. Every pattern is sized
+     so that its THREE-item worst case (each line wrapping to two) still
+     clears it, which is why the compact registers below are deliberately
+     tighter than the single-item versions they replace: the artefact's
+     square is 8×--r rather than 11, and woven's leading closed from 1.5×--r
+     to 1.25. The slot does not grow to fit the content; the content is cut
+     to fit the slot.
      ===================================================================== */
   .lately {
     grid-column: 3;
@@ -601,31 +607,35 @@ const navLinks = [
       var(--t-dock) + var(--dock-gap) +
       var(--t-sub) * 1.02 + var(--r) * 2.5
     );
-    height: calc(var(--r) * 14);   /* fixed, not min-: the slot never breathes */
+    height: calc(var(--r) * 15);   /* fixed, not min-: the slot never breathes */
   }
   .lately-view { max-width: 100%; }
   .lately-view[hidden] { display: none; }
+  .lately ul { list-style: none; }
 
   /* ---- 1 · WOVEN ---- */
   /* the measure here is the COLUMN, not the reading measure — this is a block
      in column 3 like the other two, it just happens to be made of sentence. */
   .woven {
-    font-size: calc(var(--t-body) * 1.15);
-    line-height: calc(var(--r) * 1.5);
+    font-size: calc(var(--t-body) * 1.05);
+    line-height: calc(var(--r) * 1.25);
     letter-spacing: -0.005em;
     color: rgba(255,255,255,0.88);
     max-width: 100%;
   }
+  /* the lines run on with a breath between them, not a bullet or a rule: three
+     facts spoken one after the other are still speech */
+  .woven li + li { margin-top: calc(var(--r) * 0.5); }
   .woven a { border-bottom: 1px solid rgba(255,255,255,0.4); }
   .woven a:hover { border-bottom-color: #fff; }
-  /* the artefact sits IN the sentence, sized to the line it lives on */
+  /* the artefact sits IN the first sentence, sized to the line it lives on */
   .woven .inline-thumb {
     display: inline-block;
-    width: calc(var(--r) * 1.4);
-    height: calc(var(--r) * 1.4);
+    width: calc(var(--r) * 1.2);
+    height: calc(var(--r) * 1.2);
     object-fit: cover;
-    vertical-align: -0.42em;
-    margin: 0 0.12em;
+    vertical-align: -0.34em;
+    margin: 0 0.12em 0 0;
   }
   .woven-foot {
     display: block;
@@ -638,7 +648,7 @@ const navLinks = [
   }
 
   /* ---- 2 · ARTIFACT ---- */
-  .artifact { max-width: calc(var(--r) * 11); }
+  .artifact { max-width: calc(var(--r) * 8); }
   .artifact img {
     width: 100%;
     aspect-ratio: 1;
@@ -677,6 +687,18 @@ const navLinks = [
   .artifact:hover .whence,
   .artifact:focus-within .whence { opacity: 1; }
 
+  /* what came BEFORE the object: one compact line each, no second picture */
+  .artifact-rest {
+    margin-top: var(--r);
+    font-size: var(--t-caption);
+    line-height: var(--lh-label);
+    color: rgba(255,255,255,0.62);
+  }
+  .artifact-rest li + li { margin-top: calc(var(--r) * 0.5); }
+  .artifact-rest a { border-bottom: 1px solid rgba(255,255,255,0.22); }
+  .artifact-rest a:hover { color: #fff; border-bottom-color: #fff; }
+  .artifact-rest[hidden] { display: none; }
+
   /* ---- 3 · STAMP ---- */
   .stamp {
     border-top: 1px solid rgba(255,255,255,0.3);
@@ -693,15 +715,24 @@ const navLinks = [
     letter-spacing: 0.1em;   /* "Lately" is a word, not an imprint of one */
     color: rgba(255,255,255,0.45);
   }
+  /* the entries: an index, so the thin rule between them is the point */
+  .stamp-list { margin-top: calc(var(--r) * 0.75); }
+  .stamp-list li + li {
+    border-top: 1px solid rgba(255,255,255,0.14);
+    margin-top: calc(var(--r) * 0.5);
+    padding-top: calc(var(--r) * 0.5);
+  }
   .stamp .subject {
-    margin: calc(var(--r) * 0.75) 0 calc(var(--r) * 0.5);
-    font-size: calc(var(--t-body) * 1.15);
-    line-height: calc(var(--r) * 1.25);
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
     letter-spacing: -0.01em;
     color: #fff;
   }
+  .stamp .subject a { border-bottom: 1px solid rgba(255,255,255,0.3); }
+  .stamp .subject a:hover { border-bottom-color: #fff; }
   .stamp .whence {
     display: block;
+    margin-top: calc(var(--r) * 0.25);
     font-size: var(--t-quiet);
     font-weight: 500;
     letter-spacing: 0.22em;
@@ -712,7 +743,7 @@ const navLinks = [
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .backdrop video { transition: none; }
-    .scroll-cue, .tile, .tile .media video, .bar, .bar .wordmark,
+    .scroll-cue, .tile, .tile .media video,
     .artifact .whence { transition: none !important; }
   }
 
@@ -902,7 +933,6 @@ const navLinks = [
       --dock-w: var(--col);        /* still exactly one column */
     }
     .grid { grid-template-columns: repeat(2, 1fr); }
-    .bar { grid-template-columns: repeat(2, 1fr); }
     .opening { grid-template-columns: repeat(2, 1fr); }
     .scroll-cue { grid-column: 2; }
     .intro-cols { grid-template-columns: repeat(2, 1fr); }
@@ -934,8 +964,6 @@ const navLinks = [
       --dock-w: calc(var(--span-all) * 0.46);
     }
     .grid { grid-template-columns: 1fr; row-gap: calc(var(--r) * 2); }
-    .bar { display: flex; gap: calc(var(--r) * 0.75); align-items: baseline; letter-spacing: 0.08em; }
-    .bar .links { flex: 1; }
     .opening { grid-template-columns: 1fr; }
     .scroll-cue { grid-column: 1; }
     .intro-cols, .intro { grid-template-columns: 1fr; }
@@ -993,13 +1021,9 @@ const navLinks = [
     <div class="scrim"></div>
   </div>
 
-  <!-- ============ one nav bar, white over the video, ink over the folio ============ -->
-  <header class="bar" id="bar">
-    <a class="wordmark" href="/prototype/ongoing/">divya tak</a>
-    <nav class="links" aria-label="Site">
-      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
-    </nav>
-  </header>
+  <!-- ============ THE site header — white over the video, ink over the folio.
+       Same component the Layout uses; this page only flips its `ink` class. ============ -->
+  <SiteHeader variant="overlay" />
 
   <!-- ============ the name: one element, it becomes the docked title ============ -->
   <h1 class="name" id="name">DIVYA TAK</h1>
@@ -1028,42 +1052,83 @@ const navLinks = [
             </p>
           </div>
 
-          <!-- LATELY — three structures for one living update. All content is
-               SAMPLE; each pattern says so quietly in its own register. -->
+          <!-- LATELY — three structures over ONE list of recent things. All
+               content is SAMPLE; each pattern says so quietly in its own
+               register. Each pattern reads the same `lately` array, so they
+               all handle 1, 2 or 3 items without the slot changing size. -->
           <aside class="lately" aria-label="Lately">
 
-            <!-- 1 · WOVEN: the update as a sentence, artefact set inline -->
+            <!-- 1 · WOVEN: the run as speech — short lines, artefact inline in
+                 the first one so the block still reads as a sentence, not a feed -->
             <article class="lately-view" data-view="1">
-              <p class="woven">
-                This week I have mostly been fogging
-                <img class="inline-thumb" src="/playground/lenticular.webp" alt="" width="240" height="240" />
-                the east hall of the <a href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">Metro Museum</a>,
-                and writing down what the light did.
-              </p>
-              <span class="woven-foot">09 aug 2026 &middot; mock</span>
+              <ul class="woven">
+                {lately.map((it, i) => (
+                  <li>
+                    {i === 0 && (
+                      <img class="inline-thumb" src={it.img} alt="" width="240" height="240" />
+                    )}
+                    <a
+                      href={it.href}
+                      target={isExt(it.href) ? '_blank' : undefined}
+                      rel={isExt(it.href) ? 'noopener' : undefined}
+                    >{it.short}</a>.
+                  </li>
+                ))}
+              </ul>
+              <span class="woven-foot">{latelyLead.when} 2026 &middot; mock</span>
             </article>
 
-            <!-- 2 · ARTIFACT: the object nearly alone, source withheld until hover -->
+            <!-- 2 · ARTIFACT: the newest thing as an object, source withheld
+                 until hover; anything older follows as compact lines -->
             <article class="lately-view" data-view="2" hidden>
               <figure class="artifact" tabindex="0">
-                <img src="/playground/lenticular.webp" alt="A lenticular print test, sample image standing in for a recent post" width="480" height="480" loading="lazy" />
+                <img src={latelyLead.img} alt={`${latelyLead.alt}, sample image standing in for a recent post`} width="480" height="480" loading="lazy" />
                 <figcaption>
-                  <span class="word">Lenticular</span>
-                  <span class="when">06 aug &middot; mock</span>
-                  <span class="whence">instagram</span>
+                  <span class="word">
+                    <a
+                      href={latelyLead.href}
+                      target={isExt(latelyLead.href) ? '_blank' : undefined}
+                      rel={isExt(latelyLead.href) ? 'noopener' : undefined}
+                    >{latelyLead.word}</a>
+                  </span>
+                  <span class="when">{latelyLead.when} &middot; mock</span>
+                  <span class="whence">{latelyLead.whence}</span>
                 </figcaption>
               </figure>
+              <ul class="artifact-rest" hidden={latelyRest.length === 0}>
+                {latelyRest.map((it) => (
+                  <li>
+                    <a
+                      href={it.href}
+                      target={isExt(it.href) ? '_blank' : undefined}
+                      rel={isExt(it.href) ? 'noopener' : undefined}
+                    >{it.short}</a>
+                  </li>
+                ))}
+              </ul>
             </article>
 
-            <!-- 3 · STAMP: a dated imprint. Here the rules ARE the idea. -->
+            <!-- 3 · STAMP: a dated index. Here the rules ARE the idea. -->
             <article class="lately-view" data-view="3" hidden>
               <div class="stamp">
                 <span class="imprint">
                   <span>Lately</span>
-                  <span>2026 &middot; 08 &middot; 09</span>
+                  <span>{latelyLead.stamp}</span>
                 </span>
-                <p class="subject">Notes from the Metro Museum build</p>
-                <span class="whence">substack &middot; mock</span>
+                <ul class="stamp-list">
+                  {lately.map((it) => (
+                    <li>
+                      <p class="subject">
+                        <a
+                          href={it.href}
+                          target={isExt(it.href) ? '_blank' : undefined}
+                          rel={isExt(it.href) ? 'noopener' : undefined}
+                        >{it.short}</a>
+                      </p>
+                      <span class="whence">{it.whence} &middot; mock</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </article>
 
@@ -1095,32 +1160,19 @@ const navLinks = [
         </div>
       </div>
 
-      <!-- ---- the grid: image + caption, nothing else ---- -->
+      <!-- ---- the grid: image + caption, nothing else.
+           EVERY tile goes to that work's OWN page. No tile leaves the site any
+           more; the live link out lives on the work page. ---- -->
       <div class="grid" id="grid">
         {works.map((w) => (
           <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
-            {w.href ? (
-              <a
-                class="tile"
-                href={w.href}
-                target={isExt(w.href) ? '_blank' : undefined}
-                rel={isExt(w.href) ? 'noopener' : undefined}
-              >
-                <span class="media">
-                  <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
-                  {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
-                </span>
-                <h3>{w.title}</h3>
-              </a>
-            ) : (
-              <div class="tile">
-                <span class="media">
-                  <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
-                  {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
-                </span>
-                <h3>{w.title}</h3>
-              </div>
-            )}
+            <a class="tile" href={w.href}>
+              <span class="media">
+                <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+              </span>
+              <h3>{w.title}</h3>
+            </a>
           </article>
         ))}
       </div>
@@ -1153,21 +1205,21 @@ const navLinks = [
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
-  // 8 cuts of 5.2s each, composed offline with ffmpeg at a uniform 1920x1080.
-  // The order below is informational — it is baked into the file.
-  var order = ['2a','4a','7a','1a','3a','4b','7b','2b'];
-  var MONTAGE_SECONDS = 41.6;
-  var CUT = MONTAGE_SECONDS / order.length; // 5.2s
+  // 15 cuts of 5.2s each = 78.0s, composed offline with ffmpeg at a uniform
+  // 1920x1080. The order below is informational — it is baked into the file.
+  var order = ['2a','7e','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
+  var MONTAGE_SECONDS = 78.0;
+  var CUT = MONTAGE_SECONDS / order.length;   // 5.2s — the montage's one unit
 
   var vid = document.getElementById('vid');
 
   // A LOOP THAT ALWAYS OPENS ON THE SAME FRAME becomes the page's face, and
-  // 41.6s is short enough that a returning visitor would learn it. So each load
-  // enters the loop on a different cut: seek first, THEN reveal and play, so the
-  // seek is never seen. The seek is on a cut boundary, so it lands on a first
-  // frame, not mid-shot.
+  // even 78s is short enough that a returning visitor would learn it. So each
+  // load enters the loop on a different cut: seek first, THEN reveal and play,
+  // so the seek is never seen. The seek is on a cut boundary, so it lands on a
+  // first frame, not mid-shot.
   function enterMontage() {
-    try { vid.currentTime = CUT * Math.floor(Math.random() * order.length); } catch (err) {}
+    try { vid.currentTime = 5.2 * Math.floor(Math.random() * 15); } catch (err) {}
     vid.classList.add('on');
     vid.play().catch(function () {});
   }
@@ -1192,7 +1244,9 @@ const navLinks = [
   var slotEl = document.getElementById('name-slot');
   var overlayEl = document.getElementById('intro');
   var groundEl = document.getElementById('ground');
-  var barEl = document.getElementById('bar');
+  // the shared SiteHeader, rendered in overlay mode. This page's only claim on
+  // it is the `ink` class it flips as the white ground arrives underneath.
+  var barEl = document.getElementById('site-header');
 
   var M = { x0: 0, y0: 0, x1: 0, yDoc: 0, s1: 0.2, end: 1 };
   var docked = null;
