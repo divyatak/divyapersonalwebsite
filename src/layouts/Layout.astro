@@ -16,14 +16,14 @@ const canonicalUrl = `${siteUrl}${pathname}`
 const ogImageUrl = ogImage ? `${siteUrl}${ogImage}` : `${siteUrl}/og-image.png`
 
 const navItems = [
-  { label: 'hello', href: `${base}/` },
   { label: 'works', href: `${base}/works/` },
   { label: 'friends', href: `${base}/friends/` },
   { label: 'about', href: `${base}/about/` },
+  { label: 'contact', href: 'mailto:hello@divyatak.art', external: true },
 ]
 
 function isActive(href: string) {
-  if (href === `${base}/`) return pathname === `${base}/` || pathname === base || pathname === '/'
+  if (href.startsWith('mailto:')) return false
   return pathname.startsWith(href)
 }
 ---
@@ -68,35 +68,17 @@ function isActive(href: string) {
   <body>
     <div class="layout">
       <a href="#main-content" class="skip-link">Skip to main content</a>
-      <nav class="sidebar" transition:persist aria-label="Main navigation">
-        <a href={`${base}/`} class="sidebar-name">divya tak</a>
-        <div class="sidebar-links">
-          {navItems.map(item => (
-            <a
-              href={item.href}
-              class:list={['nav-item', { active: isActive(item.href) }]}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
-          ))}
-        </div>
-        <a href={`${base}/playground/`} class="sidebar-playground">playground</a>
-        <a href="mailto:hello@divyatak.art" class="sidebar-email">
-          <span class="sidebar-email-text">hello@divyatak.art</span>
-          <svg class="sidebar-email-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg>
-        </a>
-        <div class="sidebar-socials">
-          <a href="https://www.instagram.com/divyatakart/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+      <nav class="topbar" transition:persist aria-label="Main navigation">
+        <a href={`${base}/`} class="wordmark">divya tak</a>
+        {navItems.map(item => (
+          <a
+            href={item.href}
+            class:list={['nav-link', { active: isActive(item.href) }]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
           </a>
-          <a href="https://www.linkedin.com/in/divya-tak-56019522/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          </a>
-          <a href="https://divyatak.substack.com" target="_blank" rel="noopener noreferrer" aria-label="Substack">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24l9.54-5.347L20.539 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
-          </a>
-        </div>
+        ))}
       </nav>
       <main class="content" id="main-content">
         <slot />
@@ -109,16 +91,16 @@ function isActive(href: string) {
   function initAnimations() {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Sidebar first-visit entrance
-    const sidebar = document.querySelector('.sidebar')
-    if (sidebar) {
-      if (!sessionStorage.getItem('sidebar-entered')) {
-        sidebar.classList.add('sidebar--entering')
+    // Top bar first-visit entrance
+    const topbar = document.querySelector('.topbar')
+    if (topbar) {
+      if (!sessionStorage.getItem('topbar-entered')) {
+        topbar.classList.add('topbar--entering')
         // Trigger reflow, then start animation
         requestAnimationFrame(() => {
-          sidebar.classList.remove('sidebar--entering')
-          sidebar.classList.add('sidebar--entered')
-          sessionStorage.setItem('sidebar-entered', '1')
+          topbar.classList.remove('topbar--entering')
+          topbar.classList.add('topbar--entered')
+          sessionStorage.setItem('topbar-entered', '1')
         })
       }
     }
@@ -168,15 +150,12 @@ function isActive(href: string) {
     })
   }
 
-  // Update sidebar active state on navigation
-  function updateSidebarActive() {
+  // Update top bar active state on navigation
+  function updateNavActive() {
     const path = window.location.pathname
-    document.querySelectorAll('.nav-item').forEach(item => {
+    document.querySelectorAll('.nav-link').forEach(item => {
       const href = item.getAttribute('href') || ''
-      const isHome = href.endsWith('/') && !href.includes('/works') && !href.includes('/friends') && !href.includes('/about')
-      const isActive = isHome
-        ? (path === href || path === href.slice(0, -1) || path === '/')
-        : path.startsWith(href)
+      const isActive = !href.startsWith('mailto:') && path.startsWith(href)
       item.classList.toggle('active', isActive)
       if (isActive) {
         item.setAttribute('aria-current', 'page')
@@ -191,7 +170,7 @@ function isActive(href: string) {
 
   // Re-run after Astro page transitions
   document.addEventListener('astro:after-swap', () => {
-    updateSidebarActive()
+    updateNavActive()
     initAnimations()
   })
 </script>

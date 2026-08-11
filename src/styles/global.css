@@ -73,11 +73,17 @@ body {
 }
 
 a {
-  color: #1a0dab;
+  color: #444;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 2px;
 }
 
 a:visited {
-  color: #681da8;
+  color: #444;
+}
+
+a:hover {
+  color: #222;
 }
 
 a:focus-visible {

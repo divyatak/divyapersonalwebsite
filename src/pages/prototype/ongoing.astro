@@ -1,4 +1,225 @@
-<!-- PROTOTYPE — chosen direction "ongoing", folio register. Promote to real pages next. -->
+---
+// PROTOTYPE — landing rebuild after the design interview.
+// Dark act = two snap screens over the fixed video. White act = the folio, free scroll.
+// Data lives here so the three folio views (grid / list / timeline) stay in sync.
+
+const peruse = 'https://divyatak.github.io/creative-visuals/lenticular/';
+const bazaar = 'https://everythingbazaar.netlify.app';
+
+const isExt = (h) => typeof h === 'string' && h.indexOf('http') === 0;
+
+// LATELY — the same four real facts feed all three rail variants.
+const railItems = [
+  { text: 'metro museum: in progress' },
+  { text: 'everything bazaar: live', href: bazaar },
+  { text: 'this site: rebuilt this week' },
+  { text: 'something to peruse ↗', href: peruse },
+];
+// repeated so the crawl never shows a gap on a wide screen
+const railLoop = [...railItems, ...railItems, ...railItems];
+
+// WORKS — newest first. img must be a real file on disk; clip only where footage exists.
+const works = [
+  {
+    id: 'metro-museum',
+    title: 'Metro Museum of the Forgotten',
+    year: '2026', sort: 2026,
+    status: 'in progress',
+    bucket: 'games',
+    img: '/clips/poster-7.jpg',
+    alt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
+    clip: '/clips/cut-7a.mp4',
+    href: null,
+    links: [],
+  },
+  {
+    id: 'everything-bazaar',
+    title: 'Everything Bazaar',
+    year: '2026', sort: 2026,
+    status: 'finished',
+    bucket: 'games',
+    img: '/clips/poster-6.jpg',
+    alt: 'A dark shop screen with a product box, from Everything Bazaar',
+    clip: '/clips/cut-6a.mp4',
+    href: bazaar,
+    links: [{ label: 'play ↗', href: bazaar }],
+  },
+  {
+    id: 'bioluminescent-flow',
+    title: 'Bioluminescent Flow',
+    year: '2026', sort: 2026,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/bioluminescent-flow.webp',
+    alt: 'Glowing particle trails on a dark field, from Bioluminescent Flow',
+    clip: '/clips/cut-2a.mp4',
+    href: 'https://divyatak.github.io/creative-visuals/particles/',
+    links: [{ label: 'open ↗', href: 'https://divyatak.github.io/creative-visuals/particles/' }],
+  },
+  {
+    id: 'webcam-magic',
+    title: 'Webcam Magic',
+    year: '2026', sort: 2026,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/webcam-magic.webp',
+    alt: 'A face rendered as a pixel mirror, from Webcam Magic',
+    clip: '/clips/cut-1a.mp4',
+    href: 'https://divyatak.github.io/creative-visuals/webcam/',
+    links: [{ label: 'open ↗', href: 'https://divyatak.github.io/creative-visuals/webcam/' }],
+  },
+  {
+    id: 'unseen',
+    title: '(un)seen',
+    year: '2024 to now', sort: 2026,
+    status: 'in progress',
+    bucket: 'on paper',
+    img: '/projects/2026/(un)seen Life/cover.webp',
+    alt: '(un)seen Life cover, drawing over a street photograph',
+    clip: null,
+    href: peruse,
+    links: [{ label: 'lenticular ↗', href: peruse }],
+  },
+  {
+    id: 'the-line-before',
+    title: 'The Line Before',
+    year: '2025', sort: 2025,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/the-line-before.webp',
+    alt: 'A scene from The Line Before',
+    clip: null,
+    href: 'https://divya.studiotypo.xyz',
+    with: 'with Kahran Singh',
+    links: [{ label: 'open ↗', href: 'https://divya.studiotypo.xyz' }],
+  },
+  {
+    id: 'the-titli-effect',
+    title: 'The Titli Effect',
+    year: '2024', sort: 2024,
+    status: 'finished',
+    bucket: 'games',
+    img: '/projects/2024/The titli effect/titli-title.webp',
+    alt: 'The Titli Effect title screen',
+    clip: null,
+    href: '/works/the-titli-effect/',
+    with: 'with my sister Charu',
+    links: [{ label: 'more →', href: '/works/the-titli-effect/' }],
+  },
+  {
+    id: 'journey-of-my-paper-plane',
+    title: 'Journey of my paper plane',
+    year: '2024', sort: 2024,
+    status: 'finished',
+    bucket: 'games',
+    img: '/projects/2024/Journey of my paper plane/cover.webp',
+    alt: 'Journey of my paper plane cover',
+    clip: null,
+    href: '/works/journey-of-my-paper-plane/',
+    links: [{ label: 'more →', href: '/works/journey-of-my-paper-plane/' }],
+  },
+  {
+    id: 'how-to-think',
+    title: 'How to think',
+    year: '2022', sort: 2022,
+    status: 'finished',
+    bucket: 'on paper',
+    img: '/projects/2022/How to think/cover.webp',
+    alt: 'How to think zine cover',
+    clip: null,
+    href: '/works/how-to-think/',
+    links: [{ label: 'more →', href: '/works/how-to-think/' }],
+  },
+  {
+    id: 'common',
+    title: 'Common',
+    year: '2021', sort: 2021,
+    status: 'finished',
+    bucket: 'on paper',
+    img: '/projects/2021/Common/cover.webp',
+    alt: 'Common comic cover',
+    clip: null,
+    href: '/works/common/',
+    links: [{ label: 'more →', href: '/works/common/' }],
+  },
+  {
+    id: 'six-small-games',
+    title: 'six small games',
+    year: '2020', sort: 2020,
+    status: 'finished',
+    bucket: 'games',
+    img: '/projects/2020/AI quit/cover.webp',
+    alt: 'AI quit cover, one of six small games',
+    clip: null,
+    href: null,
+    jump: true,
+    links: [
+      { label: 'AI quit', href: '/works/ai-quit/' },
+      { label: 'Boneyard', href: '/works/boneyard/' },
+      { label: 'Mark', href: '/works/mark/' },
+      { label: 'Misplaced', href: '/works/misplaced/' },
+      { label: 'Proximity', href: '/works/proximity/' },
+      { label: 'Ruh and the glow', href: '/works/ruh-and-the-glow/' },
+    ],
+  },
+  {
+    id: 'protest',
+    title: 'Protest',
+    year: '2020', sort: 2020,
+    status: 'finished',
+    bucket: 'on paper',
+    img: '/projects/2020/Protest/Protest zine print_Page_01_Image_0001.webp',
+    alt: 'First printed page of the Protest zine',
+    clip: null,
+    href: '/works/protest/',
+    links: [{ label: 'more →', href: '/works/protest/' }],
+  },
+  {
+    id: 'wonderful-worlds',
+    title: 'Wonderful Worlds',
+    year: '2019', sort: 2019,
+    status: 'finished',
+    bucket: 'on paper',
+    img: '/projects/2019/WonderfulWorlds/cover.webp',
+    alt: 'Wonderful Worlds zine cover',
+    clip: null,
+    href: '/works/wonderful-worlds/',
+    links: [{ label: 'more →', href: '/works/wonderful-worlds/' }],
+  },
+  {
+    id: 'pi-of-life',
+    title: 'Pi of life',
+    year: '2016', sort: 2016,
+    status: 'finished',
+    bucket: 'on paper',
+    img: '/projects/2016/Pi of life/cover.webp',
+    alt: 'Pi of life comic cover',
+    clip: null,
+    href: '/works/pi-of-life/',
+    links: [{ label: 'more →', href: '/works/pi-of-life/' }],
+  },
+  {
+    id: 'clogs',
+    title: 'Clogs',
+    year: '2014', sort: 2014,
+    status: 'finished',
+    bucket: 'on paper',
+    img: '/projects/2014/Clogs/cover.webp',
+    alt: 'Clogs comic cover',
+    clip: null,
+    href: '/works/clogs/',
+    links: [{ label: 'more →', href: '/works/clogs/' }],
+  },
+];
+
+const years = [...new Set(works.map((w) => w.sort))].sort((a, b) => b - a);
+const navLinks = [
+  { label: 'works', href: '#works' },
+  { label: 'friends', href: '/friends/' },
+  { label: 'about', href: '/about/' },
+  { label: 'contact', href: 'mailto:hello@divyatak.art' },
+];
+---
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -10,7 +231,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&display=swap" rel="stylesheet" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    /* the dark act snaps; the white folio has no snap points, so it scrolls free */
+    scroll-snap-type: y proximity;
+  }
   body {
     font-family: 'Montserrat', sans-serif;
     color: #222;
@@ -56,29 +281,31 @@
   }
   .shell.narrow { max-width: 1180px; }
 
-  /* ---------- nav ---------- */
+  /* ---------- nav: full width, equidistributed, white over the video ---------- */
   .nav {
-    position: absolute;
-    top: 0; left: 0; right: 0;
+    position: sticky;
+    top: 0;
     z-index: 3;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
     padding: 1.6rem 3rem;
     font-size: 12px;
     letter-spacing: 0.08em;
   }
-  .nav .links { display: flex; gap: 1.8rem; }
   .nav a { color: rgba(255,255,255,0.72); }
   .nav a:hover { color: #fff; }
-  .nav .current { color: #fff; font-weight: 600; }
 
-  /* ---------- viewport 1: the name ---------- */
+  /* ---------- screen 1: the big name ---------- */
   .opening {
     position: relative;
     height: 100vh;
+    margin-top: -4.4rem; /* the sticky nav sits inside this screen */
     display: flex;
     align-items: center;
     justify-content: center;
+    scroll-snap-align: start;
   }
   .opening h1 {
     font-weight: 800;
@@ -87,6 +314,12 @@
     line-height: 1;
     color: #fff;
     text-transform: lowercase;
+    transform-origin: center center;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  body.docked .opening h1 {
+    opacity: 0;
+    transform: scale(0.14) translateY(-14vh);
   }
   .scroll-cue {
     position: absolute;
@@ -95,97 +328,168 @@
     transform: translateX(-50%);
     color: rgba(255,255,255,0.7);
     font-size: 17px;
+    transition: opacity 0.3s ease;
   }
   .scroll-cue:hover { color: #fff; }
+  body.docked .scroll-cue { opacity: 0; pointer-events: none; }
 
-  /* ---------- viewport 2: intro over the video ---------- */
+  /* ---------- screen 2: the docked name + intro + lately ---------- */
   .overlay {
     position: relative;
     min-height: 100vh;
     display: flex;
     align-items: center;
     padding: 8rem 0 10rem;
+    scroll-snap-align: start;
     background: linear-gradient(
       to bottom,
       rgba(0,0,0,0) 0%,
-      rgba(0,0,0,0.55) 20%,
-      rgba(0,0,0,0.72) 55%,
-      rgba(0,0,0,0.86) 100%
+      rgba(0,0,0,0.58) 22%,
+      rgba(0,0,0,0.76) 58%,
+      rgba(0,0,0,0.9) 100%
     );
   }
   .overlay-inner {
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 6rem;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 5.5rem;
     width: 100%;
     align-items: start;
   }
-  .intro { color: rgba(255,255,255,0.78); }
-  .intro p { margin-bottom: 1.2rem; max-width: 46ch; }
+  .intro { color: rgba(255,255,255,0.74); }
+  .intro p { margin-bottom: 1.1rem; max-width: 46ch; }
+  .intro p:last-child { margin-bottom: 0; }
+
+  /* the big name, shrunk and docked */
+  .dock-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: lowercase;
+    color: #fff;
+    margin-bottom: 1.6rem;
+    opacity: 0;
+    transform: translateY(10px) scale(1.25);
+    transform-origin: left top;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  body.docked .dock-name { opacity: 1; transform: none; }
+
   .intro .lead {
     font-size: clamp(1.5rem, 3.2vw, 2.4rem);
     font-weight: 600;
     line-height: 1.25;
     letter-spacing: -0.02em;
     color: #fff;
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.6rem;
   }
 
+  /* ---------- lately: three variants, one column ---------- */
   .rail { color: rgba(255,255,255,0.8); }
-  .rail h2 {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: lowercase;
-    letter-spacing: 0.14em;
-    color: #fff;
-  }
-  .rail .sub {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.45);
-    margin-bottom: 1.4rem;
-  }
-  .rail ul { list-style: none; }
-  .rail li {
-    padding: 0.75rem 0;
-    border-top: 1px solid rgba(255,255,255,0.16);
-    font-size: 13px;
-  }
-  .rail li:last-of-type { border-bottom: 1px solid rgba(255,255,255,0.16); }
-  .rail .when {
-    display: block;
+  .rail a { color: #fff; }
+  .v-card, .v-terminal, .v-strip { display: none; }
+  body[data-rail="ticker"] .v-card,
+  body[data-rail="ticker"] .v-strip,
+  body[data-rail="one"] .v-card,
+  body[data-rail="terminal"] .v-terminal { display: block; }
+
+  .rail-note {
     font-size: 10.5px;
     letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.45);
-  }
-  .rail a { border-bottom: 1px solid rgba(255,255,255,0.35); }
-  .rail a:hover { border-bottom-color: #fff; }
-  .rail .foot-note {
-    font-size: 11px;
-    color: rgba(255,255,255,0.45);
-    margin-top: 1rem;
-    max-width: 32ch;
+    color: rgba(255,255,255,0.42);
+    margin-top: 0.9rem;
   }
 
-  /* ---------- video chrome: pinned to the bottom of the stage, scrolls off with it ---------- */
+  /* variant: one card (also used by the ticker variant) */
+  .card { display: block; transition: transform 0.35s ease; }
+  .card:hover, .card:focus-visible { transform: translateY(-4px); transition-duration: 0.2s; }
+  .card .card-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
+    color: #fff;
+    margin-bottom: 0.7rem;
+  }
+  .card .card-media {
+    display: block;
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .card .card-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* variant: terminal */
+  .v-terminal {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.82);
+  }
+  .v-terminal .tline { min-height: 1.9em; white-space: nowrap; }
+  .v-terminal .tline a { border-bottom: 1px solid rgba(255,255,255,0.4); }
+  .v-terminal .tline a:hover { border-bottom-color: #fff; }
+  .v-terminal .tline.typing::after {
+    content: '\2588';
+    color: rgba(255,255,255,0.6);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* variant: ticker along the bottom edge of screen 2 */
+  .v-strip {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 3.6rem;
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.14);
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    padding: 0.55rem 0;
+  }
+  .v-strip .track {
+    display: flex;
+    width: max-content;
+    animation: crawl 52s linear infinite;
+  }
+  .v-strip:hover .track,
+  .v-strip:focus-within .track { animation-play-state: paused; }
+  .v-strip .copy { display: flex; }
+  .v-strip .item {
+    font-size: 11.5px;
+    letter-spacing: 0.09em;
+    white-space: nowrap;
+    color: rgba(255,255,255,0.72);
+  }
+  .v-strip .item a { border-bottom: 1px solid rgba(255,255,255,0.35); }
+  .v-strip .item a:hover { border-bottom-color: #fff; }
+  .v-strip .dot { padding: 0 0.9rem; color: rgba(255,255,255,0.3); font-size: 11.5px; }
+  @keyframes crawl { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+  .strip-static { display: none; font-size: 11.5px; letter-spacing: 0.06em; color: rgba(255,255,255,0.7); }
+  .strip-static li { list-style: none; padding: 0.35rem 0; }
+  .strip-static a { border-bottom: 1px solid rgba(255,255,255,0.35); }
+
+  /* ---------- video chrome ---------- */
   .video-chrome {
     position: sticky;
     bottom: 0;
     z-index: 3;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-    gap: 1rem;
     padding: 0 3rem 1.5rem;
     margin-top: -3.5rem;
     pointer-events: none;
   }
   .video-chrome > * { pointer-events: auto; }
-  .from-caption {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: rgba(255,255,255,0.6);
-  }
   .motion-toggle {
     background: none;
     color: rgba(255,255,255,0.6);
@@ -200,10 +504,41 @@
   }
   .motion-toggle:hover { color: #fff; border-bottom-color: #fff; }
 
+  /* ---------- the prototype switcher (deliberately not part of the design) ---------- */
+  .proto-switch {
+    position: fixed;
+    left: 1.2rem;
+    bottom: 1.2rem;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: #0d0d0d;
+    border: 1px solid #333;
+    padding: 0.3rem 0.55rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    color: #777;
+  }
+  .proto-switch .sl { color: #444; }
+  .proto-switch button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: #999;
+  }
+  .proto-switch button:hover { color: #ddd; }
+  .proto-switch button[aria-pressed="true"] { color: #fff; text-decoration: underline; }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .backdrop video { transition: none; }
-    .tile, .tile .media img, .whisper { transition: none !important; }
+    .opening h1, .dock-name, .scroll-cue, .card, .tile, .tile .media video { transition: none !important; }
+    .v-strip { display: none !important; }
+    body[data-rail="ticker"] .strip-static { display: block; }
+    .v-terminal .tline.typing::after { display: none; }
   }
 
   /* ---------- solid ground: the folio slides over the video ---------- */
@@ -211,9 +546,38 @@
     position: relative;
     z-index: 2;
     background: #fff;
-    padding-top: 6rem;
   }
 
+  .folio-head {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding: 1.1rem 3rem;
+    border-bottom: 1px solid #eee;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+  .folio-head .wordmark {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-transform: lowercase;
+    color: #222;
+    line-height: 1;
+  }
+  .folio-head .links {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+  .folio-head a { color: #999; }
+  .folio-head a:hover { color: #222; }
+
+  .works { padding-top: 5rem; scroll-margin-top: 5rem; }
   .works-head {
     display: flex;
     flex-wrap: wrap;
@@ -228,21 +592,25 @@
     text-transform: lowercase;
     letter-spacing: 0.14em;
   }
-  .works-head .sub {
-    font-size: 12px;
-    color: #999;
-    margin-top: 0.35rem;
-    max-width: 44ch;
-  }
-  .filters { text-align: right; }
-  .filter-row {
+
+  /* ---------- lenses ---------- */
+  .lenses { text-align: right; }
+  .lens-row {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
+    align-items: baseline;
     gap: 0.4rem;
   }
-  .filter-row + .filter-row { margin-top: 0.5rem; }
-  .filter {
+  .lens-row + .lens-row { margin-top: 0.5rem; }
+  .lens-row .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .lens-row .cluster + .cluster { margin-left: 2.2rem; }
+  .lens {
     font-family: 'Montserrat', sans-serif;
     font-size: 12px;
     text-transform: lowercase;
@@ -254,94 +622,100 @@
     padding: 0 0 2px;
     cursor: pointer;
   }
-  .filter:hover { color: #222; }
-  .filter[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
-  .filter-row.quiet .filter { font-size: 11px; color: #bbb; }
-  .filter-row.quiet .filter:hover { color: #636363; }
-  .filter-row.quiet .filter[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
-  .filter-row .sep { color: #ddd; font-size: 12px; }
+  .lens:hover { color: #222; }
+  .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
+  .lens-row.quiet .lens { font-size: 11px; color: #bbb; }
+  .lens-row.quiet .lens:hover { color: #636363; }
+  .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
+  .lens-row .sep { color: #ddd; font-size: 12px; }
 
-  /* ---------- the folio ---------- */
-  .stream {
+  /* ---------- view: grid ---------- */
+  .view[hidden] { display: none; }
+  .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     align-items: start;
     column-gap: 3rem;
-    row-gap: 6rem;
+    row-gap: 5.5rem;
     padding-bottom: 8rem;
   }
   .entry[hidden] { display: none; }
-  .entry--full { grid-column: 1 / -1; }
-  .entry--offset { grid-column: 2; }
-  .entry--line { grid-column: 1 / -1; }
 
   .tile { display: block; transition: transform 0.35s ease; }
+  .tile.jump { cursor: pointer; }
   .entry:hover .tile, .entry:focus-within .tile { transform: translateY(-4px); transition-duration: 0.2s; }
-  .tile .media { display: block; overflow: hidden; }
-  .tile .media img {
-    width: 100%;
-    height: auto;
+  .tile .media {
+    display: block;
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #f4f4f4;
     box-shadow: 0 1px 8px rgba(0,0,0,0.10);
   }
-  .tile .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; align-items: start; }
-
-  .entry h3 {
-    font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    margin-top: 1.2rem;
+  .tile .media img,
+  .tile .media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
-  .entry--full h3 { font-size: clamp(1.5rem, 3vw, 2.3rem); }
-  .entry--half h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
-  .entry--offset h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
-  .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
-
-  .whisper {
+  .tile .media video {
     opacity: 0;
     transition: opacity 0.35s ease;
-    margin-top: 0.45rem;
   }
-  .entry:hover .whisper, .entry:focus-within .whisper { opacity: 1; transition-duration: 0.2s; }
-  .whisper .meta {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    color: #999;
-  }
-  .whisper .note {
-    font-size: 12px;
-    color: #636363;
-    max-width: 46ch;
-    margin-top: 0.2rem;
-  }
-  @media (hover: none) {
-    .whisper { opacity: 1; }
-  }
+  .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
 
-  .out-link {
-    display: inline-block;
-    margin-top: 0.7rem;
-    font-size: 12px;
-    color: #636363;
-    border-bottom: 1px solid #ddd;
+  .entry h3 {
+    margin-top: 0.9rem;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: lowercase;
+    color: #222;
   }
-  .out-link:hover { color: #222; border-bottom-color: #222; }
-  .sub-links {
-    margin-top: 0.7rem;
-    font-size: 12px;
-    color: #999;
-  }
-  .sub-links a { color: #636363; border-bottom: 1px solid #eee; }
-  .sub-links a:hover { color: #222; border-bottom-color: #222; }
+  .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
 
-  /* rest beats: a line of text between the imagery */
-  .entry--line .tile {
-    padding: 2.2rem 0;
+  /* ---------- views: list + timeline ---------- */
+  .rows { padding-bottom: 8rem; }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) 6.5rem 6.5rem minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
     border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    font-size: 13px;
   }
-  .entry--line h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); margin-top: 0; font-weight: 500; }
-  .entry--line h3 a { border-bottom: 1px solid transparent; }
-  .entry--line h3 a:hover { border-bottom-color: #222; }
+  .row[hidden] { display: none; }
+  .rows .row:last-of-type { border-bottom: 1px solid #eee; }
+  .row .r-title { font-weight: 500; color: #222; }
+  .row.seen .r-title::after { content: ' \00b7'; color: #ccc; }
+  .row .r-year, .row .r-status { font-size: 11.5px; letter-spacing: 0.06em; color: #999; }
+  .row .r-with { font-size: 12px; color: #636363; }
+  .row .r-links { font-size: 12px; color: #999; }
+  .row .r-links a { color: #636363; border-bottom: 1px solid #eee; }
+  .row .r-links a:hover { color: #222; border-bottom-color: #222; }
+  .row .r-links .dot { color: #ddd; padding: 0 0.25rem; }
+
+  .tl-group[hidden] { display: none; }
+  .tl-group .year-mark {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: #999;
+    padding: 2.6rem 0 0.5rem;
+  }
+  .tl-group:first-of-type .year-mark { padding-top: 0; }
+  .timeline { padding-bottom: 8rem; }
+
+  .empty {
+    font-size: 12px;
+    color: #999;
+    padding: 2rem 0 8rem;
+  }
+  .empty[hidden] { display: none; }
 
   /* ---------- foot ---------- */
   .foot {
@@ -354,20 +728,29 @@
   .foot a:hover { color: #222; }
   .foot .dot { margin: 0 0.7rem; color: #ddd; }
 
+  @media (min-width: 1600px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
   @media (max-width: 900px) {
-    .shell, .nav, .video-chrome { padding-left: 1.4rem; padding-right: 1.4rem; }
-    .overlay-inner { grid-template-columns: 1fr; gap: 3.5rem; }
-    .overlay { padding: 6rem 0 8rem; }
-    .stream { grid-template-columns: 1fr; row-gap: 4rem; }
-    .entry--offset { grid-column: 1; }
+    html { scroll-snap-type: none; }
+    .shell, .nav, .video-chrome, .folio-head { padding-left: 1.4rem; padding-right: 1.4rem; }
+    .nav { font-size: 11px; letter-spacing: 0.04em; }
+    .overlay-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .overlay { padding: 6rem 0 9rem; }
+    .grid { grid-template-columns: 1fr; row-gap: 3.5rem; }
     .works-head { flex-direction: column; align-items: flex-start; }
-    .filters { text-align: left; }
-    .filter-row { justify-content: flex-start; }
-    .ground { padding-top: 4rem; }
+    .lenses { text-align: left; }
+    .lens-row { justify-content: flex-start; }
+    .lens-row .cluster + .cluster { margin-left: 1.2rem; }
+    .works { padding-top: 3rem; }
+    .folio-head { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+    .folio-head .links { width: 100%; }
+    .row { grid-template-columns: 1fr; gap: 0.15rem; }
   }
 </style>
 </head>
-<body>
+<body data-rail="ticker">
 
   <!-- ============ the video, fixed behind everything ============ -->
   <div class="backdrop" aria-hidden="true">
@@ -378,290 +761,209 @@
   <div class="stage">
 
     <nav class="nav" aria-label="site">
-      <div class="links">
-        <span class="current" aria-current="page">works</span>
-        <a href="/friends/">friends</a>
-        <a href="/about/">about</a>
-        <a href="mailto:hello@divyatak.art">contact</a>
-      </div>
+      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
 
-    <!-- ============ 1. the name ============ -->
+    <!-- ============ screen 1: the name ============ -->
     <header class="opening" id="top">
       <h1>divya tak</h1>
       <a class="scroll-cue" href="#intro" aria-label="scroll down to the introduction">&#8595;</a>
     </header>
 
-    <!-- ============ 2. intro + lately, over the still-playing video ============ -->
+    <!-- ============ screen 2: docked name, intro, lately ============ -->
     <section class="overlay" id="intro">
       <div class="shell narrow overlay-inner">
         <div class="intro">
+          <p class="dock-name">divya tak</p>
           <p class="lead">I make interactive things.</p>
-          <p>I want the viewer to feel like they're in it. Not just looking at it through glass.</p>
-          <p>I came to all of it from physics, and I've never learned to keep the physicist and the artist in separate rooms.</p>
-          <p>Some of it is games, some of it is drawing, some of it is code that does something when you touch it. It all lives together below.</p>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
         </div>
 
         <aside class="rail" aria-label="lately">
-          <h2>lately</h2>
-          <p class="sub">updates every monday</p>
-          <ul>
-            <li>
-              <span class="when">aug 2026</span>
-              this site: alt text and image sizing pass
-            </li>
-            <li>
-              <span class="when">2026</span>
-              bioluminescent flow joined the playground
-            </li>
-            <li>
-              <span class="when">now</span>
-              metro museum: in progress
-            </li>
-            <li>
-              <span class="when">2026</span>
-              <a href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener">everything bazaar is live</a>
-            </li>
-            <li>
-              <a href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener">something to peruse &#8594;</a>
-            </li>
+
+          <!-- variant: one card (shared with the ticker variant) -->
+          <a class="v-card card" href={peruse} target="_blank" rel="noopener">
+            <span class="card-label">this week</span>
+            <span class="card-media">
+              <img src="/playground/lenticular.webp" alt="A lenticular print of a street drawing shifting between two views" loading="lazy" width="800" height="500" />
+            </span>
+          </a>
+
+          <!-- variant: terminal -->
+          <div class="v-terminal" id="terminal">
+            <p class="tline">$ this week</p>
+            <p class="tline">&gt; metro-museum: in progress</p>
+            <p class="tline">&gt; <a href={bazaar} target="_blank" rel="noopener">everything bazaar: live &#8599;</a></p>
+            <p class="tline">&gt; <a href={peruse} target="_blank" rel="noopener">something to peruse &#8599;</a></p>
+          </div>
+
+          <!-- reduced-motion fallback for the ticker -->
+          <ul class="strip-static">
+            {railItems.map((it) => (
+              <li>{it.href ? <a href={it.href} target="_blank" rel="noopener">{it.text}</a> : it.text}</li>
+            ))}
           </ul>
-          <p class="foot-note">sample rail. the real one builds itself from github, substack, instagram.</p>
+
+          <p class="rail-note">updates every monday</p>
         </aside>
+      </div>
+
+      <!-- variant: ticker, along the bottom edge of screen 2 -->
+      <div class="v-strip" aria-label="lately">
+        <div class="track">
+          {[0, 1].map((copy) => (
+            <div class="copy" aria-hidden={copy === 1 ? 'true' : undefined}>
+              {railLoop.map((it) => (
+                <>
+                  <span class="item">
+                    {it.href
+                      ? <a href={it.href} target="_blank" rel="noopener" tabindex={copy === 1 ? -1 : undefined}>{it.text}</a>
+                      : it.text}
+                  </span>
+                  <span class="dot" aria-hidden="true">&middot;</span>
+                </>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
 
     <div class="video-chrome">
-      <p class="from-caption" id="hero-caption">from: bioluminescent flow</p>
       <button class="motion-toggle" id="motion-toggle" aria-pressed="false" aria-label="pause background clips">pause</button>
     </div>
   </div>
 
-  <!-- ============ 3. solid ground: the folio slides over the video ============ -->
+  <!-- ============ the folio: white ground slides over the video ============ -->
   <main class="ground">
+
+    <header class="folio-head">
+      <span class="wordmark">divya tak</span>
+      <div class="links">
+        {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+      </div>
+    </header>
+
     <div class="shell">
 
-      <section class="works" aria-label="works">
+      <section class="works" id="works" aria-label="works">
         <div class="works-head">
-          <div>
-            <h2>works</h2>
-            <p class="sub">everything, newest first. some finished, some in progress, some never finishing.</p>
-          </div>
-          <div class="filters">
-            <div class="filter-row" role="group" aria-label="filter by kind">
-              <button class="filter" data-kind="all" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-kind="experiment" aria-pressed="false">experiments</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-kind="finished" aria-pressed="false">finished</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-kind="ongoing" aria-pressed="false">ongoing</button>
+          <h2>works</h2>
+
+          <div class="lenses">
+            <div class="lens-row" role="group" aria-label="filter by kind">
+              <button class="lens" data-bucket="all" aria-pressed="true">all</button><span class="sep" aria-hidden="true">&middot;</span>
+              <button class="lens" data-bucket="games" aria-pressed="false">games</button><span class="sep" aria-hidden="true">&middot;</span>
+              <button class="lens" data-bucket="interactive pieces" aria-pressed="false">interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
+              <button class="lens" data-bucket="on paper" aria-pressed="false">on paper</button>
             </div>
-            <div class="filter-row quiet" role="group" aria-label="filter by category">
-              <button class="filter" data-cat="game" aria-pressed="false">game</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-cat="illustration" aria-pressed="false">illustration</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-cat="comic" aria-pressed="false">comic</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-cat="zine" aria-pressed="false">zine</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-cat="photocomics" aria-pressed="false">photocomics</button><span class="sep" aria-hidden="true">&middot;</span>
-              <button class="filter" data-cat="tool" aria-pressed="false">tool</button>
+            <div class="lens-row quiet">
+              <div class="cluster" role="group" aria-label="filter by status">
+                <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
+                <button class="lens" data-status="in progress" aria-pressed="false">in progress</button><span class="sep" aria-hidden="true">&middot;</span>
+                <button class="lens" data-status="finished" aria-pressed="false">finished</button>
+              </div>
+              <div class="cluster" role="group" aria-label="choose a view">
+                <button class="lens" data-view="grid" aria-pressed="true">grid</button><span class="sep" aria-hidden="true">&middot;</span>
+                <button class="lens" data-view="list" aria-pressed="false">list</button><span class="sep" aria-hidden="true">&middot;</span>
+                <button class="lens" data-view="timeline" aria-pressed="false">timeline</button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="stream" id="stream">
-
-          <article class="entry entry--full" data-id="metro-museum" data-kind="ongoing" data-cat="game">
-            <div class="tile">
-              <span class="media">
-                <img src="/clips/poster-7.jpg" alt="A 3D museum interior with mannequin figures at sunset, from the Metro Museum build" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Metro Museum of the Forgotten</h3>
-              <div class="whisper">
-                <p class="meta">2026 &middot; in progress &middot; game</p>
-                <p class="note">a museum for what people leave behind on the Delhi Metro</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="entry entry--full" data-id="everything-bazaar" data-kind="finished" data-cat="game tool">
-            <a class="tile" href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener">
-              <span class="media">
-                <img src="/clips/poster-6.jpg" alt="A dark shop screen with a product box, from Everything Bazaar" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Everything Bazaar</h3>
-              <div class="whisper">
-                <p class="meta">2026 &middot; live &middot; game, tool</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--half" data-id="bioluminescent-flow" data-kind="experiment" data-cat="">
-            <a class="tile" href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">
-              <span class="media">
-                <img src="/playground/bioluminescent-flow.webp" alt="Glowing particle trails on a dark field, from Bioluminescent Flow" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Bioluminescent Flow</h3>
-              <div class="whisper">
-                <p class="meta">2026 &middot; live &middot; experiment</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--half" data-id="webcam-magic" data-kind="experiment" data-cat="">
-            <a class="tile" href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener">
-              <span class="media">
-                <img src="/playground/webcam-magic.webp" alt="A face rendered as a pixel mirror, from Webcam Magic" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Webcam Magic</h3>
-              <div class="whisper">
-                <p class="meta">2026 &middot; live &middot; experiment</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--half" data-id="the-line-before" data-kind="finished" data-cat="game">
-            <a class="tile" href="https://divya.studiotypo.xyz" target="_blank" rel="noopener">
-              <span class="media">
-                <img src="/playground/the-line-before.webp" alt="A scene from The Line Before" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>The Line Before</h3>
-              <div class="whisper">
-                <p class="meta">2025 &middot; live &middot; game &middot; with Kahran Singh</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--full" data-id="unseen" data-kind="ongoing" data-cat="photocomics illustration">
-            <div class="tile">
-              <span class="media strip">
-                <img src="/projects/2024/(un)seen Istanbul/cover.webp" alt="(un)seen Istanbul cover, drawing over a street photograph" loading="lazy" width="300" height="300" />
-                <img src="/projects/2025/(un)seen Emirates/cover.webp" alt="(un)seen Emirates cover, drawing over a street photograph" loading="lazy" width="300" height="300" />
-                <img src="/projects/2026/(un)seen Life/cover.webp" alt="(un)seen Life cover, drawing over a street photograph" loading="lazy" width="300" height="300" />
-              </span>
-              <h3>(un)seen</h3>
-              <div class="whisper">
-                <p class="meta">2024 to now &middot; ongoing &middot; photocomics, illustration</p>
-                <p class="note">I draw into photographs of streets I'd have walked straight past, until I can't walk past them anymore.</p>
-              </div>
-              <a class="out-link" href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener">the lenticular edition &#8594;</a>
-            </div>
-          </article>
-
-          <article class="entry entry--line" data-id="the-titli-effect" data-kind="finished" data-cat="game">
-            <div class="tile">
-              <h3><a href="/works/the-titli-effect/">The Titli Effect</a></h3>
-              <div class="whisper">
-                <p class="meta">2024 &middot; game &middot; with my sister Charu</p>
-                <p class="note">2nd place, Jennifer Ann Group Connectedness jam</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="entry entry--half" data-id="journey-of-my-paper-plane" data-kind="finished" data-cat="game illustration">
-            <a class="tile" href="/works/journey-of-my-paper-plane/">
-              <span class="media">
-                <img src="/projects/2024/Journey of my paper plane/cover.webp" alt="Journey of my paper plane cover" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Journey of my paper plane</h3>
-              <div class="whisper">
-                <p class="meta">2024 &middot; game, illustration</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--half" data-id="how-to-think" data-kind="finished" data-cat="zine illustration">
-            <a class="tile" href="/works/how-to-think/">
-              <span class="media">
-                <img src="/projects/2022/How to think/cover.webp" alt="How to think zine cover" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>How to think</h3>
-              <div class="whisper">
-                <p class="meta">2022 &middot; zine, illustration</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--offset" data-id="common" data-kind="finished" data-cat="comic">
-            <a class="tile" href="/works/common/">
-              <span class="media">
-                <img src="/projects/2021/Common/cover.webp" alt="Common comic cover" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Common</h3>
-              <div class="whisper">
-                <p class="meta">2021 &middot; comic</p>
-                <p class="note">printed in the INKLAB anthology</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--full" data-id="six-small-games" data-kind="finished" data-cat="game">
-            <div class="tile">
-              <span class="media strip">
-                <img src="/projects/2020/AI quit/cover.webp" alt="AI quit cover" loading="lazy" width="300" height="300" />
-                <img src="/projects/2020/Boneyard/cover.webp" alt="Boneyard cover" loading="lazy" width="300" height="300" />
-                <img src="/projects/2020/Mark/cover.webp" alt="Mark cover" loading="lazy" width="300" height="300" />
-              </span>
-              <h3>six small games</h3>
-              <div class="whisper">
-                <p class="meta">2020 &middot; game</p>
-              </div>
-              <p class="sub-links">
-                <a href="/works/ai-quit/">AI quit</a> &middot;
-                <a href="/works/boneyard/">Boneyard</a> &middot;
-                <a href="/works/mark/">Mark</a> &middot;
-                <a href="/works/misplaced/">Misplaced</a> &middot;
-                <a href="/works/proximity/">Proximity</a> &middot;
-                <a href="/works/ruh-and-the-glow/">Ruh and the glow</a>
-              </p>
-            </div>
-          </article>
-
-          <article class="entry entry--line" data-id="protest" data-kind="finished" data-cat="zine">
-            <div class="tile">
-              <h3><a href="/works/protest/">Protest</a></h3>
-              <div class="whisper">
-                <p class="meta">2020 &middot; zine</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="entry entry--half" data-id="wonderful-worlds" data-kind="finished" data-cat="zine illustration">
-            <a class="tile" href="/works/wonderful-worlds/">
-              <span class="media">
-                <img src="/projects/2019/WonderfulWorlds/cover.webp" alt="Wonderful Worlds zine cover" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Wonderful Worlds</h3>
-              <div class="whisper">
-                <p class="meta">2019 &middot; zine, illustration</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--half" data-id="pi-of-life" data-kind="finished" data-cat="comic">
-            <a class="tile" href="/works/pi-of-life/">
-              <span class="media">
-                <img src="/projects/2016/Pi of life/cover.webp" alt="Pi of life comic cover" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Pi of life</h3>
-              <div class="whisper">
-                <p class="meta">2016 &middot; comic</p>
-              </div>
-            </a>
-          </article>
-
-          <article class="entry entry--full" data-id="clogs" data-kind="finished" data-cat="comic illustration">
-            <a class="tile" href="/works/clogs/">
-              <span class="media">
-                <img src="/projects/2014/Clogs/cover.webp" alt="Clogs comic cover" loading="lazy" width="640" height="360" />
-              </span>
-              <h3>Clogs</h3>
-              <div class="whisper">
-                <p class="meta">2014 &middot; comic, illustration</p>
-              </div>
-            </a>
-          </article>
-
+        <!-- ---- view: grid ---- -->
+        <div class="view grid" id="view-grid">
+          {works.map((w) => (
+            <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
+              {w.href ? (
+                <a
+                  class="tile"
+                  href={w.href}
+                  target={isExt(w.href) ? '_blank' : undefined}
+                  rel={isExt(w.href) ? 'noopener' : undefined}
+                >
+                  <span class="media">
+                    <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                    {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+                  </span>
+                  <h3>{w.title}</h3>
+                </a>
+              ) : (
+                <div
+                  class={w.jump ? 'tile jump' : 'tile'}
+                  role={w.jump ? 'button' : undefined}
+                  tabindex={w.jump ? 0 : undefined}
+                  data-jump={w.jump ? w.id : undefined}
+                >
+                  <span class="media">
+                    <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                    {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+                  </span>
+                  <h3>{w.title}</h3>
+                </div>
+              )}
+            </article>
+          ))}
         </div>
+
+        <!-- ---- view: list ---- -->
+        <div class="view rows" id="view-list" hidden>
+          {works.map((w) => (
+            <div class="row" id={`row-${w.id}`} data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
+              <span class="r-title">{w.title}</span>
+              <span class="r-year">{w.year}</span>
+              <span class="r-status">{w.status}</span>
+              <span class="r-with">{w.with || ''}</span>
+              <span class="r-links">
+                {w.links.map((ln, i) => (
+                  <>
+                    {i > 0 && <span class="dot" aria-hidden="true">&middot;</span>}
+                    <a
+                      href={ln.href}
+                      target={isExt(ln.href) ? '_blank' : undefined}
+                      rel={isExt(ln.href) ? 'noopener' : undefined}
+                    >{ln.label}</a>
+                  </>
+                ))}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <!-- ---- view: timeline ---- -->
+        <div class="view timeline" id="view-timeline" hidden>
+          {years.map((y) => (
+            <section class="tl-group" data-year={y}>
+              <p class="year-mark">{y}</p>
+              {works.filter((w) => w.sort === y).map((w) => (
+                <div class="row" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
+                  <span class="r-title">{w.title}</span>
+                  <span class="r-year">{w.year}</span>
+                  <span class="r-status">{w.status}</span>
+                  <span class="r-with">{w.with || ''}</span>
+                  <span class="r-links">
+                    {w.links.map((ln, i) => (
+                      <>
+                        {i > 0 && <span class="dot" aria-hidden="true">&middot;</span>}
+                        <a
+                          href={ln.href}
+                          target={isExt(ln.href) ? '_blank' : undefined}
+                          rel={isExt(ln.href) ? 'noopener' : undefined}
+                        >{ln.label}</a>
+                      </>
+                    ))}
+                  </span>
+                </div>
+              ))}
+            </section>
+          ))}
+        </div>
+
+        <p class="empty" id="empty" hidden>nothing under this lens yet.</p>
       </section>
 
-      <!-- ============ 4. foot ============ -->
       <footer class="foot">
         <a href="/friends/">friends</a><span class="dot" aria-hidden="true">&middot;</span>
         <a href="/about/">about</a><span class="dot" aria-hidden="true">&middot;</span>
@@ -671,11 +973,22 @@
     </div>
   </main>
 
+  <!-- prototype only: switches the lately variant -->
+  <div class="proto-switch" role="group" aria-label="prototype: lately variant">
+    <span class="sl">rail:</span>
+    <button data-rail-set="ticker" aria-pressed="true">ticker</button><span class="sl">/</span>
+    <button data-rail-set="terminal" aria-pressed="false">terminal</button><span class="sl">/</span>
+    <button data-rail-set="one" aria-pressed="false">one</button>
+  </div>
+
 <script is:inline>
 (function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
-  // 16 cuts of ~5.2s each, composed offline with ffmpeg (order below matches the
-  // render). Captions are derived from playback time against that order.
+  // 16 cuts of ~5.2s each, composed offline with ffmpeg. Order and cut length are
+  // kept here unchanged even though the "from:" caption is gone, so anything that
+  // needs to reason about playback time still can.
   var order = ['2a','5a','7a','1a','6a','4a','8a','3a','2b','5b','7b','1b','6b','4b','8b','3b'];
   var captions = {
     1: 'webcam magic',
@@ -689,22 +1002,11 @@
   };
   var MONTAGE_SECONDS = 83.2;
   var CUT = MONTAGE_SECONDS / 16;
+
   var vid = document.getElementById('vid');
-  var caption = document.getElementById('hero-caption');
   var toggle = document.getElementById('motion-toggle');
-  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var paused = prefersReduced;
   var started = false;
-
-  function setCaptionForTime(t) {
-    var i = Math.min(order.length - 1, Math.floor(t / CUT));
-    caption.textContent = 'from: ' + captions[order[i].charAt(0)];
-  }
-
-  vid.addEventListener('timeupdate', function () {
-    setCaptionForTime(vid.currentTime || 0);
-  });
-  setCaptionForTime(0);
 
   function start() {
     started = true;
@@ -731,49 +1033,211 @@
   });
 
   setToggleUi();
-  if (!prefersReduced) {
-    start();
-  }
+  if (!prefersReduced) start();
   // under reduced motion nothing plays: the poster still shows via the
   // backdrop's CSS background and the untouched poster attribute.
 
-  /* ---------- works filters ---------- */
-  var kindFilters = document.querySelectorAll('.filter[data-kind]');
-  var catFilters = document.querySelectorAll('.filter[data-cat]');
-  var entries = document.querySelectorAll('.entry');
-  var kind = 'all';
-  var cat = null;
+  /* ---------- the name docks: big name crossfades into the small one ---------- */
+  var docked = false;
+  function checkDock() {
+    var should = window.scrollY > window.innerHeight * 0.28;
+    if (should !== docked) {
+      docked = should;
+      document.body.classList.toggle('docked', docked);
+    }
+  }
+  checkDock();
+  window.addEventListener('scroll', function () {
+    window.requestAnimationFrame(checkDock);
+  }, { passive: true });
 
-  function applyFilters() {
-    entries.forEach(function (e) {
-      var eKind = e.dataset.kind;
-      var eCats = (e.dataset.cat || '').split(' ');
-      var kindOk = kind === 'all' || eKind === kind;
-      var catOk = !cat || eCats.indexOf(cat) !== -1;
-      e.hidden = !(kindOk && catOk);
+  /* ---------- lately: three variants, switched in place ---------- */
+  var RAIL_KEY = 'proto-ongoing-rail';
+  var railBtns = document.querySelectorAll('[data-rail-set]');
+  var terminal = document.getElementById('terminal');
+  var tlines = terminal.querySelectorAll('.tline');
+  var finalHtml = [];
+  tlines.forEach(function (l) { finalHtml.push(l.innerHTML); });
+  var typeTimer = null;
+
+  function showTerminalInstantly() {
+    tlines.forEach(function (l, i) {
+      l.classList.remove('typing');
+      l.innerHTML = finalHtml[i];
     });
   }
 
-  kindFilters.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      kind = btn.dataset.kind;
-      kindFilters.forEach(function (b) {
-        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+  function typeTerminal() {
+    if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+    if (prefersReduced) { showTerminalInstantly(); return; }
+    var texts = [];
+    tlines.forEach(function (l, i) {
+      var probe = document.createElement('div');
+      probe.innerHTML = finalHtml[i];
+      texts.push(probe.textContent);
+      l.textContent = '';
+      l.classList.remove('typing');
+    });
+
+    var line = 0, ch = 0;
+    function step() {
+      if (line >= tlines.length) { typeTimer = null; return; }
+      var el = tlines[line];
+      el.classList.add('typing');
+      if (ch <= texts[line].length) {
+        el.textContent = texts[line].slice(0, ch);
+        ch += 1;
+        typeTimer = setTimeout(step, 30);
+      } else {
+        el.classList.remove('typing');
+        el.innerHTML = finalHtml[line]; // links go live once the line lands
+        line += 1;
+        ch = 0;
+        typeTimer = setTimeout(step, 220);
+      }
+    }
+    step();
+  }
+
+  var overlaySeen = false;
+  var overlayEl = document.getElementById('intro');
+
+  function setRail(name, replay) {
+    document.body.setAttribute('data-rail', name);
+    railBtns.forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.railSet === name ? 'true' : 'false');
+    });
+    try { sessionStorage.setItem(RAIL_KEY, name); } catch (err) {}
+    if (name === 'terminal') {
+      if (prefersReduced) showTerminalInstantly();
+      else if (overlaySeen && replay) typeTerminal();
+    } else if (typeTimer) {
+      clearTimeout(typeTimer);
+      typeTimer = null;
+    }
+  }
+
+  var storedRail = null;
+  try { storedRail = sessionStorage.getItem(RAIL_KEY); } catch (err) {}
+  setRail(storedRail === 'terminal' || storedRail === 'one' ? storedRail : 'ticker', false);
+
+  railBtns.forEach(function (b) {
+    b.addEventListener('click', function () { setRail(b.dataset.railSet, true); });
+  });
+
+  // type on first reveal of screen 2
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (rows) {
+      rows.forEach(function (r) {
+        if (!r.isIntersecting) return;
+        overlaySeen = true;
+        if (document.body.getAttribute('data-rail') === 'terminal') typeTerminal();
+        io.disconnect();
       });
-      applyFilters();
+    }, { threshold: 0.35 });
+    io.observe(overlayEl);
+  } else {
+    overlaySeen = true;
+    if (document.body.getAttribute('data-rail') === 'terminal') typeTerminal();
+  }
+
+  /* ---------- folio: lenses (bucket, status) and views ---------- */
+  var bucketBtns = document.querySelectorAll('.lens[data-bucket]');
+  var statusBtns = document.querySelectorAll('.lens[data-status]');
+  var viewBtns = document.querySelectorAll('.lens[data-view]');
+  var items = document.querySelectorAll('.entry, .row');
+  var groups = document.querySelectorAll('.tl-group');
+  var viewEls = {
+    grid: document.getElementById('view-grid'),
+    list: document.getElementById('view-list'),
+    timeline: document.getElementById('view-timeline')
+  };
+  var emptyEl = document.getElementById('empty');
+  var bucket = 'all';
+  var status = 'latest';
+  var view = 'grid';
+
+  function applyLenses() {
+    items.forEach(function (el) {
+      var bOk = bucket === 'all' || el.dataset.bucket === bucket;
+      var sOk = status === 'latest' || el.dataset.status === status;
+      el.hidden = !(bOk && sOk);
+    });
+    groups.forEach(function (g) {
+      g.hidden = !g.querySelector('.row:not([hidden])');
+    });
+    var visible = viewEls[view].querySelectorAll('.entry:not([hidden]), .row:not([hidden])');
+    emptyEl.hidden = visible.length > 0;
+  }
+
+  function setView(name) {
+    view = name;
+    Object.keys(viewEls).forEach(function (k) { viewEls[k].hidden = k !== name; });
+    viewBtns.forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.view === name ? 'true' : 'false');
+    });
+    applyLenses();
+  }
+
+  bucketBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      bucket = b.dataset.bucket;
+      bucketBtns.forEach(function (o) {
+        o.setAttribute('aria-pressed', o.dataset.bucket === bucket ? 'true' : 'false');
+      });
+      applyLenses();
     });
   });
 
-  catFilters.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var picked = btn.dataset.cat;
-      cat = (cat === picked) ? null : picked; // click again to clear
-      catFilters.forEach(function (b) {
-        b.setAttribute('aria-pressed', b.dataset.cat === cat ? 'true' : 'false');
+  statusBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      status = b.dataset.status;
+      statusBtns.forEach(function (o) {
+        o.setAttribute('aria-pressed', o.dataset.status === status ? 'true' : 'false');
       });
-      applyFilters();
+      applyLenses();
     });
   });
+
+  viewBtns.forEach(function (b) {
+    b.addEventListener('click', function () { setView(b.dataset.view); });
+  });
+
+  applyLenses();
+
+  /* ---------- the six small games tile: jump to its list row ---------- */
+  document.querySelectorAll('[data-jump]').forEach(function (t) {
+    function jump() {
+      setView('list');
+      var row = document.getElementById('row-' + t.dataset.jump);
+      if (row) row.scrollIntoView({ block: 'center', behavior: prefersReduced ? 'auto' : 'smooth' });
+    }
+    t.addEventListener('click', jump);
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); }
+    });
+  });
+
+  /* ---------- hover footage: only where a real clip exists ---------- */
+  if (!prefersReduced) {
+    document.querySelectorAll('.tile .clip').forEach(function (v) {
+      var tile = v.closest('.tile');
+      function enter() {
+        if (!v.src) v.src = v.dataset.src;
+        v.classList.add('on');
+        v.play().catch(function () {});
+      }
+      function leave() {
+        v.classList.remove('on');
+        v.pause();
+        try { v.currentTime = 0; } catch (err) {}
+      }
+      tile.addEventListener('mouseenter', enter);
+      tile.addEventListener('focusin', enter);
+      tile.addEventListener('mouseleave', leave);
+      tile.addEventListener('focusout', leave);
+    });
+  }
 
   /* ---------- residue (session marks, never counted) ---------- */
   var KEY = 'proto-ongoing-seen';
@@ -783,16 +1247,19 @@
   } catch (err) {
     seen = [];
   }
-  entries.forEach(function (e) {
-    if (seen.indexOf(e.dataset.id) !== -1) e.classList.add('seen');
-    e.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        if (seen.indexOf(e.dataset.id) === -1) {
-          seen.push(e.dataset.id);
-          try { sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (err) {}
-        }
-        e.classList.add('seen');
-      });
+  function mark(id) {
+    if (seen.indexOf(id) === -1) {
+      seen.push(id);
+      try { sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (err) {}
+    }
+    document.querySelectorAll('[data-id="' + id + '"]').forEach(function (el) {
+      el.classList.add('seen');
+    });
+  }
+  seen.forEach(mark);
+  items.forEach(function (el) {
+    el.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { mark(el.dataset.id); });
     });
   });
 })();
