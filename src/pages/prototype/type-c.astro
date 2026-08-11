@@ -1,0 +1,1059 @@
+<!-- TYPE EXPLORATION C of ongoing.astro, typography only -->
+---
+// PROTOTYPE — landing rebuild after the design interview.
+// Dark act = two snap screens over the fixed video. White act = the folio, free scroll.
+// One name element travels from screen 1 into the slot on screen 2. One nav bar for the whole page.
+// Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
+
+import generated from '../../data/generated-projects.json';
+
+const isExt = (h) => typeof h === 'string' && h.indexOf('http') === 0;
+
+/* ---------- buckets: derived from the pipeline's categories ---------- */
+const ON_PAPER = ['comic', 'zine', 'illustration', 'photocomics'];
+const bucketFor = (cats = []) => {
+  if (cats.indexOf('game') !== -1) return 'games';
+  if (cats.some((c) => ON_PAPER.indexOf(c) !== -1)) return 'on paper';
+  return 'none'; // e.g. Mixed meanings (ai / conceptual) — visible under "all" only
+};
+
+// the pipeline groups by year, and buckets everything pre-2020 into a label:"earlier"
+// group whose year is 0, so the real year comes off the cover path.
+const yearOf = (p, group) => {
+  const m = /\/projects\/(\d{4})\//.exec(p.cover || '');
+  return m ? Number(m[1]) : group.year;
+};
+
+// credits are kept in the data but are NOT shown in the folio any more —
+// they belong on the work detail pages.
+const WITH_CHARU = [
+  'ai-quit', 'boneyard', 'mark', 'misplaced', 'proximity', 'ruh-and-the-glow',
+  'the-titli-effect',
+];
+
+const CURRENT_YEAR = 2026;
+
+/* ---------- the five that are not in the pipeline ---------- */
+const bazaar = 'https://everythingbazaar.netlify.app';
+const flow = 'https://divyatak.github.io/creative-visuals/particles/';
+const webcam = 'https://divyatak.github.io/creative-visuals/webcam/';
+const lineBefore = 'https://divya.studiotypo.xyz';
+
+const additions = [
+  {
+    id: 'metro-museum',
+    title: 'Metro Museum of the Forgotten',
+    year: 2026,
+    status: 'in progress',
+    bucket: 'games',
+    img: '/clips/poster-7.jpg',
+    alt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
+    clip: '/clips/cut-7a.mp4',
+    href: null,
+    with: '',
+  },
+  {
+    id: 'everything-bazaar',
+    title: 'Everything Bazaar',
+    year: 2026,
+    status: 'ongoing',
+    bucket: 'games',
+    img: '/clips/poster-6.jpg',
+    alt: 'A dark shop screen with a product box, from Everything Bazaar',
+    clip: null,
+    href: bazaar,
+    with: '',
+  },
+  {
+    id: 'bioluminescent-flow',
+    title: 'Bioluminescent Flow',
+    year: 2026,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/bioluminescent-flow.webp',
+    alt: 'Glowing particle trails on a dark field, from Bioluminescent Flow',
+    clip: '/clips/cut-2a.mp4',
+    href: flow,
+    with: '',
+  },
+  {
+    id: 'webcam-magic',
+    title: 'Webcam Magic',
+    year: 2026,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/webcam-magic.webp',
+    alt: 'A face rendered as a pixel mirror, from Webcam Magic',
+    clip: '/clips/cut-1a.mp4',
+    href: webcam,
+    with: '',
+  },
+  {
+    id: 'the-line-before',
+    title: 'The Line Before',
+    year: 2025,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/the-line-before.webp',
+    alt: 'A scene from The Line Before',
+    clip: null,
+    href: lineBefore,
+    with: 'with Kahran Singh',
+  },
+];
+
+/* ---------- everything the pipeline knows about ---------- */
+const fromPipeline = generated.flatMap((group) =>
+  group.projects.map((p) => {
+    const year = yearOf(p, group);
+    return {
+      id: p.slug,
+      title: p.title,
+      year,
+      // only the current year's (un)seen edition is still being added to;
+      // every earlier edition is closed, like everything else in the pipeline
+      status:
+        p.slug.indexOf('unseen') === 0 && year === CURRENT_YEAR ? 'ongoing' : 'finished',
+      bucket: bucketFor(p.categories),
+      img: p.cover,
+      alt: `Cover image for ${p.title}`,
+      clip: null,
+      href: `/works/${p.slug}/`,
+      with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
+    };
+  })
+);
+
+// newest first; the sort is stable, so the additions sit ahead of pipeline entries
+// from the same year.
+const works = [...additions, ...fromPipeline].sort((a, b) => b.year - a.year);
+
+const navLinks = [
+  { label: 'works', href: '#works' },
+  { label: 'friends', href: '/friends/' },
+  { label: 'about', href: '/about/' },
+  { label: 'contact', href: 'mailto:hello@divyatak.art' },
+];
+---
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>divya tak · type c</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  /* ---------- TYPE C: two voices ----------
+     TECHNICAL, MONO-INFLECTED. Every functional string — nav, wordmark, lens rows,
+     the "lately" label, tile titles, the pause control, the foot — is set in
+     JetBrains Mono: instrument-panel voice, small, tracked open, tabular by default.
+     Everything the site actually *says* — the name, the lead, the intro body, the
+     "works" chapter — is Space Grotesk, which descends from Space Mono and so shares
+     the flat terminals and squared bowls of the labels around it. The pairing is
+     engineered, not collaged: same skeleton, one voice proportional, one metric.
+
+     SIZE LOGIC. Mono carries a fixed 0.6em advance, so every string set in it runs
+     ~15% wider than the Montserrat it replaces. Each mono slot therefore steps DOWN
+     one notch (nav 12→11, lens 12→11, quiet lens 11→10, tile title 14→13, label
+     11→10) and buys the width back — nothing is reworded, only re-metered.
+
+     TRACKING LOGIC. Inverse to size, and gentler than a proportional face would need
+     because the advance already does half the spacing work:
+       13px mono  0.005em   · titles, read as words
+       11px mono  0.08em    · nav, lenses, foot — read as a row of controls
+       10px mono  0.16em    · uppercase micro-labels — read as instrumentation
+     The sans runs the other way: -0.03em on display, -0.015em on the lead, +0.005em
+     on body copy at 15px. Big type closes up, small type opens out.
+
+     name (7.5rem max) and docked name (1.1rem) are the SAME element mid-flight —
+     identical family/weight/tracking/line-height, size is the only difference, so
+     the morph script's fontSize ratio stays exact. */
+  :root {
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+    /* the dark act snaps; the white folio has no snap points, so it scrolls free */
+    scroll-snap-type: y proximity;
+  }
+  body {
+    font-family: var(--sans);
+    color: #222;
+    background: #111;
+    font-size: 15px;
+    line-height: 1.65;
+    letter-spacing: 0.005em;
+    /* figures line up in every voice; JetBrains Mono is tabular by construction,
+       Space Grotesk needs telling */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  /* the instrument voice: one rule, applied wherever the page is labelling itself */
+  .bar, .lens, .lens-row .sep, .lately .label, .entry h3, .motion-toggle,
+  .more, .empty, .foot, .scroll-cue {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  /* hairline mono on a moving video blooms; hold the strokes thin */
+  .bar, .lately .label, .motion-toggle, .scroll-cue, .intro, .name {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+  /* ---------- the video layer: fixed, behind everything, never scrolls away ---------- */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: #111 url('/clips/poster-2.jpg') center / cover no-repeat;
+  }
+  .backdrop video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* the montage is uniform 1920x1080; cover keeps it honest anyway */
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+  .backdrop video.on { opacity: 1; }
+  .backdrop .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.34) 100%);
+  }
+
+  /* ---------- one nav bar for the whole page ---------- */
+  .bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding: 1.25rem 3rem;
+    /* 12→11: mono runs wider, so the row steps down and tracks out instead */
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: lowercase;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+    border-bottom: 1px solid transparent;
+  }
+  /* the name, compressed into the instrument panel: mono at 11px, one weight up.
+     It is deliberately NOT the sans name — in the bar it is a readout, not a voice. */
+  .bar .wordmark {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: #fff;
+    opacity: 1;
+    transition: opacity 0.3s ease, color 0.25s ease;
+  }
+  /* on screen 1 the big name is the wordmark, so the bar keeps quiet */
+  body:not(.docked) .bar .wordmark { opacity: 0; pointer-events: none; }
+  .bar .links {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+  .bar a { color: rgba(255,255,255,0.72); transition: color 0.25s ease; }
+  .bar a:hover { color: #fff; }
+  /* once the white ground is under the bar, the bar turns to ink */
+  .bar.ink {
+    background: rgba(255,255,255,0.86);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom-color: #eee;
+  }
+  .bar.ink .wordmark { color: #222; }
+  .bar.ink a { color: #999; }
+  .bar.ink a:hover { color: #222; }
+
+  /* ---------- the one name: fixed, driven by scroll, never crossfaded ---------- */
+  .name {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2; /* above the stage, under the white ground */
+    width: max-content;
+    white-space: nowrap;
+    transform-origin: 0 0;
+    /* PAIRED WITH .name-slot — family, weight, tracking and line-height must match
+       exactly so the morph script's fontSize ratio stays true. Tracking is in em,
+       so it scales with the element and survives the flight. */
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(2.8rem, 8vw, 7.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-transform: lowercase;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+  }
+  .name.ready { opacity: 1; }
+
+  /* ---------- the stage: everything that sits over the video ---------- */
+  .stage { position: relative; z-index: 1; }
+  .stage a { color: #fff; }
+
+  .shell {
+    max-width: 1420px;
+    margin: 0 auto;
+    padding: 0 3rem;
+  }
+  .shell.narrow { max-width: 1180px; }
+
+  /* ---------- screen 1 ---------- */
+  .opening {
+    position: relative;
+    height: 100vh;
+    scroll-snap-align: start;
+  }
+  .scroll-cue {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.7);
+    /* an arrow is a control, so it belongs to the mono voice; mono glyphs sit on a
+       fixed advance and read a touch larger, hence 17→15 */
+    font-size: 15px;
+    line-height: 1;
+    transition: opacity 0.3s ease;
+  }
+  .scroll-cue:hover { color: #fff; }
+  body.docked .scroll-cue { opacity: 0; pointer-events: none; }
+
+  /* ---------- screen 2: the docked name + the intro ---------- */
+  .overlay {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 0 8rem;
+    scroll-snap-align: start;
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0.66) 20%,
+      rgba(0,0,0,0.86) 55%,
+      rgba(0,0,0,0.95) 100%
+    );
+  }
+  /* intro on the left (~2/3), the reserved slot on the right (~1/3) */
+  .intro-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 3rem;
+    /* held in from the shell's full width so the 2/3 column stays close to the
+       intro's own 54ch measure — otherwise the ratio reads as a void */
+    max-width: 940px;
+  }
+  .intro {
+    color: rgba(255,255,255,0.76);
+    max-width: 54ch;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.65;
+    letter-spacing: 0.005em;
+  }
+  .intro p { margin-bottom: 1rem; }
+
+  /* ---------- the reserved slot: held space, on purpose ----------
+     A rule, a label, and nothing else. The height is the point. */
+  .lately {
+    margin-top: 2.6rem;   /* drops the rule to the lead's line, past the docked name */
+    padding-top: 0.75rem;
+    min-height: 22rem;
+    border-top: 1px solid rgba(255,255,255,0.28);
+  }
+  /* the one true instrument label on the dark act: uppercase mono, 10px, tracked
+     hard. Uppercase is reserved for micro-labels only — used anywhere larger it
+     would tip the page into terminal cosplay. */
+  .lately .label {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: rgba(255,255,255,0.5);
+  }
+  /* one hairline far below, so the emptiness reads as measured, not missing */
+  .lately::after {
+    content: '';
+    display: block;
+    width: 2.5rem;
+    height: 1px;
+    margin-top: 15rem;
+    background: rgba(255,255,255,0.16);
+  }
+  .intro a {
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.35);
+  }
+  .intro a:hover { border-bottom-color: #fff; }
+
+  /* the slot the big name lands in — invisible, it only holds the position */
+  .name-slot {
+    /* IDENTICAL to .name except size — see the note there */
+    font-family: var(--sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: lowercase;
+    visibility: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  /* the human sentence, and the only place the sans gets to be loud below the name */
+  .intro .lead {
+    font-family: var(--sans);
+    font-size: clamp(1.6rem, 2.6vw, 1.9rem);
+    font-weight: 500;
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .intro .coda {
+    margin-top: 2rem;
+    margin-bottom: 0;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* ---------- video chrome ---------- */
+  .video-chrome {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 3rem 1.5rem;
+    margin-top: -3.5rem;
+    pointer-events: none;
+  }
+  .video-chrome > * { pointer-events: auto; }
+  .motion-toggle {
+    background: none;
+    color: rgba(255,255,255,0.6);
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 0 0 3px;
+    cursor: pointer;
+  }
+  .motion-toggle:hover { color: #fff; border-bottom-color: #fff; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .backdrop video { transition: none; }
+    .scroll-cue, .tile, .tile .media video, .bar, .bar .wordmark { transition: none !important; }
+  }
+
+  /* ---------- solid ground: the folio slides over the video ---------- */
+  .ground {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+  }
+
+  /* the folio runs edge to edge; only a small gutter holds it off the viewport */
+  .works {
+    padding: 8rem 1.75rem 0;
+    scroll-margin-top: 3.5rem;
+  }
+  .works-head { padding-bottom: 3rem; }
+  /* a chapter opening, not a label */
+  .works-head h2 {
+    font-family: var(--sans);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-transform: lowercase;
+    color: #222;
+    margin-bottom: 1.75rem;
+  }
+
+  /* ---------- lenses ---------- */
+  .lens-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .lens-row + .lens-row { margin-top: 0.5rem; }
+  /* the lens rows are the clearest instrument panel on the page. They stay LOWERCASE
+     — "interactive pieces" is 18 characters and uppercase mono would run it off the
+     row. Width is bought back with size (12→11) and a measured 0.08em instead. */
+  .lens {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0.08em;
+    color: #999;
+    background: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 0 0 2px;
+    cursor: pointer;
+  }
+  .lens:hover { color: #222; }
+  .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
+  .lens[aria-pressed="true"] { font-weight: 500; }
+  .lens-row.quiet .lens { font-size: 10px; letter-spacing: 0.1em; color: #bbb; }
+  .lens-row.quiet .lens:hover { color: #636363; }
+  .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
+  .lens-row .sep { color: #ddd; font-size: 12px; }
+
+  /* ---------- the grid: the only view ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    column-gap: 1.5rem;
+    row-gap: 2.5rem;
+    padding-bottom: 3.5rem;
+  }
+  .entry[hidden] { display: none; }
+
+  .tile { display: block; transition: transform 0.35s ease; }
+  .entry:hover .tile, .entry:focus-within .tile { transform: translateY(-4px); transition-duration: 0.2s; }
+  .tile .media {
+    display: block;
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #f4f4f4;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.10);
+  }
+  .tile .media img,
+  .tile .media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* nothing stretches, ever */
+  }
+  .tile .media video {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
+
+  /* tile titles are the hinge of the thesis: they are content, but they are also the
+     index of an archive, so they take the mono at near-reading size (14→13) with
+     tracking pulled almost to zero. Long titles wrap cleanly on a 1.45 leading. */
+  .entry h3 {
+    margin-top: 1rem;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: 0.005em;
+    text-transform: lowercase;
+    color: #222;
+  }
+  .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
+
+  /* ---------- nine at a time ---------- */
+  .more-wrap {
+    text-align: center;
+    padding-bottom: 8rem;
+  }
+  .more {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: #bbb;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 0 0 3px;
+    cursor: pointer;
+  }
+  .more:hover { color: #222; border-bottom-color: #222; }
+  .more[hidden] { display: none; }
+
+  /* a system message, so it stays in the system's voice */
+  .empty {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: #999;
+    padding: 2rem 0;
+  }
+  .empty[hidden] { display: none; }
+
+  /* ---------- foot ---------- */
+  .foot {
+    padding: 0 1.75rem 6rem;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: #999;
+  }
+  .foot a { color: #999; }
+  .foot a:hover { color: #222; }
+  .foot .dot { margin: 0 0.5rem; color: #ddd; }
+
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 900px) {
+    html { scroll-snap-type: none; }
+    .shell, .bar, .video-chrome { padding-left: 1.5rem; padding-right: 1.5rem; }
+    /* five mono strings on one narrow row: drop a notch and close the tracking
+       right down. The copy is never reworded, only re-metered. */
+    .bar { gap: 1.5rem; font-size: 10px; letter-spacing: 0.02em; }
+    .bar .wordmark { font-size: 10px; letter-spacing: 0.04em; }
+    .lens { font-size: 10px; letter-spacing: 0.04em; }
+    .lens-row.quiet .lens { font-size: 10px; letter-spacing: 0.06em; }
+    .entry h3 { font-size: 13px; }
+    .bar .links { gap: 1rem; }
+    .overlay { padding: 7rem 0 7rem; }
+    /* the reserved slot stacks under the intro */
+    .intro-cols { grid-template-columns: 1fr; gap: 3.5rem; }
+    .lately { margin-top: 0; min-height: 14rem; }
+    .lately::after { margin-top: 9rem; }
+    .works { padding: 6rem 1.25rem 0; }
+    .foot { padding-left: 1.25rem; padding-right: 1.25rem; }
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; row-gap: 3rem; }
+  }
+
+  /* ---------- tooling only: not part of the design ---------- */
+  .proto-pill {
+    position: fixed;
+    z-index: 99;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .proto-pill a { color: rgba(255,255,255,0.6); }
+  .proto-pill a:hover { color: #fff; }
+  .proto-pill a[aria-current="page"] { color: #fff; font-weight: 700; }
+  .proto-pill span { color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+  <!-- ============ the video, fixed behind everything ============ -->
+  <div class="backdrop" aria-hidden="true">
+    <video id="vid" muted playsinline loop preload="auto" poster="/clips/poster-2.jpg" src="/clips/montage.mp4"></video>
+    <div class="scrim"></div>
+  </div>
+
+  <!-- ============ one nav bar, white over the video, ink over the folio ============ -->
+  <header class="bar" id="bar">
+    <a class="wordmark" href="/prototype/type-c/">divya tak</a>
+    <nav class="links" aria-label="site">
+      {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+  </header>
+
+  <!-- ============ the name: one element, it becomes the docked title ============ -->
+  <h1 class="name" id="name">divya tak</h1>
+
+  <div class="stage">
+
+    <!-- ============ screen 1 ============ -->
+    <div class="opening" id="top">
+      <a class="scroll-cue" href="#intro" aria-label="scroll down to the introduction">&#8595;</a>
+    </div>
+
+    <!-- ============ screen 2: docked name + intro ============ -->
+    <section class="overlay" id="intro">
+      <div class="shell narrow">
+        <div class="intro-cols">
+          <div class="intro">
+            <!-- the slot the fixed name lands in; it holds space and nothing else -->
+            <p class="name-slot" id="name-slot" aria-hidden="true">divya tak</p>
+            <p class="lead">I make interactive things.</p>
+            <p>Hi! Hello! I'm Divya. I am a cross domain creative human. I love making many things with many people.</p>
+            <p>
+              I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener">Joyus</a>
+              with my friend <a href="https://kahransingh.com" target="_blank" rel="noopener">Kahran</a>.
+              I make games with <a href="https://charutak.xyz" target="_blank" rel="noopener">Charu</a>.
+              I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener">Varun Ramanna</a> on VFX projects.
+            </p>
+            <p class="coda">You are at the home of some of my creations.</p>
+          </div>
+
+          <!-- RESERVED SLOT — "lately / new stuff".
+               The space is intentional and stays empty until its design exists.
+               Do not fill this with a list, a feed, or placeholder content. -->
+          <aside class="lately" aria-label="lately">
+            <span class="label">lately</span>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <div class="video-chrome">
+      <button class="motion-toggle" id="motion-toggle" aria-pressed="false" aria-label="pause background clips">pause</button>
+    </div>
+  </div>
+
+  <!-- ============ the folio: white ground slides over the video ============ -->
+  <main class="ground" id="ground">
+
+    <section class="works" id="works" aria-label="works">
+      <div class="works-head">
+        <h2>works</h2>
+
+        <div class="lenses">
+          <div class="lens-row" role="group" aria-label="filter by kind">
+            <button class="lens" data-bucket="all" aria-pressed="true">all</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="games" aria-pressed="false">games</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="interactive pieces" aria-pressed="false">interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="on paper" aria-pressed="false">on paper</button>
+          </div>
+          <div class="lens-row quiet" role="group" aria-label="filter by status">
+            <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="in progress" aria-pressed="false">in progress</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="ongoing" aria-pressed="false">ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="finished" aria-pressed="false">finished</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- the grid: image + title, nothing else ---- -->
+      <div class="grid" id="grid">
+        {works.map((w) => (
+          <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
+            {w.href ? (
+              <a
+                class="tile"
+                href={w.href}
+                target={isExt(w.href) ? '_blank' : undefined}
+                rel={isExt(w.href) ? 'noopener' : undefined}
+              >
+                <span class="media">
+                  <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                  {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+                </span>
+                <h3>{w.title}</h3>
+              </a>
+            ) : (
+              <div class="tile">
+                <span class="media">
+                  <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                  {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+                </span>
+                <h3>{w.title}</h3>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <p class="empty" id="empty" hidden>nothing under this lens yet.</p>
+
+      <div class="more-wrap">
+        <button class="more" id="more" type="button" hidden>more</button>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <a href="/friends/">friends</a><span class="dot" aria-hidden="true">&middot;</span>
+      <a href="/about/">about</a><span class="dot" aria-hidden="true">&middot;</span>
+      <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
+    </footer>
+
+  </main>
+
+  <!-- tooling only — variant switcher, not part of the design -->
+  <nav class="proto-pill" aria-label="type exploration switcher">
+    <a href="/prototype/ongoing/">base</a><span aria-hidden="true">&middot;</span>
+    <a href="/prototype/type-a/">a</a><span aria-hidden="true">&middot;</span>
+    <a href="/prototype/type-b/">b</a><span aria-hidden="true">&middot;</span>
+    <a href="/prototype/type-c/" aria-current="page">c</a>
+  </nav>
+
+<script is:inline>
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
+  // 12 cuts of 5.2s each, composed offline with ffmpeg at a uniform 1920x1080.
+  // Kept here so anything that needs to reason about playback time still can.
+  // Sources 5 and 6 no longer exist in /clips/, so they are not in the order.
+  var order = ['2a','7a','1a','4a','8b','3a','2b','7b','1b','4b','8a','3b'];
+  var MONTAGE_SECONDS = 62.4;
+  var CUT = MONTAGE_SECONDS / order.length; // 5.2s
+
+  var vid = document.getElementById('vid');
+  var toggle = document.getElementById('motion-toggle');
+  var paused = prefersReduced;
+  var started = false;
+
+  function start() {
+    started = true;
+    vid.classList.add('on');
+    vid.play().catch(function () {});
+  }
+
+  function setToggleUi() {
+    toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    toggle.setAttribute('aria-label', paused ? 'play background clips' : 'pause background clips');
+    toggle.textContent = paused ? 'play' : 'pause';
+  }
+
+  toggle.addEventListener('click', function () {
+    paused = !paused;
+    setToggleUi();
+    if (paused) {
+      vid.pause();
+    } else if (!started) {
+      start(); // reduced-motion visitors opt in here
+    } else {
+      vid.play().catch(function () {});
+    }
+  });
+
+  setToggleUi();
+  if (!prefersReduced) start();
+  // under reduced motion nothing plays: the poster still shows via the
+  // backdrop's CSS background and the untouched poster attribute.
+
+  /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
+     Start = centred in the viewport at full size. End = the invisible .name-slot that
+     sits above the intro lead. We measure both, then interpolate transform against
+     scroll progress across the dark act. No crossfade, no second element. */
+  var nameEl = document.getElementById('name');
+  var slotEl = document.getElementById('name-slot');
+  var overlayEl = document.getElementById('intro');
+  var groundEl = document.getElementById('ground');
+  var barEl = document.getElementById('bar');
+
+  var M = { x0: 0, y0: 0, x1: 0, yDoc: 0, s1: 0.2, end: 1 };
+  var docked = null;
+  var inked = null;
+
+  function measure() {
+    nameEl.style.transform = 'none';
+    var nr = nameEl.getBoundingClientRect();       // left:0 / top:0, so this is its natural size
+    var sr = slotEl.getBoundingClientRect();
+    var nf = parseFloat(getComputedStyle(nameEl).fontSize) || 1;
+    var sf = parseFloat(getComputedStyle(slotEl).fontSize) || 1;
+
+    M.x0 = (window.innerWidth - nr.width) / 2;
+    M.y0 = (window.innerHeight - nr.height) / 2;
+    M.x1 = sr.left + (window.pageXOffset || 0);
+    M.yDoc = sr.top + (window.pageYOffset || 0);   // the slot's position in the document
+    M.s1 = sf / nf;                                // both use line-height 1, so top-left aligns
+    // scroll distance between the two snap points, measured from the document
+    M.end = Math.max(1, overlayEl.getBoundingClientRect().top + (window.pageYOffset || 0));
+    paint();
+    nameEl.classList.add('ready');
+  }
+
+  function paint() {
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var p = y / M.end;
+    if (p < 0) p = 0;
+    if (p > 1) p = 1;
+    if (prefersReduced) p = p > 0.35 ? 1 : 0; // jump between states, never tween
+
+    var tx = M.x0 + (M.x1 - M.x0) * p;
+    var yEnd = M.yDoc - y;                    // where the slot is on screen right now
+    var ty = M.y0 + (yEnd - M.y0) * p;        // past p=1 this tracks the slot, so it scrolls away
+    var s = 1 + (M.s1 - 1) * p;
+    nameEl.style.transform =
+      'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
+
+    var d = p > 0.5;
+    if (d !== docked) { docked = d; document.body.classList.toggle('docked', d); }
+
+    // the bar turns to ink once the white ground has slid under it
+    var ink = groundEl.getBoundingClientRect().top <= barEl.offsetHeight;
+    if (ink !== inked) { inked = ink; barEl.classList.toggle('ink', ink); }
+  }
+
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () { ticking = false; paint(); });
+  }, { passive: true });
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(measure, 120);
+  });
+
+  measure();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  window.addEventListener('load', measure);
+
+  /* ---------- wheel assist: the dark act's two screens snap decisively ----------
+     CSS scroll-snap stays as the fallback; this just makes one gesture land. */
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  if (!prefersReduced && !coarse) {
+    var lockUntil = 0;
+    var THRESHOLD = 8;
+    window.addEventListener('wheel', function (e) {
+      if (e.ctrlKey) return;                       // pinch zoom
+      var y = window.pageYOffset || 0;
+      var end = M.end;
+      if (y > end + 4) return;                     // in the folio: hands off
+      var now = Date.now();
+      if (now < lockUntil) { e.preventDefault(); return; } // swallow the tail of a gesture
+      if (e.deltaY > THRESHOLD && y < end - 4) {
+        e.preventDefault();
+        lockUntil = now + 700;
+        window.scrollTo({ top: end, behavior: 'smooth' });
+      } else if (e.deltaY < -THRESHOLD && y > 4) {
+        e.preventDefault();
+        lockUntil = now + 700;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, { passive: false });
+  }
+
+  /* ---------- folio: lenses (bucket, status) + nine at a time ---------- */
+  var bucketBtns = document.querySelectorAll('.lens[data-bucket]');
+  var statusBtns = document.querySelectorAll('.lens[data-status]');
+  var items = document.querySelectorAll('.entry');
+  var emptyEl = document.getElementById('empty');
+  var moreBtn = document.getElementById('more');
+  var bucket = 'all';
+  var status = 'latest';
+
+  var PAGE = 9;
+  var shown = PAGE;
+
+  // keepPage=true when the visitor asked for more; any lens change starts over
+  function apply(keepPage) {
+    if (!keepPage) shown = PAGE;
+    var matched = 0;
+    items.forEach(function (el) {
+      var bOk = bucket === 'all' || el.dataset.bucket === bucket;
+      var sOk = status === 'latest' || el.dataset.status === status;
+      var hit = bOk && sOk;
+      if (hit) matched++;
+      el.hidden = !(hit && matched <= shown);
+    });
+    emptyEl.hidden = matched > 0;
+    moreBtn.hidden = matched <= shown; // no counts, it just goes quiet when done
+  }
+
+  bucketBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      bucket = b.dataset.bucket;
+      bucketBtns.forEach(function (o) {
+        o.setAttribute('aria-pressed', o.dataset.bucket === bucket ? 'true' : 'false');
+      });
+      apply(false);
+    });
+  });
+
+  statusBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      status = b.dataset.status;
+      statusBtns.forEach(function (o) {
+        o.setAttribute('aria-pressed', o.dataset.status === status ? 'true' : 'false');
+      });
+      apply(false);
+    });
+  });
+
+  moreBtn.addEventListener('click', function () {
+    shown += PAGE;
+    apply(true);
+  });
+
+  apply(false);
+
+  /* ---------- hover footage: only where a real clip exists ---------- */
+  if (!prefersReduced) {
+    document.querySelectorAll('.tile .clip').forEach(function (v) {
+      var tile = v.closest('.tile');
+      function enter() {
+        if (!v.src) v.src = v.dataset.src;
+        v.classList.add('on');
+        v.play().catch(function () {});
+      }
+      function leave() {
+        v.classList.remove('on');
+        v.pause();
+        try { v.currentTime = 0; } catch (err) {}
+      }
+      tile.addEventListener('mouseenter', enter);
+      tile.addEventListener('focusin', enter);
+      tile.addEventListener('mouseleave', leave);
+      tile.addEventListener('focusout', leave);
+    });
+  }
+
+  /* ---------- residue (session marks, never counted) ---------- */
+  var KEY = 'proto-ongoing-seen';
+  var seen;
+  try {
+    seen = JSON.parse(sessionStorage.getItem(KEY) || '[]');
+  } catch (err) {
+    seen = [];
+  }
+  function mark(id) {
+    if (seen.indexOf(id) === -1) {
+      seen.push(id);
+      try { sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (err) {}
+    }
+    document.querySelectorAll('[data-id="' + id + '"]').forEach(function (el) {
+      el.classList.add('seen');
+    });
+  }
+  seen.forEach(mark);
+  items.forEach(function (el) {
+    el.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { mark(el.dataset.id); });
+    });
+  });
+})();
+</script>
+</body>
+</html>
