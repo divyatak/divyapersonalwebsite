@@ -1,218 +1,129 @@
 ---
 // PROTOTYPE — landing rebuild after the design interview.
 // Dark act = two snap screens over the fixed video. White act = the folio, free scroll.
-// Data lives here so the three folio views (grid / list / timeline) stay in sync.
+// One name element travels from screen 1 into the slot on screen 2. One nav bar for the whole page.
+// Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
 
-const peruse = 'https://divyatak.github.io/creative-visuals/lenticular/';
-const bazaar = 'https://everythingbazaar.netlify.app';
+import generated from '../../data/generated-projects.json';
 
 const isExt = (h) => typeof h === 'string' && h.indexOf('http') === 0;
 
-// LATELY — the same four real facts feed all three rail variants.
-const railItems = [
-  { text: 'metro museum: in progress' },
-  { text: 'everything bazaar: live', href: bazaar },
-  { text: 'this site: rebuilt this week' },
-  { text: 'something to peruse ↗', href: peruse },
-];
-// repeated so the crawl never shows a gap on a wide screen
-const railLoop = [...railItems, ...railItems, ...railItems];
+/* ---------- buckets: derived from the pipeline's categories ---------- */
+const ON_PAPER = ['comic', 'zine', 'illustration', 'photocomics'];
+const bucketFor = (cats = []) => {
+  if (cats.indexOf('game') !== -1) return 'games';
+  if (cats.some((c) => ON_PAPER.indexOf(c) !== -1)) return 'on paper';
+  return 'none'; // e.g. Mixed meanings (ai / conceptual) — visible under "all" only
+};
 
-// WORKS — newest first. img must be a real file on disk; clip only where footage exists.
-const works = [
+// the pipeline groups by year, and buckets everything pre-2020 into a label:"earlier"
+// group whose year is 0, so the real year comes off the cover path.
+const yearOf = (p, group) => {
+  const m = /\/projects\/(\d{4})\//.exec(p.cover || '');
+  return m ? Number(m[1]) : group.year;
+};
+
+const WITH_CHARU = [
+  'ai-quit', 'boneyard', 'mark', 'misplaced', 'proximity', 'ruh-and-the-glow',
+  'the-titli-effect',
+];
+
+/* ---------- the five that are not in the pipeline ---------- */
+const bazaar = 'https://everythingbazaar.netlify.app';
+const flow = 'https://divyatak.github.io/creative-visuals/particles/';
+const webcam = 'https://divyatak.github.io/creative-visuals/webcam/';
+const lineBefore = 'https://divya.studiotypo.xyz';
+
+const additions = [
   {
     id: 'metro-museum',
     title: 'Metro Museum of the Forgotten',
-    year: '2026', sort: 2026,
+    year: 2026,
     status: 'in progress',
     bucket: 'games',
     img: '/clips/poster-7.jpg',
     alt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
     clip: '/clips/cut-7a.mp4',
     href: null,
+    with: '',
     links: [],
   },
   {
     id: 'everything-bazaar',
     title: 'Everything Bazaar',
-    year: '2026', sort: 2026,
-    status: 'finished',
+    year: 2026,
+    status: 'ongoing',
     bucket: 'games',
     img: '/clips/poster-6.jpg',
     alt: 'A dark shop screen with a product box, from Everything Bazaar',
-    clip: '/clips/cut-6a.mp4',
+    clip: null,
     href: bazaar,
+    with: '',
     links: [{ label: 'play ↗', href: bazaar }],
   },
   {
     id: 'bioluminescent-flow',
     title: 'Bioluminescent Flow',
-    year: '2026', sort: 2026,
+    year: 2026,
     status: 'finished',
     bucket: 'interactive pieces',
     img: '/playground/bioluminescent-flow.webp',
     alt: 'Glowing particle trails on a dark field, from Bioluminescent Flow',
     clip: '/clips/cut-2a.mp4',
-    href: 'https://divyatak.github.io/creative-visuals/particles/',
-    links: [{ label: 'open ↗', href: 'https://divyatak.github.io/creative-visuals/particles/' }],
+    href: flow,
+    with: '',
+    links: [{ label: 'open ↗', href: flow }],
   },
   {
     id: 'webcam-magic',
     title: 'Webcam Magic',
-    year: '2026', sort: 2026,
+    year: 2026,
     status: 'finished',
     bucket: 'interactive pieces',
     img: '/playground/webcam-magic.webp',
     alt: 'A face rendered as a pixel mirror, from Webcam Magic',
     clip: '/clips/cut-1a.mp4',
-    href: 'https://divyatak.github.io/creative-visuals/webcam/',
-    links: [{ label: 'open ↗', href: 'https://divyatak.github.io/creative-visuals/webcam/' }],
-  },
-  {
-    id: 'unseen',
-    title: '(un)seen',
-    year: '2024 to now', sort: 2026,
-    status: 'in progress',
-    bucket: 'on paper',
-    img: '/projects/2026/(un)seen Life/cover.webp',
-    alt: '(un)seen Life cover, drawing over a street photograph',
-    clip: null,
-    href: peruse,
-    links: [{ label: 'lenticular ↗', href: peruse }],
+    href: webcam,
+    with: '',
+    links: [{ label: 'open ↗', href: webcam }],
   },
   {
     id: 'the-line-before',
     title: 'The Line Before',
-    year: '2025', sort: 2025,
+    year: 2025,
     status: 'finished',
     bucket: 'interactive pieces',
     img: '/playground/the-line-before.webp',
     alt: 'A scene from The Line Before',
     clip: null,
-    href: 'https://divya.studiotypo.xyz',
+    href: lineBefore,
     with: 'with Kahran Singh',
-    links: [{ label: 'open ↗', href: 'https://divya.studiotypo.xyz' }],
-  },
-  {
-    id: 'the-titli-effect',
-    title: 'The Titli Effect',
-    year: '2024', sort: 2024,
-    status: 'finished',
-    bucket: 'games',
-    img: '/projects/2024/The titli effect/titli-title.webp',
-    alt: 'The Titli Effect title screen',
-    clip: null,
-    href: '/works/the-titli-effect/',
-    with: 'with my sister Charu',
-    links: [{ label: 'more →', href: '/works/the-titli-effect/' }],
-  },
-  {
-    id: 'journey-of-my-paper-plane',
-    title: 'Journey of my paper plane',
-    year: '2024', sort: 2024,
-    status: 'finished',
-    bucket: 'games',
-    img: '/projects/2024/Journey of my paper plane/cover.webp',
-    alt: 'Journey of my paper plane cover',
-    clip: null,
-    href: '/works/journey-of-my-paper-plane/',
-    links: [{ label: 'more →', href: '/works/journey-of-my-paper-plane/' }],
-  },
-  {
-    id: 'how-to-think',
-    title: 'How to think',
-    year: '2022', sort: 2022,
-    status: 'finished',
-    bucket: 'on paper',
-    img: '/projects/2022/How to think/cover.webp',
-    alt: 'How to think zine cover',
-    clip: null,
-    href: '/works/how-to-think/',
-    links: [{ label: 'more →', href: '/works/how-to-think/' }],
-  },
-  {
-    id: 'common',
-    title: 'Common',
-    year: '2021', sort: 2021,
-    status: 'finished',
-    bucket: 'on paper',
-    img: '/projects/2021/Common/cover.webp',
-    alt: 'Common comic cover',
-    clip: null,
-    href: '/works/common/',
-    links: [{ label: 'more →', href: '/works/common/' }],
-  },
-  {
-    id: 'six-small-games',
-    title: 'six small games',
-    year: '2020', sort: 2020,
-    status: 'finished',
-    bucket: 'games',
-    img: '/projects/2020/AI quit/cover.webp',
-    alt: 'AI quit cover, one of six small games',
-    clip: null,
-    href: null,
-    jump: true,
-    links: [
-      { label: 'AI quit', href: '/works/ai-quit/' },
-      { label: 'Boneyard', href: '/works/boneyard/' },
-      { label: 'Mark', href: '/works/mark/' },
-      { label: 'Misplaced', href: '/works/misplaced/' },
-      { label: 'Proximity', href: '/works/proximity/' },
-      { label: 'Ruh and the glow', href: '/works/ruh-and-the-glow/' },
-    ],
-  },
-  {
-    id: 'protest',
-    title: 'Protest',
-    year: '2020', sort: 2020,
-    status: 'finished',
-    bucket: 'on paper',
-    img: '/projects/2020/Protest/Protest zine print_Page_01_Image_0001.webp',
-    alt: 'First printed page of the Protest zine',
-    clip: null,
-    href: '/works/protest/',
-    links: [{ label: 'more →', href: '/works/protest/' }],
-  },
-  {
-    id: 'wonderful-worlds',
-    title: 'Wonderful Worlds',
-    year: '2019', sort: 2019,
-    status: 'finished',
-    bucket: 'on paper',
-    img: '/projects/2019/WonderfulWorlds/cover.webp',
-    alt: 'Wonderful Worlds zine cover',
-    clip: null,
-    href: '/works/wonderful-worlds/',
-    links: [{ label: 'more →', href: '/works/wonderful-worlds/' }],
-  },
-  {
-    id: 'pi-of-life',
-    title: 'Pi of life',
-    year: '2016', sort: 2016,
-    status: 'finished',
-    bucket: 'on paper',
-    img: '/projects/2016/Pi of life/cover.webp',
-    alt: 'Pi of life comic cover',
-    clip: null,
-    href: '/works/pi-of-life/',
-    links: [{ label: 'more →', href: '/works/pi-of-life/' }],
-  },
-  {
-    id: 'clogs',
-    title: 'Clogs',
-    year: '2014', sort: 2014,
-    status: 'finished',
-    bucket: 'on paper',
-    img: '/projects/2014/Clogs/cover.webp',
-    alt: 'Clogs comic cover',
-    clip: null,
-    href: '/works/clogs/',
-    links: [{ label: 'more →', href: '/works/clogs/' }],
+    links: [{ label: 'open ↗', href: lineBefore }],
   },
 ];
 
-const years = [...new Set(works.map((w) => w.sort))].sort((a, b) => b - a);
+/* ---------- everything the pipeline knows about ---------- */
+const fromPipeline = generated.flatMap((group) =>
+  group.projects.map((p) => ({
+    id: p.slug,
+    title: p.title,
+    year: yearOf(p, group),
+    // the (un)seen series is still being added to; everything else has landed
+    status: p.slug.indexOf('unseen') === 0 ? 'ongoing' : 'finished',
+    bucket: bucketFor(p.categories),
+    img: p.cover,
+    alt: `Cover image for ${p.title}`,
+    clip: null,
+    href: `/works/${p.slug}/`,
+    with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
+    links: [{ label: 'more →', href: `/works/${p.slug}/` }],
+  }))
+);
+
+// newest first; the sort is stable, so the additions sit ahead of pipeline entries
+// from the same year.
+const works = [...additions, ...fromPipeline].sort((a, b) => b.year - a.year);
+
 const navLinks = [
   { label: 'works', href: '#works' },
   { label: 'friends', href: '/friends/' },
@@ -230,6 +141,9 @@ const navLinks = [
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&display=swap" rel="stylesheet" />
 <style>
+  /* ---------- one type system ----------
+     name 7.5rem max · docked name 1.1rem · lead 1.9rem · body 15px
+     tile title 14px · whisper 11px · nav 12px. Spacing in 0.5rem steps. */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html {
     scroll-behavior: smooth;
@@ -259,7 +173,7 @@ const navLinks = [
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* the montage is uniform 1920x1080; cover keeps it honest anyway */
     opacity: 0;
     transition: opacity 180ms ease;
   }
@@ -267,8 +181,74 @@ const navLinks = [
   .backdrop .scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.38) 0%, rgba(0,0,0,0.12) 42%, rgba(0,0,0,0.3) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.34) 100%);
   }
+
+  /* ---------- one nav bar for the whole page ---------- */
+  .bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding: 1.25rem 3rem;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .bar .wordmark {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #fff;
+    opacity: 1;
+    transition: opacity 0.3s ease, color 0.25s ease;
+  }
+  /* on screen 1 the big name is the wordmark, so the bar keeps quiet */
+  body:not(.docked) .bar .wordmark { opacity: 0; pointer-events: none; }
+  .bar .links {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+  .bar a { color: rgba(255,255,255,0.72); transition: color 0.25s ease; }
+  .bar a:hover { color: #fff; }
+  /* once the white ground is under the bar, the bar turns to ink */
+  .bar.ink {
+    background: rgba(255,255,255,0.86);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border-bottom-color: #eee;
+  }
+  .bar.ink .wordmark { color: #222; }
+  .bar.ink a { color: #999; }
+  .bar.ink a:hover { color: #222; }
+
+  /* ---------- the one name: fixed, driven by scroll, never crossfaded ---------- */
+  .name {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2; /* above the stage, under the white ground */
+    width: max-content;
+    white-space: nowrap;
+    transform-origin: 0 0;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 8vw, 7.5rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+    text-transform: lowercase;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+  }
+  .name.ready { opacity: 1; }
 
   /* ---------- the stage: everything that sits over the video ---------- */
   .stage { position: relative; z-index: 1; }
@@ -281,49 +261,15 @@ const navLinks = [
   }
   .shell.narrow { max-width: 1180px; }
 
-  /* ---------- nav: full width, equidistributed, white over the video ---------- */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 3;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1.6rem 3rem;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-  }
-  .nav a { color: rgba(255,255,255,0.72); }
-  .nav a:hover { color: #fff; }
-
-  /* ---------- screen 1: the big name ---------- */
+  /* ---------- screen 1 ---------- */
   .opening {
     position: relative;
     height: 100vh;
-    margin-top: -4.4rem; /* the sticky nav sits inside this screen */
-    display: flex;
-    align-items: center;
-    justify-content: center;
     scroll-snap-align: start;
-  }
-  .opening h1 {
-    font-weight: 800;
-    font-size: clamp(3rem, 13vw, 10rem);
-    letter-spacing: -0.035em;
-    line-height: 1;
-    color: #fff;
-    text-transform: lowercase;
-    transform-origin: center center;
-    transition: opacity 0.45s ease, transform 0.45s ease;
-  }
-  body.docked .opening h1 {
-    opacity: 0;
-    transform: scale(0.14) translateY(-14vh);
   }
   .scroll-cue {
     position: absolute;
-    bottom: 1.6rem;
+    bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
     color: rgba(255,255,255,0.7);
@@ -333,149 +279,57 @@ const navLinks = [
   .scroll-cue:hover { color: #fff; }
   body.docked .scroll-cue { opacity: 0; pointer-events: none; }
 
-  /* ---------- screen 2: the docked name + intro + lately ---------- */
+  /* ---------- screen 2: the docked name + the intro ---------- */
   .overlay {
     position: relative;
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: 8rem 0 10rem;
+    padding: 8rem 0 8rem;
     scroll-snap-align: start;
     background: linear-gradient(
       to bottom,
       rgba(0,0,0,0) 0%,
-      rgba(0,0,0,0.58) 22%,
-      rgba(0,0,0,0.76) 58%,
-      rgba(0,0,0,0.9) 100%
+      rgba(0,0,0,0.66) 20%,
+      rgba(0,0,0,0.86) 55%,
+      rgba(0,0,0,0.95) 100%
     );
   }
-  .overlay-inner {
-    display: grid;
-    grid-template-columns: 1.7fr 1fr;
-    gap: 5.5rem;
-    width: 100%;
-    align-items: start;
+  .intro {
+    color: rgba(255,255,255,0.76);
+    max-width: 54ch;
   }
-  .intro { color: rgba(255,255,255,0.74); }
-  .intro p { margin-bottom: 1.1rem; max-width: 46ch; }
-  .intro p:last-child { margin-bottom: 0; }
-
-  /* the big name, shrunk and docked */
-  .dock-name {
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    text-transform: lowercase;
+  .intro p { margin-bottom: 1rem; }
+  .intro a {
     color: #fff;
-    margin-bottom: 1.6rem;
-    opacity: 0;
-    transform: translateY(10px) scale(1.25);
-    transform-origin: left top;
-    transition: opacity 0.45s ease, transform 0.45s ease;
+    border-bottom: 1px solid rgba(255,255,255,0.35);
   }
-  body.docked .dock-name { opacity: 1; transform: none; }
+  .intro a:hover { border-bottom-color: #fff; }
+
+  /* the slot the big name lands in — invisible, it only holds the position */
+  .name-slot {
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: lowercase;
+    visibility: hidden;
+    margin-bottom: 1.5rem;
+  }
 
   .intro .lead {
-    font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+    font-size: clamp(1.6rem, 2.6vw, 1.9rem);
     font-weight: 600;
-    line-height: 1.25;
+    line-height: 1.3;
     letter-spacing: -0.02em;
     color: #fff;
-    margin-bottom: 1.6rem;
+    margin-bottom: 1.5rem;
   }
-
-  /* ---------- lately: three variants, one column ---------- */
-  .rail { color: rgba(255,255,255,0.8); }
-  .rail a { color: #fff; }
-  .v-card, .v-terminal, .v-strip { display: none; }
-  body[data-rail="ticker"] .v-card,
-  body[data-rail="ticker"] .v-strip,
-  body[data-rail="one"] .v-card,
-  body[data-rail="terminal"] .v-terminal { display: block; }
-
-  .rail-note {
-    font-size: 10.5px;
-    letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.42);
-    margin-top: 0.9rem;
+  .intro .coda {
+    margin-top: 2rem;
+    margin-bottom: 0;
+    color: rgba(255,255,255,0.55);
   }
-
-  /* variant: one card (also used by the ticker variant) */
-  .card { display: block; transition: transform 0.35s ease; }
-  .card:hover, .card:focus-visible { transform: translateY(-4px); transition-duration: 0.2s; }
-  .card .card-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: lowercase;
-    color: #fff;
-    margin-bottom: 0.7rem;
-  }
-  .card .card-media {
-    display: block;
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-  }
-  .card .card-media img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* variant: terminal */
-  .v-terminal {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12.5px;
-    line-height: 1.9;
-    color: rgba(255,255,255,0.82);
-  }
-  .v-terminal .tline { min-height: 1.9em; white-space: nowrap; }
-  .v-terminal .tline a { border-bottom: 1px solid rgba(255,255,255,0.4); }
-  .v-terminal .tline a:hover { border-bottom-color: #fff; }
-  .v-terminal .tline.typing::after {
-    content: '\2588';
-    color: rgba(255,255,255,0.6);
-    animation: blink 1s steps(1) infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* variant: ticker along the bottom edge of screen 2 */
-  .v-strip {
-    position: absolute;
-    left: 0; right: 0;
-    bottom: 3.6rem;
-    overflow: hidden;
-    border-top: 1px solid rgba(255,255,255,0.14);
-    border-bottom: 1px solid rgba(255,255,255,0.14);
-    padding: 0.55rem 0;
-  }
-  .v-strip .track {
-    display: flex;
-    width: max-content;
-    animation: crawl 52s linear infinite;
-  }
-  .v-strip:hover .track,
-  .v-strip:focus-within .track { animation-play-state: paused; }
-  .v-strip .copy { display: flex; }
-  .v-strip .item {
-    font-size: 11.5px;
-    letter-spacing: 0.09em;
-    white-space: nowrap;
-    color: rgba(255,255,255,0.72);
-  }
-  .v-strip .item a { border-bottom: 1px solid rgba(255,255,255,0.35); }
-  .v-strip .item a:hover { border-bottom-color: #fff; }
-  .v-strip .dot { padding: 0 0.9rem; color: rgba(255,255,255,0.3); font-size: 11.5px; }
-  @keyframes crawl { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-
-  .strip-static { display: none; font-size: 11.5px; letter-spacing: 0.06em; color: rgba(255,255,255,0.7); }
-  .strip-static li { list-style: none; padding: 0.35rem 0; }
-  .strip-static a { border-bottom: 1px solid rgba(255,255,255,0.35); }
 
   /* ---------- video chrome ---------- */
   .video-chrome {
@@ -504,41 +358,10 @@ const navLinks = [
   }
   .motion-toggle:hover { color: #fff; border-bottom-color: #fff; }
 
-  /* ---------- the prototype switcher (deliberately not part of the design) ---------- */
-  .proto-switch {
-    position: fixed;
-    left: 1.2rem;
-    bottom: 1.2rem;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    background: #0d0d0d;
-    border: 1px solid #333;
-    padding: 0.3rem 0.55rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 10.5px;
-    color: #777;
-  }
-  .proto-switch .sl { color: #444; }
-  .proto-switch button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font: inherit;
-    color: #999;
-  }
-  .proto-switch button:hover { color: #ddd; }
-  .proto-switch button[aria-pressed="true"] { color: #fff; text-decoration: underline; }
-
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .backdrop video { transition: none; }
-    .opening h1, .dock-name, .scroll-cue, .card, .tile, .tile .media video { transition: none !important; }
-    .v-strip { display: none !important; }
-    body[data-rail="ticker"] .strip-static { display: block; }
-    .v-terminal .tline.typing::after { display: none; }
+    .scroll-cue, .tile, .tile .media video, .bar, .bar .wordmark { transition: none !important; }
   }
 
   /* ---------- solid ground: the folio slides over the video ---------- */
@@ -548,36 +371,7 @@ const navLinks = [
     background: #fff;
   }
 
-  .folio-head {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-    padding: 1.1rem 3rem;
-    border-bottom: 1px solid #eee;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-  }
-  .folio-head .wordmark {
-    font-size: 1.3rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-transform: lowercase;
-    color: #222;
-    line-height: 1;
-  }
-  .folio-head .links {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-  }
-  .folio-head a { color: #999; }
-  .folio-head a:hover { color: #222; }
-
-  .works { padding-top: 5rem; scroll-margin-top: 5rem; }
+  .works { padding-top: 8rem; scroll-margin-top: 3.5rem; }
   .works-head {
     display: flex;
     flex-wrap: wrap;
@@ -591,6 +385,7 @@ const navLinks = [
     font-weight: 600;
     text-transform: lowercase;
     letter-spacing: 0.14em;
+    color: #222;
   }
 
   /* ---------- lenses ---------- */
@@ -600,16 +395,16 @@ const navLinks = [
     flex-wrap: wrap;
     justify-content: flex-end;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
   .lens-row + .lens-row { margin-top: 0.5rem; }
   .lens-row .cluster {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
-  .lens-row .cluster + .cluster { margin-left: 2.2rem; }
+  .lens-row .cluster + .cluster { margin-left: 2rem; }
   .lens {
     font-family: 'Montserrat', sans-serif;
     font-size: 12px;
@@ -636,13 +431,12 @@ const navLinks = [
     grid-template-columns: repeat(2, 1fr);
     align-items: start;
     column-gap: 3rem;
-    row-gap: 5.5rem;
+    row-gap: 4rem;
     padding-bottom: 8rem;
   }
   .entry[hidden] { display: none; }
 
   .tile { display: block; transition: transform 0.35s ease; }
-  .tile.jump { cursor: pointer; }
   .entry:hover .tile, .entry:focus-within .tile { transform: translateY(-4px); transition-duration: 0.2s; }
   .tile .media {
     display: block;
@@ -658,7 +452,7 @@ const navLinks = [
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* nothing stretches, ever */
   }
   .tile .media video {
     opacity: 0;
@@ -667,24 +461,32 @@ const navLinks = [
   .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
 
   .entry h3 {
-    margin-top: 0.9rem;
-    font-size: 15px;
+    margin-top: 1rem;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 1.3;
-    letter-spacing: 0;
+    line-height: 1.35;
     text-transform: lowercase;
     color: #222;
   }
   .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
 
-  /* ---------- views: list + timeline ---------- */
+  .whisper {
+    margin-top: 0.25rem;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: #bbb;
+    text-transform: lowercase;
+  }
+  .whisper .dot { padding: 0 0.35rem; color: #ddd; }
+
+  /* ---------- view: list ---------- */
   .rows { padding-bottom: 8rem; }
   .row {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) 6.5rem 6.5rem minmax(0, 1fr) minmax(0, 1.3fr);
+    grid-template-columns: minmax(0, 1.6fr) 5rem 7rem minmax(0, 1fr) minmax(0, 1.3fr);
     gap: 1.5rem;
     align-items: baseline;
-    padding: 0.85rem 0;
+    padding: 0.75rem 0;
     border-top: 1px solid #eee;
     font-size: 13px;
   }
@@ -692,23 +494,12 @@ const navLinks = [
   .rows .row:last-of-type { border-bottom: 1px solid #eee; }
   .row .r-title { font-weight: 500; color: #222; }
   .row.seen .r-title::after { content: ' \00b7'; color: #ccc; }
-  .row .r-year, .row .r-status { font-size: 11.5px; letter-spacing: 0.06em; color: #999; }
-  .row .r-with { font-size: 12px; color: #636363; }
+  .row .r-year, .row .r-status { font-size: 11px; letter-spacing: 0.06em; color: #999; }
+  .row .r-with { font-size: 11px; letter-spacing: 0.06em; color: #636363; }
   .row .r-links { font-size: 12px; color: #999; }
   .row .r-links a { color: #636363; border-bottom: 1px solid #eee; }
   .row .r-links a:hover { color: #222; border-bottom-color: #222; }
   .row .r-links .dot { color: #ddd; padding: 0 0.25rem; }
-
-  .tl-group[hidden] { display: none; }
-  .tl-group .year-mark {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    color: #999;
-    padding: 2.6rem 0 0.5rem;
-  }
-  .tl-group:first-of-type .year-mark { padding-top: 0; }
-  .timeline { padding-bottom: 8rem; }
 
   .empty {
     font-size: 12px;
@@ -719,14 +510,14 @@ const navLinks = [
 
   /* ---------- foot ---------- */
   .foot {
-    padding: 0 0 4rem;
+    padding: 0 0 6rem;
     font-size: 12px;
     letter-spacing: 0.06em;
     color: #999;
   }
   .foot a { color: #999; }
   .foot a:hover { color: #222; }
-  .foot .dot { margin: 0 0.7rem; color: #ddd; }
+  .foot .dot { margin: 0 0.5rem; color: #ddd; }
 
   @media (min-width: 1600px) {
     .grid { grid-template-columns: repeat(3, 1fr); }
@@ -734,23 +525,21 @@ const navLinks = [
 
   @media (max-width: 900px) {
     html { scroll-snap-type: none; }
-    .shell, .nav, .video-chrome, .folio-head { padding-left: 1.4rem; padding-right: 1.4rem; }
-    .nav { font-size: 11px; letter-spacing: 0.04em; }
-    .overlay-inner { grid-template-columns: 1fr; gap: 3rem; }
-    .overlay { padding: 6rem 0 9rem; }
+    .shell, .bar, .video-chrome { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .bar { gap: 1.5rem; font-size: 11px; letter-spacing: 0.04em; }
+    .bar .links { gap: 1rem; }
+    .overlay { padding: 7rem 0 7rem; }
     .grid { grid-template-columns: 1fr; row-gap: 3.5rem; }
+    .works { padding-top: 6rem; }
     .works-head { flex-direction: column; align-items: flex-start; }
     .lenses { text-align: left; }
     .lens-row { justify-content: flex-start; }
-    .lens-row .cluster + .cluster { margin-left: 1.2rem; }
-    .works { padding-top: 3rem; }
-    .folio-head { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
-    .folio-head .links { width: 100%; }
-    .row { grid-template-columns: 1fr; gap: 0.15rem; }
+    .lens-row .cluster + .cluster { margin-left: 1rem; }
+    .row { grid-template-columns: 1fr; gap: 0.25rem; }
   }
 </style>
 </head>
-<body data-rail="ticker">
+<body>
 
   <!-- ============ the video, fixed behind everything ============ -->
   <div class="backdrop" aria-hidden="true">
@@ -758,74 +547,40 @@ const navLinks = [
     <div class="scrim"></div>
   </div>
 
-  <div class="stage">
-
-    <nav class="nav" aria-label="site">
+  <!-- ============ one nav bar, white over the video, ink over the folio ============ -->
+  <header class="bar" id="bar">
+    <a class="wordmark" href="/prototype/ongoing/">divya tak</a>
+    <nav class="links" aria-label="site">
       {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
+  </header>
 
-    <!-- ============ screen 1: the name ============ -->
-    <header class="opening" id="top">
-      <h1>divya tak</h1>
+  <!-- ============ the name: one element, it becomes the docked title ============ -->
+  <h1 class="name" id="name">divya tak</h1>
+
+  <div class="stage">
+
+    <!-- ============ screen 1 ============ -->
+    <div class="opening" id="top">
       <a class="scroll-cue" href="#intro" aria-label="scroll down to the introduction">&#8595;</a>
-    </header>
+    </div>
 
-    <!-- ============ screen 2: docked name, intro, lately ============ -->
+    <!-- ============ screen 2: docked name + intro ============ -->
     <section class="overlay" id="intro">
-      <div class="shell narrow overlay-inner">
+      <div class="shell narrow">
         <div class="intro">
-          <p class="dock-name">divya tak</p>
+          <!-- the slot the fixed name lands in; it holds space and nothing else -->
+          <p class="name-slot" id="name-slot" aria-hidden="true">divya tak</p>
           <p class="lead">I make interactive things.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        </div>
-
-        <aside class="rail" aria-label="lately">
-
-          <!-- variant: one card (shared with the ticker variant) -->
-          <a class="v-card card" href={peruse} target="_blank" rel="noopener">
-            <span class="card-label">this week</span>
-            <span class="card-media">
-              <img src="/playground/lenticular.webp" alt="A lenticular print of a street drawing shifting between two views" loading="lazy" width="800" height="500" />
-            </span>
-          </a>
-
-          <!-- variant: terminal -->
-          <div class="v-terminal" id="terminal">
-            <p class="tline">$ this week</p>
-            <p class="tline">&gt; metro-museum: in progress</p>
-            <p class="tline">&gt; <a href={bazaar} target="_blank" rel="noopener">everything bazaar: live &#8599;</a></p>
-            <p class="tline">&gt; <a href={peruse} target="_blank" rel="noopener">something to peruse &#8599;</a></p>
-          </div>
-
-          <!-- reduced-motion fallback for the ticker -->
-          <ul class="strip-static">
-            {railItems.map((it) => (
-              <li>{it.href ? <a href={it.href} target="_blank" rel="noopener">{it.text}</a> : it.text}</li>
-            ))}
-          </ul>
-
-          <p class="rail-note">updates every monday</p>
-        </aside>
-      </div>
-
-      <!-- variant: ticker, along the bottom edge of screen 2 -->
-      <div class="v-strip" aria-label="lately">
-        <div class="track">
-          {[0, 1].map((copy) => (
-            <div class="copy" aria-hidden={copy === 1 ? 'true' : undefined}>
-              {railLoop.map((it) => (
-                <>
-                  <span class="item">
-                    {it.href
-                      ? <a href={it.href} target="_blank" rel="noopener" tabindex={copy === 1 ? -1 : undefined}>{it.text}</a>
-                      : it.text}
-                  </span>
-                  <span class="dot" aria-hidden="true">&middot;</span>
-                </>
-              ))}
-            </div>
-          ))}
+          <p>Hi! Hello! I'm Divya. I am a cross domain creative human. I love making many things with many people.</p>
+          <p>
+            I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener">Joyus</a>
+            with my friend <a href="https://kahransingh.com" target="_blank" rel="noopener">Kahran</a>.
+            I lead product design for Klydo. I make games with
+            <a href="https://charutak.xyz" target="_blank" rel="noopener">Charu</a>.
+            I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener">Varun Ramanna</a> on VFX projects.
+          </p>
+          <p class="coda">You are at the home of some of my creations.</p>
         </div>
       </div>
     </section>
@@ -836,15 +591,7 @@ const navLinks = [
   </div>
 
   <!-- ============ the folio: white ground slides over the video ============ -->
-  <main class="ground">
-
-    <header class="folio-head">
-      <span class="wordmark">divya tak</span>
-      <div class="links">
-        {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
-      </div>
-    </header>
-
+  <main class="ground" id="ground">
     <div class="shell">
 
       <section class="works" id="works" aria-label="works">
@@ -862,12 +609,12 @@ const navLinks = [
               <div class="cluster" role="group" aria-label="filter by status">
                 <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
                 <button class="lens" data-status="in progress" aria-pressed="false">in progress</button><span class="sep" aria-hidden="true">&middot;</span>
+                <button class="lens" data-status="ongoing" aria-pressed="false">ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
                 <button class="lens" data-status="finished" aria-pressed="false">finished</button>
               </div>
               <div class="cluster" role="group" aria-label="choose a view">
                 <button class="lens" data-view="grid" aria-pressed="true">grid</button><span class="sep" aria-hidden="true">&middot;</span>
-                <button class="lens" data-view="list" aria-pressed="false">list</button><span class="sep" aria-hidden="true">&middot;</span>
-                <button class="lens" data-view="timeline" aria-pressed="false">timeline</button>
+                <button class="lens" data-view="list" aria-pressed="false">list</button>
               </div>
             </div>
           </div>
@@ -891,12 +638,7 @@ const navLinks = [
                   <h3>{w.title}</h3>
                 </a>
               ) : (
-                <div
-                  class={w.jump ? 'tile jump' : 'tile'}
-                  role={w.jump ? 'button' : undefined}
-                  tabindex={w.jump ? 0 : undefined}
-                  data-jump={w.jump ? w.id : undefined}
-                >
+                <div class="tile">
                   <span class="media">
                     <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
                     {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
@@ -904,6 +646,7 @@ const navLinks = [
                   <h3>{w.title}</h3>
                 </div>
               )}
+              <p class="whisper">{w.year}<span class="dot" aria-hidden="true">&middot;</span>{w.status}</p>
             </article>
           ))}
         </div>
@@ -932,35 +675,6 @@ const navLinks = [
           ))}
         </div>
 
-        <!-- ---- view: timeline ---- -->
-        <div class="view timeline" id="view-timeline" hidden>
-          {years.map((y) => (
-            <section class="tl-group" data-year={y}>
-              <p class="year-mark">{y}</p>
-              {works.filter((w) => w.sort === y).map((w) => (
-                <div class="row" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
-                  <span class="r-title">{w.title}</span>
-                  <span class="r-year">{w.year}</span>
-                  <span class="r-status">{w.status}</span>
-                  <span class="r-with">{w.with || ''}</span>
-                  <span class="r-links">
-                    {w.links.map((ln, i) => (
-                      <>
-                        {i > 0 && <span class="dot" aria-hidden="true">&middot;</span>}
-                        <a
-                          href={ln.href}
-                          target={isExt(ln.href) ? '_blank' : undefined}
-                          rel={isExt(ln.href) ? 'noopener' : undefined}
-                        >{ln.label}</a>
-                      </>
-                    ))}
-                  </span>
-                </div>
-              ))}
-            </section>
-          ))}
-        </div>
-
         <p class="empty" id="empty" hidden>nothing under this lens yet.</p>
       </section>
 
@@ -973,35 +687,17 @@ const navLinks = [
     </div>
   </main>
 
-  <!-- prototype only: switches the lately variant -->
-  <div class="proto-switch" role="group" aria-label="prototype: lately variant">
-    <span class="sl">rail:</span>
-    <button data-rail-set="ticker" aria-pressed="true">ticker</button><span class="sl">/</span>
-    <button data-rail-set="terminal" aria-pressed="false">terminal</button><span class="sl">/</span>
-    <button data-rail-set="one" aria-pressed="false">one</button>
-  </div>
-
 <script is:inline>
 (function () {
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
-  // 16 cuts of ~5.2s each, composed offline with ffmpeg. Order and cut length are
-  // kept here unchanged even though the "from:" caption is gone, so anything that
-  // needs to reason about playback time still can.
-  var order = ['2a','5a','7a','1a','6a','4a','8a','3a','2b','5b','7b','1b','6b','4b','8b','3b'];
-  var captions = {
-    1: 'webcam magic',
-    2: 'bioluminescent flow',
-    3: 'a gallery experiment',
-    4: 'a neon platformer',
-    5: 'package studio',
-    6: 'everything bazaar',
-    7: 'metro museum, in progress',
-    8: 'a paper game'
-  };
-  var MONTAGE_SECONDS = 83.2;
-  var CUT = MONTAGE_SECONDS / 16;
+  // 12 cuts of 5.2s each, composed offline with ffmpeg at a uniform 1920x1080.
+  // Kept here so anything that needs to reason about playback time still can.
+  // Sources 5 and 6 no longer exist in /clips/, so they are not in the order.
+  var order = ['2a','7a','1a','4a','8b','3a','2b','7b','1b','4b','8a','3b'];
+  var MONTAGE_SECONDS = 62.4;
+  var CUT = MONTAGE_SECONDS / order.length; // 5.2s
 
   var vid = document.getElementById('vid');
   var toggle = document.getElementById('motion-toggle');
@@ -1037,108 +733,100 @@ const navLinks = [
   // under reduced motion nothing plays: the poster still shows via the
   // backdrop's CSS background and the untouched poster attribute.
 
-  /* ---------- the name docks: big name crossfades into the small one ---------- */
-  var docked = false;
-  function checkDock() {
-    var should = window.scrollY > window.innerHeight * 0.28;
-    if (should !== docked) {
-      docked = should;
-      document.body.classList.toggle('docked', docked);
-    }
+  /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
+     Start = centred in the viewport at full size. End = the invisible .name-slot that
+     sits above the intro lead. We measure both, then interpolate transform against
+     scroll progress across the dark act. No crossfade, no second element. */
+  var nameEl = document.getElementById('name');
+  var slotEl = document.getElementById('name-slot');
+  var overlayEl = document.getElementById('intro');
+  var groundEl = document.getElementById('ground');
+  var barEl = document.getElementById('bar');
+
+  var M = { x0: 0, y0: 0, x1: 0, yDoc: 0, s1: 0.2, end: 1 };
+  var docked = null;
+  var inked = null;
+
+  function measure() {
+    nameEl.style.transform = 'none';
+    var nr = nameEl.getBoundingClientRect();       // left:0 / top:0, so this is its natural size
+    var sr = slotEl.getBoundingClientRect();
+    var nf = parseFloat(getComputedStyle(nameEl).fontSize) || 1;
+    var sf = parseFloat(getComputedStyle(slotEl).fontSize) || 1;
+
+    M.x0 = (window.innerWidth - nr.width) / 2;
+    M.y0 = (window.innerHeight - nr.height) / 2;
+    M.x1 = sr.left + (window.pageXOffset || 0);
+    M.yDoc = sr.top + (window.pageYOffset || 0);   // the slot's position in the document
+    M.s1 = sf / nf;                                // both use line-height 1, so top-left aligns
+    // scroll distance between the two snap points, measured from the document
+    M.end = Math.max(1, overlayEl.getBoundingClientRect().top + (window.pageYOffset || 0));
+    paint();
+    nameEl.classList.add('ready');
   }
-  checkDock();
+
+  function paint() {
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var p = y / M.end;
+    if (p < 0) p = 0;
+    if (p > 1) p = 1;
+    if (prefersReduced) p = p > 0.35 ? 1 : 0; // jump between states, never tween
+
+    var tx = M.x0 + (M.x1 - M.x0) * p;
+    var yEnd = M.yDoc - y;                    // where the slot is on screen right now
+    var ty = M.y0 + (yEnd - M.y0) * p;        // past p=1 this tracks the slot, so it scrolls away
+    var s = 1 + (M.s1 - 1) * p;
+    nameEl.style.transform =
+      'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
+
+    var d = p > 0.5;
+    if (d !== docked) { docked = d; document.body.classList.toggle('docked', d); }
+
+    // the bar turns to ink once the white ground has slid under it
+    var ink = groundEl.getBoundingClientRect().top <= barEl.offsetHeight;
+    if (ink !== inked) { inked = ink; barEl.classList.toggle('ink', ink); }
+  }
+
+  var ticking = false;
   window.addEventListener('scroll', function () {
-    window.requestAnimationFrame(checkDock);
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () { ticking = false; paint(); });
   }, { passive: true });
 
-  /* ---------- lately: three variants, switched in place ---------- */
-  var RAIL_KEY = 'proto-ongoing-rail';
-  var railBtns = document.querySelectorAll('[data-rail-set]');
-  var terminal = document.getElementById('terminal');
-  var tlines = terminal.querySelectorAll('.tline');
-  var finalHtml = [];
-  tlines.forEach(function (l) { finalHtml.push(l.innerHTML); });
-  var typeTimer = null;
-
-  function showTerminalInstantly() {
-    tlines.forEach(function (l, i) {
-      l.classList.remove('typing');
-      l.innerHTML = finalHtml[i];
-    });
-  }
-
-  function typeTerminal() {
-    if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
-    if (prefersReduced) { showTerminalInstantly(); return; }
-    var texts = [];
-    tlines.forEach(function (l, i) {
-      var probe = document.createElement('div');
-      probe.innerHTML = finalHtml[i];
-      texts.push(probe.textContent);
-      l.textContent = '';
-      l.classList.remove('typing');
-    });
-
-    var line = 0, ch = 0;
-    function step() {
-      if (line >= tlines.length) { typeTimer = null; return; }
-      var el = tlines[line];
-      el.classList.add('typing');
-      if (ch <= texts[line].length) {
-        el.textContent = texts[line].slice(0, ch);
-        ch += 1;
-        typeTimer = setTimeout(step, 30);
-      } else {
-        el.classList.remove('typing');
-        el.innerHTML = finalHtml[line]; // links go live once the line lands
-        line += 1;
-        ch = 0;
-        typeTimer = setTimeout(step, 220);
-      }
-    }
-    step();
-  }
-
-  var overlaySeen = false;
-  var overlayEl = document.getElementById('intro');
-
-  function setRail(name, replay) {
-    document.body.setAttribute('data-rail', name);
-    railBtns.forEach(function (b) {
-      b.setAttribute('aria-pressed', b.dataset.railSet === name ? 'true' : 'false');
-    });
-    try { sessionStorage.setItem(RAIL_KEY, name); } catch (err) {}
-    if (name === 'terminal') {
-      if (prefersReduced) showTerminalInstantly();
-      else if (overlaySeen && replay) typeTerminal();
-    } else if (typeTimer) {
-      clearTimeout(typeTimer);
-      typeTimer = null;
-    }
-  }
-
-  var storedRail = null;
-  try { storedRail = sessionStorage.getItem(RAIL_KEY); } catch (err) {}
-  setRail(storedRail === 'terminal' || storedRail === 'one' ? storedRail : 'ticker', false);
-
-  railBtns.forEach(function (b) {
-    b.addEventListener('click', function () { setRail(b.dataset.railSet, true); });
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(measure, 120);
   });
 
-  // type on first reveal of screen 2
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (rows) {
-      rows.forEach(function (r) {
-        if (!r.isIntersecting) return;
-        overlaySeen = true;
-        if (document.body.getAttribute('data-rail') === 'terminal') typeTerminal();
-        io.disconnect();
-      });
-    }, { threshold: 0.35 });
-    io.observe(overlayEl);
-  } else {
-    overlaySeen = true;
-    if (document.body.getAttribute('data-rail') === 'terminal') typeTerminal();
+  measure();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  window.addEventListener('load', measure);
+
+  /* ---------- wheel assist: the dark act's two screens snap decisively ----------
+     CSS scroll-snap stays as the fallback; this just makes one gesture land. */
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  if (!prefersReduced && !coarse) {
+    var lockUntil = 0;
+    var THRESHOLD = 8;
+    window.addEventListener('wheel', function (e) {
+      if (e.ctrlKey) return;                       // pinch zoom
+      var y = window.pageYOffset || 0;
+      var end = M.end;
+      if (y > end + 4) return;                     // in the folio: hands off
+      var now = Date.now();
+      if (now < lockUntil) { e.preventDefault(); return; } // swallow the tail of a gesture
+      if (e.deltaY > THRESHOLD && y < end - 4) {
+        e.preventDefault();
+        lockUntil = now + 700;
+        window.scrollTo({ top: end, behavior: 'smooth' });
+      } else if (e.deltaY < -THRESHOLD && y > 4) {
+        e.preventDefault();
+        lockUntil = now + 700;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, { passive: false });
   }
 
   /* ---------- folio: lenses (bucket, status) and views ---------- */
@@ -1146,11 +834,9 @@ const navLinks = [
   var statusBtns = document.querySelectorAll('.lens[data-status]');
   var viewBtns = document.querySelectorAll('.lens[data-view]');
   var items = document.querySelectorAll('.entry, .row');
-  var groups = document.querySelectorAll('.tl-group');
   var viewEls = {
     grid: document.getElementById('view-grid'),
-    list: document.getElementById('view-list'),
-    timeline: document.getElementById('view-timeline')
+    list: document.getElementById('view-list')
   };
   var emptyEl = document.getElementById('empty');
   var bucket = 'all';
@@ -1162,9 +848,6 @@ const navLinks = [
       var bOk = bucket === 'all' || el.dataset.bucket === bucket;
       var sOk = status === 'latest' || el.dataset.status === status;
       el.hidden = !(bOk && sOk);
-    });
-    groups.forEach(function (g) {
-      g.hidden = !g.querySelector('.row:not([hidden])');
     });
     var visible = viewEls[view].querySelectorAll('.entry:not([hidden]), .row:not([hidden])');
     emptyEl.hidden = visible.length > 0;
@@ -1204,19 +887,6 @@ const navLinks = [
   });
 
   applyLenses();
-
-  /* ---------- the six small games tile: jump to its list row ---------- */
-  document.querySelectorAll('[data-jump]').forEach(function (t) {
-    function jump() {
-      setView('list');
-      var row = document.getElementById('row-' + t.dataset.jump);
-      if (row) row.scrollIntoView({ block: 'center', behavior: prefersReduced ? 'auto' : 'smooth' });
-    }
-    t.addEventListener('click', jump);
-    t.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); }
-    });
-  });
 
   /* ---------- hover footage: only where a real clip exists ---------- */
   if (!prefersReduced) {

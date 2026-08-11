@@ -17,8 +17,3 @@ name: Samhita Arni
 role: Author & brand consultant
 url: https://www.samarni.com/
 description: Known for Sita's Ramayana (NYT Bestseller) and The Mahabharatha — A Child's View. Elsa Morante Literary Award winner.
-
-name: Amrita Sukrity
-role: Entrepreneur & healthcare innovator
-url: https://www.linkedin.com/in/amritasukrity/
-description: Founder of SpotSense Healthcare. IIT Kharagpur alumna and collaborator on the Flatline podcast.

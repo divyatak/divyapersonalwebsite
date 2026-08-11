@@ -16,7 +16,8 @@ const canonicalUrl = `${siteUrl}${pathname}`
 const ogImageUrl = ogImage ? `${siteUrl}${ogImage}` : `${siteUrl}/og-image.png`
 
 const navItems = [
-  { label: 'works', href: `${base}/works/` },
+  // works points at the new landing's folio section while the redesign lives at /prototype/
+  { label: 'works', href: `${base}/prototype/ongoing/#works` },
   { label: 'friends', href: `${base}/friends/` },
   { label: 'about', href: `${base}/about/` },
   { label: 'contact', href: 'mailto:hello@divyatak.art', external: true },
@@ -69,7 +70,7 @@ function isActive(href: string) {
     <div class="layout">
       <a href="#main-content" class="skip-link">Skip to main content</a>
       <nav class="topbar" transition:persist aria-label="Main navigation">
-        <a href={`${base}/`} class="wordmark">divya tak</a>
+        <a href={`${base}/prototype/ongoing/`} class="wordmark">divya tak</a>
         {navItems.map(item => (
           <a
             href={item.href}
