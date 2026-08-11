@@ -1,5 +1,21 @@
 # Spine reasoning — outcome (2026-08-11)
 
+> **2026-08-11, later: DIRECTION CHOSEN — "ongoing" (/prototype/ongoing/).** Divya picked
+> her own container after judging flow/record/merge "conventional": montage of her real
+> work clips under the name; intro scrolls OVER the still-playing video; a Monday "lately"
+> rail from her public activity; works as ONE image-first stream (experiments + finished +
+> ongoing), newest first, quietly sortable. Aesthetic register: high-end folio, Es Devlin
+> reference (imagery-first, title-only overlays, whisper metadata, minimal chrome) — NOT
+> blog rows. Her copy rules: no "24,646"/record-count stats leading copy anywhere; no
+> "playful". Montage: 16 cuts x ~5.2s at 1920px from repo-root CLips/ recordings
+> (public/clips/montage.mp4, 83.2s); cut moments are blind samples pending her culling.
+> The seven other variant pages were deleted; the law below still governs the real build,
+> bent where her eye overrode it (the montage autoplay exception; image-first grid).
+> Next: promote this direction into the real pages (index/works/about/friends follow its
+> style), build the Monday rail job (GitHub + Substack automatable; Instagram mechanism
+> and rail voice still open), move the montage to a Remotion composition once moments
+> are chosen.
+
 Question this prototype folder was answering: what is the conceptual spine of the site
 pivot, such that the design is *derived* from it rather than mixed-and-matched?
 
