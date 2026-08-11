@@ -85,20 +85,28 @@ const isActive = (href: string) =>
      the ink and where the bar is anchored change with the variant.
      ===================================================================== */
   .site-header {
-    /* the component carries its own box model: the landing's reset is scoped to
-       the landing's own elements and never reaches in here, and a fixed bar with
-       left:0/right:0 plus content-box padding would run past the viewport */
+    /* THE GEOMETRY LIVES HERE AND ONLY HERE. It inherits nothing from the host
+       page — that inheritance is exactly what made the bar render at two widths
+       (full-bleed on the landing, a 1420px box on subpages). One set of metrics,
+       identical on every page: full viewport width, the landing's edge gutters,
+       the landing's three columns, nav size derived from the column width by the
+       same formula the landing uses (column ÷ 33.6). */
+    --hdr-r: 1.5rem;
+    --hdr-edge: calc(var(--hdr-r) * 1.25);
+    --hdr-gutter: var(--hdr-r);
     box-sizing: border-box;
     margin: 0;
+    width: 100%;
     z-index: 10;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--gutter, 1.5rem);
+    column-gap: var(--hdr-gutter);
     align-items: baseline;
-    font-size: var(--t-nav, 0.8125rem);
+    font-size: clamp(0.6875rem, calc((100vw - 2 * var(--hdr-edge) - 2 * var(--hdr-gutter)) / 3 / 33.6), 0.9625rem);
     font-weight: 500;
     letter-spacing: 0.16em;
-    line-height: calc(var(--r, 1.5rem) * 0.75);
+    line-height: calc(var(--hdr-r) * 0.75);
+    padding: calc(var(--hdr-r) * 0.75) var(--hdr-edge);
     border-bottom: 1px solid transparent;
     transition: background-color 0.25s ease, border-color 0.25s ease;
     -webkit-font-smoothing: antialiased;
@@ -125,7 +133,7 @@ const isActive = (href: string) =>
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--gutter, 1.5rem);
+    gap: var(--hdr-gutter);
     letter-spacing: 0.06em;
   }
 
@@ -150,14 +158,13 @@ const isActive = (href: string) =>
     outline-offset: 3px;
   }
 
-  /* ---------- overlay: the landing's dark act ---------- */
+  /* ---------- overlay: the landing's dark act. Same geometry; only anchor and ink differ ---------- */
   .v-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 6;
-    padding: calc(var(--r, 1.5rem) * 0.75) var(--edge, 1.875rem);
   }
   .v-overlay .wordmark { color: #fff; opacity: 1; }
   .v-overlay .nav-link { color: rgba(255, 255, 255, 0.72); }
@@ -169,13 +176,11 @@ const isActive = (href: string) =>
     pointer-events: none;
   }
 
-  /* ---------- ink: subpages, and the landing once the folio is under it ---------- */
+  /* ---------- ink: subpages, and the landing once the folio is under it.
+       Same geometry as overlay; only anchor and ground differ ---------- */
   .v-ink {
     position: sticky;
     top: 0;
-    max-width: 1420px;
-    margin: 0 auto;
-    padding: 1.6rem 3rem;
     background: #fff;
   }
   .v-overlay.ink {
@@ -192,43 +197,26 @@ const isActive = (href: string) =>
   .v-overlay.ink .nav-link:hover { color: #222; }
   .v-ink .nav-link.active { color: #222; }
 
-  /* ================= narrowing ================= */
+  /* ================= narrowing: SHARED geometry, variant-only grounds ================= */
   @media (max-width: 1100px) {
-    .v-overlay { grid-template-columns: repeat(2, 1fr); }
+    .site-header { grid-template-columns: repeat(2, 1fr); }
   }
 
-  @media (max-width: 1024px) {
-    .v-ink { padding: 1.3rem 1.6rem; column-gap: 1.2rem; }
-  }
-
-  @media (max-width: 768px) {
+  @media (max-width: 700px) {
+    .site-header {
+      display: flex;
+      gap: calc(var(--hdr-r) * 0.75);
+      align-items: baseline;
+      letter-spacing: 0.08em;
+    }
+    .site-header .links { flex: 1; gap: 0.75rem; }
+    .site-header .nav-link { font-size: 0.75rem; }
     .v-ink {
-      grid-template-columns: 1fr;
-      row-gap: 0.75rem;
-      padding: 1rem 1.2rem;
-      padding-top: calc(1rem + env(safe-area-inset-top));
+      padding-top: calc(var(--hdr-r) * 0.75 + env(safe-area-inset-top));
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
-    .v-ink .wordmark,
-    .v-ink .links { grid-column: 1; }
-    .v-ink .links { gap: 1rem; }
-  }
-
-  @media (max-width: 700px) {
-    .v-overlay {
-      display: flex;
-      gap: calc(var(--r, 1.5rem) * 0.75);
-      align-items: baseline;
-      letter-spacing: 0.08em;
-    }
-    .v-overlay .links { flex: 1; }
-  }
-
-  @media (max-width: 600px) {
-    .v-ink .links { gap: 0.75rem; }
-    .v-ink .nav-link { font-size: 0.75rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
