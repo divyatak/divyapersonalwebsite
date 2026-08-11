@@ -1,0 +1,697 @@
+<!-- THROWAWAY PROTOTYPE — spine variant ONGOING (her direction), delete after decision -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>divya tak · ongoing prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    color: #222;
+    background: #fff;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: #222; text-decoration: none; border-bottom: 1px solid #ccc; }
+  a:hover { border-bottom-color: #222; }
+
+  /* ---------- nav (chrome, inert) ---------- */
+  .nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1.4rem 2rem;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  .nav a, .nav span { color: rgba(255,255,255,0.85); border-bottom: none; }
+  .nav a:hover { color: #fff; }
+  .nav .links { display: flex; gap: 1.6rem; }
+  .nav .current { color: #fff; font-weight: 600; }
+
+  /* ---------- opening ---------- */
+  .hero {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background: #111 url('/clips/poster-2.jpg') center / cover no-repeat;
+  }
+  .hero video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+  .hero video.on { opacity: 1; }
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero h1 {
+    font-weight: 800;
+    font-size: clamp(3rem, 11vw, 8.5rem);
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-transform: lowercase;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.35);
+  }
+  .hero-caption {
+    position: absolute;
+    left: 2rem;
+    bottom: 1.6rem;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.03em;
+  }
+  .scroll-cue {
+    position: absolute;
+    bottom: 1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.8);
+    font-size: 18px;
+    border-bottom: none;
+  }
+  .scroll-cue:hover { color: #fff; }
+  .motion-toggle {
+    position: absolute;
+    right: 2rem;
+    bottom: 1.4rem;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+  }
+  .motion-toggle:hover, .motion-toggle:focus-visible { background: rgba(0,0,0,0.7); border-color: #fff; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .hero video { transition: none; }
+  }
+
+  /* ---------- shared shell ---------- */
+  .shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ---------- intro + lately ---------- */
+  .intro-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
+    padding: 6rem 0 5rem;
+  }
+  .intro p { margin-bottom: 1.1rem; max-width: 56ch; }
+  .intro .lead {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 1.4rem;
+  }
+  .rail h2 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: lowercase;
+    letter-spacing: 0.06em;
+  }
+  .rail .sub {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 1.2rem;
+  }
+  .rail ul { list-style: none; }
+  .rail li {
+    padding: 0.7rem 0;
+    border-top: 1px solid #eee;
+    font-size: 13.5px;
+  }
+  .rail li:last-of-type { border-bottom: 1px solid #eee; }
+  .rail .when {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 0.04em;
+  }
+  .rail .foot-note {
+    font-size: 11px;
+    color: #999;
+    margin-top: 0.9rem;
+  }
+
+  /* ---------- works ---------- */
+  .works-head { padding-bottom: 1.6rem; }
+  .works-head h2 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: lowercase;
+    letter-spacing: 0.06em;
+  }
+  .works-head .sub { font-size: 13.5px; color: #636363; margin-top: 0.2rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+  .chips + .chips { margin-top: 0.6rem; }
+  .chip {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+    color: #636363;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 0.3rem 0.75rem;
+    cursor: pointer;
+  }
+  .chip:hover { border-color: #999; color: #222; }
+  .chip[aria-pressed="true"] {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+  }
+  .chips.quiet .chip { border-color: transparent; padding-left: 0.4rem; padding-right: 0.4rem; }
+  .chips.quiet .chip:hover { color: #222; }
+  .chips.quiet .chip[aria-pressed="true"] {
+    background: none;
+    color: #222;
+    border-color: transparent;
+    border-bottom: 1px solid #222;
+  }
+
+  .stream { padding-bottom: 4rem; }
+  .entry {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    padding: 1.8rem 0;
+    border-top: 1px solid #eee;
+  }
+  .entry.no-thumb { grid-template-columns: 1fr; }
+  .entry[hidden] { display: none; }
+  .thumb img {
+    width: 100%;
+    height: auto;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+  .thumb-strip { display: flex; gap: 0.5rem; }
+  .thumb-strip img {
+    width: calc((100% - 1rem) / 3);
+    height: auto;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+  .entry h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .entry h3 a { border-bottom: none; }
+  .entry h3 a:hover { border-bottom: 1px solid #222; }
+  .entry.seen h3::after {
+    content: ' \00b7';
+    color: #bbb;
+  }
+  .entry .meta {
+    font-size: 12px;
+    color: #999;
+    letter-spacing: 0.03em;
+    margin: 0.2rem 0 0.5rem;
+  }
+  .entry .hook { max-width: 58ch; color: #636363; font-size: 13.5px; }
+  .entry .go {
+    display: inline-block;
+    margin-top: 0.6rem;
+    font-size: 13px;
+  }
+  .entry .sub-links { margin-top: 0.6rem; font-size: 13px; color: #636363; }
+  .entry .sub-links a { margin-right: 0.2rem; }
+
+  /* ---------- foot ---------- */
+  .foot {
+    border-top: 1px solid #eee;
+    padding: 2.5rem 0 6rem;
+    font-size: 13px;
+    color: #636363;
+  }
+  .foot a { color: #636363; }
+  .foot a:hover { color: #222; }
+  .foot .dot { margin: 0 0.6rem; color: #ccc; }
+
+  @media (max-width: 760px) {
+    .intro-section { grid-template-columns: 1fr; gap: 3rem; padding-top: 4rem; }
+    .entry { grid-template-columns: 1fr; gap: 1rem; }
+    .thumb img { max-width: 320px; }
+    .nav { padding: 1.1rem 1.2rem; }
+    .shell { padding: 0 1.2rem; }
+    .hero-caption { left: 1.2rem; }
+    .motion-toggle { right: 1.2rem; }
+  }
+
+  /* ---------- prototype switcher (tooling chrome, exempt from skin) ---------- */
+  .proto-bar {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #111;
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 99px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .proto-bar a { color: #fff; border-bottom: none; opacity: 0.8; }
+  .proto-bar a:hover { opacity: 1; }
+  .proto-bar .idx { opacity: 0.5; font-size: 11px; }
+</style>
+</head>
+<body>
+
+  <!-- ============ 1. opening ============ -->
+  <header class="hero" id="top">
+    <video id="vid" muted playsinline loop preload="auto" poster="/clips/poster-2.jpg" src="/clips/montage.mp4" aria-hidden="true"></video>
+    <div class="scrim"></div>
+
+    <nav class="nav" aria-label="site">
+      <span class="wordmark" aria-hidden="true"></span>
+      <div class="links">
+        <span class="current" aria-current="page">works</span>
+        <a href="/friends/">friends</a>
+        <a href="/about/">about</a>
+        <a href="mailto:hello@divyatak.art">contact</a>
+      </div>
+    </nav>
+
+    <div class="hero-inner">
+      <h1>divya tak</h1>
+    </div>
+
+    <p class="hero-caption" id="hero-caption">from: bioluminescent flow</p>
+    <a class="scroll-cue" href="#intro" aria-label="scroll down to the introduction">&#8595;</a>
+    <button class="motion-toggle" id="motion-toggle" aria-pressed="false" aria-label="pause background clips">pause</button>
+  </header>
+
+  <!-- ============ 2. intro + lately ============ -->
+  <main class="shell">
+    <section class="intro-section" id="intro">
+      <div class="intro">
+        <p class="lead">I make interactive things.</p>
+        <p>I want the viewer to feel like they're in it. Not just looking at it through glass.</p>
+        <p>I came to all of it from physics, and I've never learned to keep the physicist and the artist in separate rooms.</p>
+        <p>Some of it is games, some of it is drawing, some of it is code that does something when you touch it. It all lives together below.</p>
+      </div>
+
+      <aside class="rail" aria-label="lately">
+        <h2>lately</h2>
+        <p class="sub">updates every monday</p>
+        <ul>
+          <li>
+            <span class="when">aug 2026</span>
+            this site: alt text and image sizing pass
+          </li>
+          <li>
+            <span class="when">2026</span>
+            bioluminescent flow joined the playground
+          </li>
+          <li>
+            <span class="when">now</span>
+            metro museum: in progress
+          </li>
+          <li>
+            <span class="when">2026</span>
+            <a href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener">everything bazaar is live</a>
+          </li>
+          <li>
+            <a href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener">something to peruse &#8594;</a>
+          </li>
+        </ul>
+        <p class="foot-note">sample rail. the real one builds itself from github, substack, instagram.</p>
+      </aside>
+    </section>
+
+    <!-- ============ 3. works ============ -->
+    <section class="works" aria-label="works">
+      <div class="works-head">
+        <h2>works</h2>
+        <p class="sub">everything, newest first. some finished, some in progress, some never finishing.</p>
+        <div class="chips" role="group" aria-label="filter by kind">
+          <button class="chip" data-kind="all" aria-pressed="true">all</button>
+          <button class="chip" data-kind="experiment" aria-pressed="false">experiments</button>
+          <button class="chip" data-kind="finished" aria-pressed="false">finished</button>
+          <button class="chip" data-kind="ongoing" aria-pressed="false">ongoing</button>
+        </div>
+        <div class="chips quiet" role="group" aria-label="filter by category">
+          <button class="chip" data-cat="game" aria-pressed="false">game</button>
+          <button class="chip" data-cat="illustration" aria-pressed="false">illustration</button>
+          <button class="chip" data-cat="comic" aria-pressed="false">comic</button>
+          <button class="chip" data-cat="zine" aria-pressed="false">zine</button>
+          <button class="chip" data-cat="photocomics" aria-pressed="false">photocomics</button>
+          <button class="chip" data-cat="tool" aria-pressed="false">tool</button>
+        </div>
+      </div>
+
+      <div class="stream" id="stream">
+
+        <article class="entry" data-id="metro-museum" data-kind="ongoing" data-cat="game">
+          <div class="thumb">
+            <img src="/clips/poster-7.jpg" alt="A 3D museum interior with mannequin figures at sunset, from the Metro Museum build" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3>Metro Museum of the Forgotten</h3>
+            <p class="meta">2026 &middot; in progress &middot; game</p>
+            <p class="hook">a museum for what people leave behind on the Delhi Metro</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="everything-bazaar" data-kind="finished" data-cat="game tool">
+          <div class="thumb">
+            <img src="/clips/poster-6.jpg" alt="A dark shop screen with a product box, from Everything Bazaar" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener">Everything Bazaar</a></h3>
+            <p class="meta">2026 &middot; live &middot; game, tool</p>
+            <a class="go" href="https://everythingbazaar.netlify.app" target="_blank" rel="noopener">open the bazaar &#8594;</a>
+          </div>
+        </article>
+
+        <article class="entry" data-id="bioluminescent-flow" data-kind="experiment" data-cat="">
+          <div class="thumb">
+            <img src="/playground/bioluminescent-flow.webp" alt="Glowing particle trails on a dark field, from Bioluminescent Flow" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">Bioluminescent Flow</a></h3>
+            <p class="meta">2026 &middot; live &middot; experiment</p>
+            <a class="go" href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">move the particles &#8594;</a>
+          </div>
+        </article>
+
+        <article class="entry" data-id="webcam-magic" data-kind="experiment" data-cat="">
+          <div class="thumb">
+            <img src="/playground/webcam-magic.webp" alt="A face rendered as a pixel mirror, from Webcam Magic" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener">Webcam Magic</a></h3>
+            <p class="meta">2026 &middot; live &middot; experiment</p>
+            <a class="go" href="https://divyatak.github.io/creative-visuals/webcam/" target="_blank" rel="noopener">look into it &#8594;</a>
+          </div>
+        </article>
+
+        <article class="entry" data-id="unseen" data-kind="ongoing" data-cat="photocomics illustration">
+          <div class="thumb thumb-strip">
+            <img src="/projects/2024/(un)seen Istanbul/cover.webp" alt="(un)seen Istanbul cover, drawing over a street photograph" loading="lazy" width="300" height="300" />
+            <img src="/projects/2025/(un)seen Emirates/cover.webp" alt="(un)seen Emirates cover, drawing over a street photograph" loading="lazy" width="300" height="300" />
+            <img src="/projects/2026/(un)seen Life/cover.webp" alt="(un)seen Life cover, drawing over a street photograph" loading="lazy" width="300" height="300" />
+          </div>
+          <div class="body">
+            <h3>(un)seen</h3>
+            <p class="meta">2024 to now &middot; ongoing &middot; photocomics, illustration</p>
+            <p class="hook">I draw into photographs of streets I'd have walked straight past, until I can't walk past them anymore.</p>
+            <a class="go" href="https://divyatak.github.io/creative-visuals/lenticular/" target="_blank" rel="noopener">the lenticular edition &#8594;</a>
+          </div>
+        </article>
+
+        <article class="entry" data-id="the-line-before" data-kind="finished" data-cat="game">
+          <div class="thumb">
+            <img src="/playground/the-line-before.webp" alt="A scene from The Line Before" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="https://divya.studiotypo.xyz" target="_blank" rel="noopener">The Line Before</a></h3>
+            <p class="meta">2025 &middot; live &middot; game &middot; with Kahran Singh</p>
+            <a class="go" href="https://divya.studiotypo.xyz" target="_blank" rel="noopener">play it &#8594;</a>
+          </div>
+        </article>
+
+        <article class="entry no-thumb" data-id="the-titli-effect" data-kind="finished" data-cat="game">
+          <div class="body">
+            <h3><a href="/works/the-titli-effect/">The Titli Effect</a></h3>
+            <p class="meta">2024 &middot; game &middot; with my sister Charu</p>
+            <p class="hook">2nd place, Jennifer Ann Group Connectedness jam</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="journey-of-my-paper-plane" data-kind="finished" data-cat="game illustration">
+          <div class="thumb">
+            <img src="/projects/2024/Journey of my paper plane/cover.webp" alt="Journey of my paper plane cover" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="/works/journey-of-my-paper-plane/">Journey of my paper plane</a></h3>
+            <p class="meta">2024 &middot; game, illustration</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="how-to-think" data-kind="finished" data-cat="zine illustration">
+          <div class="thumb">
+            <img src="/projects/2022/How to think/cover.webp" alt="How to think zine cover" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="/works/how-to-think/">How to think</a></h3>
+            <p class="meta">2022 &middot; zine, illustration</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="common" data-kind="finished" data-cat="comic">
+          <div class="thumb">
+            <img src="/projects/2021/Common/cover.webp" alt="Common comic cover" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="/works/common/">Common</a></h3>
+            <p class="meta">2021 &middot; comic</p>
+            <p class="hook">printed in the INKLAB anthology</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="six-small-games" data-kind="finished" data-cat="game">
+          <div class="thumb thumb-strip">
+            <img src="/projects/2020/AI quit/cover.webp" alt="AI quit cover" loading="lazy" width="300" height="300" />
+            <img src="/projects/2020/Boneyard/cover.webp" alt="Boneyard cover" loading="lazy" width="300" height="300" />
+            <img src="/projects/2020/Mark/cover.webp" alt="Mark cover" loading="lazy" width="300" height="300" />
+          </div>
+          <div class="body">
+            <h3>six small games</h3>
+            <p class="meta">2020 &middot; game</p>
+            <p class="sub-links">
+              <a href="/works/ai-quit/">AI quit</a> &middot;
+              <a href="/works/boneyard/">Boneyard</a> &middot;
+              <a href="/works/mark/">Mark</a> &middot;
+              <a href="/works/misplaced/">Misplaced</a> &middot;
+              <a href="/works/proximity/">Proximity</a> &middot;
+              <a href="/works/ruh-and-the-glow/">Ruh and the glow</a>
+            </p>
+          </div>
+        </article>
+
+        <article class="entry no-thumb" data-id="protest" data-kind="finished" data-cat="zine">
+          <div class="body">
+            <h3><a href="/works/protest/">Protest</a></h3>
+            <p class="meta">2020 &middot; zine</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="wonderful-worlds" data-kind="finished" data-cat="zine illustration">
+          <div class="thumb">
+            <img src="/projects/2019/WonderfulWorlds/cover.webp" alt="Wonderful Worlds zine cover" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="/works/wonderful-worlds/">Wonderful Worlds</a></h3>
+            <p class="meta">2019 &middot; zine, illustration</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="pi-of-life" data-kind="finished" data-cat="comic">
+          <div class="thumb">
+            <img src="/projects/2016/Pi of life/cover.webp" alt="Pi of life comic cover" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="/works/pi-of-life/">Pi of life</a></h3>
+            <p class="meta">2016 &middot; comic</p>
+          </div>
+        </article>
+
+        <article class="entry" data-id="clogs" data-kind="finished" data-cat="comic illustration">
+          <div class="thumb">
+            <img src="/projects/2014/Clogs/cover.webp" alt="Clogs comic cover" loading="lazy" width="640" height="360" />
+          </div>
+          <div class="body">
+            <h3><a href="/works/clogs/">Clogs</a></h3>
+            <p class="meta">2014 &middot; comic, illustration</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ============ 4. foot ============ -->
+    <footer class="foot">
+      <a href="/friends/">friends</a><span class="dot">&middot;</span>
+      <a href="/about/">about</a><span class="dot">&middot;</span>
+      <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
+    </footer>
+  </main>
+
+  <!-- prototype switcher -->
+  <div class="proto-bar"><a href="/prototype/merge/" aria-label="previous variant">&#8592;</a><span>ongoing &mdash; her direction</span><a href="/prototype/flow/" aria-label="next variant">&#8594;</a><a class="idx" href="/prototype/">all</a></div>
+
+<script is:inline>
+(function () {
+  /* ---------- opening montage: one pre-composed file (/clips/montage.mp4) ---------- */
+  // 24 cuts of ~2.6s each, composed offline with ffmpeg (order below matches the
+  // render). Captions are derived from playback time against that order.
+  var order = ['2b','5a','7c','1a','6b','4c','8a','3b','2c','5c','7a','1c','6a','4a','8c','3a','2a','5b','7b','1b','6c','4b','8b','3c'];
+  var captions = {
+    1: 'webcam magic',
+    2: 'bioluminescent flow',
+    3: 'a gallery experiment',
+    4: 'a neon platformer',
+    5: 'package studio',
+    6: 'everything bazaar',
+    7: 'metro museum, in progress',
+    8: 'a paper game'
+  };
+  var MONTAGE_SECONDS = 62.0;
+  var CUT = MONTAGE_SECONDS / order.length;
+  var vid = document.getElementById('vid');
+  var caption = document.getElementById('hero-caption');
+  var toggle = document.getElementById('motion-toggle');
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var paused = prefersReduced;
+  var started = false;
+
+  function setCaptionForTime(t) {
+    var i = Math.min(order.length - 1, Math.floor(t / CUT));
+    caption.textContent = 'from: ' + captions[order[i].charAt(0)];
+  }
+
+  vid.addEventListener('timeupdate', function () {
+    setCaptionForTime(vid.currentTime || 0);
+  });
+  setCaptionForTime(0);
+
+  function start() {
+    started = true;
+    vid.classList.add('on');
+    vid.play().catch(function () {});
+  }
+
+  function setToggleUi() {
+    toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    toggle.setAttribute('aria-label', paused ? 'play background clips' : 'pause background clips');
+    toggle.textContent = paused ? 'play' : 'pause';
+  }
+
+  toggle.addEventListener('click', function () {
+    paused = !paused;
+    setToggleUi();
+    if (paused) {
+      vid.pause();
+    } else if (!started) {
+      start(); // reduced-motion visitors opt in here
+    } else {
+      vid.play().catch(function () {});
+    }
+  });
+
+  setToggleUi();
+  if (!prefersReduced) {
+    start();
+  }
+  // under reduced motion nothing plays: the poster still shows via the
+  // hero's CSS background and the untouched poster attribute.
+
+  /* ---------- works filters ---------- */
+  var kindChips = document.querySelectorAll('.chip[data-kind]');
+  var catChips = document.querySelectorAll('.chip[data-cat]');
+  var entries = document.querySelectorAll('.entry');
+  var kind = 'all';
+  var cat = null;
+
+  function applyFilters() {
+    entries.forEach(function (e) {
+      var eKind = e.dataset.kind;
+      var eCats = (e.dataset.cat || '').split(' ');
+      var kindOk = kind === 'all' || eKind === kind;
+      var catOk = !cat || eCats.indexOf(cat) !== -1;
+      e.hidden = !(kindOk && catOk);
+    });
+  }
+
+  kindChips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      kind = chip.dataset.kind;
+      kindChips.forEach(function (c) {
+        c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+      });
+      applyFilters();
+    });
+  });
+
+  catChips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var picked = chip.dataset.cat;
+      cat = (cat === picked) ? null : picked; // click again to clear
+      catChips.forEach(function (c) {
+        c.setAttribute('aria-pressed', c.dataset.cat === cat ? 'true' : 'false');
+      });
+      applyFilters();
+    });
+  });
+
+  /* ---------- residue (session marks, never counted) ---------- */
+  var KEY = 'proto-ongoing-seen';
+  var seen;
+  try {
+    seen = JSON.parse(sessionStorage.getItem(KEY) || '[]');
+  } catch (err) {
+    seen = [];
+  }
+  entries.forEach(function (e) {
+    if (seen.indexOf(e.dataset.id) !== -1) e.classList.add('seen');
+    e.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (seen.indexOf(e.dataset.id) === -1) {
+          seen.push(e.dataset.id);
+          try { sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (err) {}
+        }
+        e.classList.add('seen');
+      });
+    });
+  });
+
+  /* ---------- switcher keys ---------- */
+  document.addEventListener('keydown', function (ev) {
+    var t = ev.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (ev.key === 'ArrowLeft') window.location.href = '/prototype/merge/';
+    if (ev.key === 'ArrowRight') window.location.href = '/prototype/flow/';
+  });
+})();
+</script>
+</body>
+</html>

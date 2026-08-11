@@ -31,3 +31,6 @@ brave_*.jpg
 *.njsproj
 *.sln
 *.sw?
+
+# raw screen recordings (430MB, source material only)
+/CLips/
