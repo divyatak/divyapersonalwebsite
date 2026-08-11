@@ -1,4 +1,4 @@
-<!-- TYPE EXPLORATION A of ongoing.astro, typography only -->
+<!-- TYPE EXPLORATION A of ongoing.astro — ROUND 2, relationships. Two sizes only. -->
 ---
 // PROTOTYPE — landing rebuild after the design interview.
 // Dark act = two snap screens over the fixed video. White act = the folio, free scroll.
@@ -145,17 +145,43 @@ const navLinks = [
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 <style>
-  /* ---------- TYPE A · swiss grotesk precision ----------
-     One family, two weights, no exceptions: Schibsted Grotesk 500 (text) / 700 (display).
+  /* ================= TYPE A · ROUND 2 — TWO SIZES ONLY =================
 
-     DISPLAY  name clamp(2.8→7.5rem) · works clamp(2.5→5rem) · lead clamp(1.6→1.9rem)
-              all 700, tracking -0.045em (lead -0.028em), line-height 1 / 1.2
-     TEXT     body 15px/1.55, weight 500, tracking 0
-     LABELS   nav + lens 11px · whisper/quiet 10px · tile title 12px
-              all 500, tracking +0.08em → +0.18em, lowercase throughout
+     There are exactly two type sizes on this page.
 
-     Only two tracking families exist on this page: display negative, label positive.
-     Nothing sits in between. Figures are tabular everywhere. Spacing untouched. */
+       ARCHITECTURAL — not a number, a RELATIONSHIP: the word is fitted to the
+       full measure, edge to edge, flush to the left axis. "divya tak" and
+       "works" are the only two words that get it. On a 1440 screen that lands
+       near 370px and 500px respectively; on a phone near 90px. It is measured,
+       not declared (see fit() in the script).
+
+       WORKING — 13px. Everything else. Nav, the lead, body copy, tile titles,
+       lenses, the reserved-slot label, the foot, the empty state, the buttons.
+       No exceptions and no middle terms. The lead is NOT bigger than the body.
+
+     Because there is no middle, hierarchy has to come from somewhere else:
+
+       AXIS      one left edge (--gutter) runs the whole page. Nav, name, cue,
+                 the docked name, the lead, body, works, lenses, grid, foot all
+                 hang off it. The name morph is therefore PURE VERTICAL TRAVEL —
+                 it never slides sideways, it only falls and shrinks, 1:28.
+       SPACE     the lead is separated from the body by 4rem of nothing. The
+                 dock is separated from the lead by 4.5rem. Distance is rank.
+       WEIGHT    700 = spoken, 500 = said. The only two weights loaded.
+       TRACKING  three registers, all at 13px: 0.22em (lead, an inscription),
+                 0.14em (labels and nav), 0 (running text).
+       CASE      lowercase is the system's voice (name, works, nav, lead,
+                 titles, lenses). Sentence case is the human voice (body copy).
+       INK       on dark: #fff → 0.66 → 0.4. On white: #111 → #999 → #bbb.
+
+     Spacing steps, the video, the 3-up 16:10 grid and the load-more are
+     untouched. Only the type and where it sits have moved.
+     ===================================================================== */
+  :root {
+    --type: 13px;      /* the working size. the ONLY small size on the page. */
+    --gutter: 28px;    /* the left axis, shared with the folio grid */
+    --lh: 1.85;        /* long leading, because the working size is small */
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html {
     scroll-behavior: smooth;
@@ -166,16 +192,13 @@ const navLinks = [
     font-family: 'Schibsted Grotesk', sans-serif;
     color: #222;
     background: #111;
-    font-size: 15px;
+    font-size: var(--type);
     font-weight: 500;
-    line-height: 1.55;
-    letter-spacing: 0;
-    /* numbers align in a column wherever they turn up */
+    line-height: var(--lh);
     font-variant-numeric: tabular-nums lining;
     font-feature-settings: 'tnum' 1, 'lnum' 1, 'kern' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
   img { max-width: 100%; display: block; }
   a { color: inherit; text-decoration: none; }
@@ -204,7 +227,7 @@ const navLinks = [
     background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.34) 100%);
   }
 
-  /* ---------- one nav bar for the whole page ---------- */
+  /* ---------- one nav bar — working size, hung on the axis ---------- */
   .bar {
     position: fixed;
     top: 0;
@@ -214,18 +237,18 @@ const navLinks = [
     display: flex;
     align-items: center;
     gap: 3rem;
-    padding: 1.25rem 3rem;
-    /* instrument labels: small, opened, never bold */
-    font-size: 11px;
+    padding: 1.5rem var(--gutter);
+    font-size: var(--type);
     font-weight: 500;
-    letter-spacing: 0.14em;
+    line-height: 1.2;
+    letter-spacing: 0.14em;   /* label register */
     text-transform: lowercase;
     transition: background-color 0.25s ease, border-color 0.25s ease;
     border-bottom: 1px solid transparent;
   }
   .bar .wordmark {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: var(--type);
+    font-weight: 700;         /* weight, not size, marks it as the mark */
     letter-spacing: 0.14em;
     color: #fff;
     opacity: 1;
@@ -236,9 +259,9 @@ const navLinks = [
   .bar .links {
     flex: 1;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between;  /* the links measure the page like a ruler */
   }
-  .bar a { color: rgba(255,255,255,0.72); transition: color 0.25s ease; }
+  .bar a { color: rgba(255,255,255,0.66); transition: color 0.25s ease; }
   .bar a:hover { color: #fff; }
   /* once the white ground is under the bar, the bar turns to ink */
   .bar.ink {
@@ -247,11 +270,15 @@ const navLinks = [
     -webkit-backdrop-filter: saturate(140%) blur(10px);
     border-bottom-color: #eee;
   }
-  .bar.ink .wordmark { color: #222; }
+  .bar.ink .wordmark { color: #111; }
   .bar.ink a { color: #999; }
-  .bar.ink a:hover { color: #222; }
+  .bar.ink a:hover { color: #111; }
 
-  /* ---------- the one name: fixed, driven by scroll, never crossfaded ---------- */
+  /* ---------- THE ARCHITECTURAL SIZE ----------
+     Flush to the axis, fitted to the measure by script. The fallback vw value
+     below is only what shows for the millisecond before fit() runs.
+     .name and .name-slot MUST agree on family / weight / tracking / line-height:
+     the morph interpolates between the two boxes and aligns them top-left. */
   .name {
     position: fixed;
     left: 0;
@@ -261,16 +288,16 @@ const navLinks = [
     white-space: nowrap;
     transform-origin: 0 0;
     font-weight: 700;
-    font-size: clamp(2.8rem, 8vw, 7.5rem);
+    font-size: 20vw;          /* replaced by fit(); deliberately under-set so the
+                                 pre-script frame can never overflow */
     line-height: 1;
-    /* display tracking: pulled in hard so the word reads as one machined block.
-       MUST stay identical to .name-slot — the morph interpolates between the two. */
-    letter-spacing: -0.045em;
+    letter-spacing: -0.05em;  /* the measure is set by tracking + fitting together */
     color: #fff;
     text-transform: lowercase;
     pointer-events: none;
     opacity: 0;
-    will-change: transform;
+    /* deliberately NOT promoted: at a 1:28 downscale a cached layer goes soft,
+       so we let it re-rasterise on every paint instead. */
   }
   .name.ready { opacity: 1; }
 
@@ -278,12 +305,14 @@ const navLinks = [
   .stage { position: relative; z-index: 1; }
   .stage a { color: #fff; }
 
+  /* the shell no longer centres anything — the axis is the left edge */
   .shell {
-    max-width: 1420px;
-    margin: 0 auto;
-    padding: 0 3rem;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 var(--gutter);
   }
-  .shell.narrow { max-width: 1180px; }
+  .shell.narrow { max-width: none; }
 
   /* ---------- screen 1 ---------- */
   .opening {
@@ -291,20 +320,22 @@ const navLinks = [
     height: 100vh;
     scroll-snap-align: start;
   }
+  /* the cue joins the axis instead of floating in the middle */
   .scroll-cue {
     position: absolute;
     bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255,255,255,0.7);
-    font-size: 17px;
+    left: var(--gutter);
+    transform: none;
+    color: rgba(255,255,255,0.6);
+    font-size: var(--type);
     line-height: 1;
+    letter-spacing: 0;
     transition: opacity 0.3s ease;
   }
   .scroll-cue:hover { color: #fff; }
   body.docked .scroll-cue { opacity: 0; pointer-events: none; }
 
-  /* ---------- screen 2: the docked name + the intro ---------- */
+  /* ---------- screen 2: the dock + the intro ---------- */
   .overlay {
     position: relative;
     min-height: 100vh;
@@ -320,40 +351,77 @@ const navLinks = [
       rgba(0,0,0,0.95) 100%
     );
   }
-  /* intro on the left (~2/3), the reserved slot on the right (~1/3) */
+  /* .intro dissolves into the grid so the lead can command a wide row while the
+     body stays on a narrow measure. Same DOM, same order — new relationships. */
+  .intro { display: contents; color: rgba(255,255,255,0.66); }
   .intro-cols {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 44ch) minmax(0, 1fr) minmax(0, 24ch);
+    column-gap: 3rem;
     align-items: start;
-    gap: 3rem;
-    /* held in from the shell's full width so the 2/3 column stays close to the
-       intro's own 54ch measure — otherwise the ratio reads as a void */
-    max-width: 940px;
+    max-width: 1060px;   /* anchored left, never centred */
   }
-  .intro {
-    color: rgba(255,255,255,0.74);
-    max-width: 54ch;
+  .intro p { margin-bottom: 1.5rem; text-wrap: pretty; }
+
+  /* the dock — working size, first thing on the axis.
+     scoped through .intro so it outranks the generic `.intro p` margin */
+  .intro .name-slot {
+    grid-column: 1 / -1;
+    font-size: var(--type);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    text-transform: lowercase;
+    visibility: hidden;
+    margin-bottom: 4.5rem;   /* the drop from the monument to the whisper */
   }
-  .intro p { margin-bottom: 1rem; }
-  /* a measured rag: the browser is allowed to even out the last lines */
-  .intro p { text-wrap: pretty; }
+
+  /* THE LEAD — same 13px as the body. It outranks the body by holding a whole
+     wide row alone, by weight, and by 0.22em of air between its letters. */
+  .intro .lead {
+    grid-column: 1 / -1;
+    font-size: var(--type);
+    font-weight: 700;
+    line-height: 1.6;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: #fff;
+    margin-bottom: 4rem;
+  }
+  /* running text: narrow measure, long leading, no tracking, sentence case */
+  .intro p:not(.lead):not(.name-slot) {
+    grid-column: 1;
+    line-height: var(--lh);
+    letter-spacing: 0;
+  }
+  .intro .coda {
+    margin-top: 2.5rem;
+    margin-bottom: 0;
+    color: rgba(255,255,255,0.4);
+  }
+  .intro a {
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+  }
+  .intro a:hover { border-bottom-color: #fff; }
 
   /* ---------- the reserved slot: held space, on purpose ----------
      A rule, a label, and nothing else. The height is the point. */
   .lately {
-    margin-top: 2.6rem;   /* drops the rule to the lead's line, past the docked name */
+    grid-column: 3;
+    grid-row: 3 / span 4;
     padding-top: 0.75rem;
     min-height: 22rem;
     border-top: 1px solid rgba(255,255,255,0.28);
   }
   .lately .label {
     display: block;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    line-height: 1.4;
+    font-size: var(--type);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
     text-transform: lowercase;
-    color: rgba(255,255,255,0.48);
+    color: rgba(255,255,255,0.5);
   }
   /* one hairline far below, so the emptiness reads as measured, not missing */
   .lately::after {
@@ -364,39 +432,6 @@ const navLinks = [
     margin-top: 15rem;
     background: rgba(255,255,255,0.16);
   }
-  .intro a {
-    color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,0.35);
-  }
-  .intro a:hover { border-bottom-color: #fff; }
-
-  /* the slot the big name lands in — invisible, it only holds the position.
-     Same family, same weight, same tracking as .name: the morph depends on it. */
-  .name-slot {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.045em;
-    text-transform: lowercase;
-    visibility: hidden;
-    margin-bottom: 1.5rem;
-  }
-
-  .intro .lead {
-    font-size: clamp(1.6rem, 2.6vw, 1.9rem);
-    font-weight: 700;
-    /* set, not typed: the lines lock up close and the rag is balanced */
-    line-height: 1.2;
-    letter-spacing: -0.028em;
-    text-wrap: balance;
-    color: #fff;
-    margin-bottom: 1.5rem;
-  }
-  .intro .coda {
-    margin-top: 2rem;
-    margin-bottom: 0;
-    color: rgba(255,255,255,0.5);
-  }
 
   /* ---------- video chrome ---------- */
   .video-chrome {
@@ -406,22 +441,23 @@ const navLinks = [
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 0 3rem 1.5rem;
+    padding: 0 var(--gutter) 1.5rem;
     margin-top: -3.5rem;
     pointer-events: none;
   }
   .video-chrome > * { pointer-events: auto; }
   .motion-toggle {
     background: none;
-    color: rgba(255,255,255,0.58);
+    color: rgba(255,255,255,0.55);
     border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.28);
     font-family: 'Schibsted Grotesk', sans-serif;
-    font-size: 10px;
+    font-size: var(--type);
     font-weight: 500;
-    letter-spacing: 0.18em;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
     text-transform: lowercase;
-    padding: 0 0 2px;
+    padding: 0 0 3px;
     cursor: pointer;
   }
   .motion-toggle:hover { color: #fff; border-bottom-color: #fff; }
@@ -439,51 +475,62 @@ const navLinks = [
     background: #fff;
   }
 
-  /* the folio runs edge to edge; only a small gutter holds it off the viewport */
   .works {
-    padding: 8rem 1.75rem 0;
-    scroll-margin-top: 3.5rem;
+    padding: 8rem var(--gutter) 0;
+    scroll-margin-top: 4rem;
   }
   .works-head { padding-bottom: 3rem; }
-  /* a chapter opening, not a label — the name's voice, in ink */
+  /* the second and last architectural word. Same relationship as the name:
+     fitted to the full measure, flush to the axis. */
   .works-head h2 {
-    font-size: clamp(2.5rem, 6vw, 5rem);
+    display: block;
+    width: max-content;
+    white-space: nowrap;
+    font-size: 26vw;          /* replaced by fit(); under-set, see .name */
     font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.05em;
     text-transform: lowercase;
     color: #111;
-    margin-bottom: 1.75rem;
+    margin-bottom: 2.5rem;
   }
 
-  /* ---------- lenses: instrument labels ---------- */
+  /* ---------- lenses: one control strip, both rows on a single line ---------- */
+  .lenses {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem 4rem;
+  }
   .lens-row {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.5rem;
   }
-  .lens-row + .lens-row { margin-top: 0.5rem; }
+  .lens-row + .lens-row { margin-top: 0; }
   .lens {
     font-family: 'Schibsted Grotesk', sans-serif;
-    font-size: 11px;
+    font-size: var(--type);
     font-weight: 500;
     line-height: 1.4;
     text-transform: lowercase;
-    letter-spacing: 0.12em;
-    color: #9a9a9a;
+    letter-spacing: 0.14em;
+    color: #999;
     background: none;
     border: none;
     border-bottom: 1px solid transparent;
-    padding: 0 0 2px;
+    padding: 0 0 3px;
     cursor: pointer;
   }
-  .lens:hover { color: #222; }
-  .lens[aria-pressed="true"] { color: #111; border-bottom-color: #111; }
-  .lens-row.quiet .lens { font-size: 10px; letter-spacing: 0.16em; color: #bbb; }
+  .lens:hover { color: #111; }
+  /* pressed = heavier, not larger */
+  .lens[aria-pressed="true"] { font-weight: 700; color: #111; border-bottom-color: #111; }
+  /* the quiet row is the SAME size — only its ink is lower */
+  .lens-row.quiet .lens { font-size: var(--type); color: #c4c4c4; }
   .lens-row.quiet .lens:hover { color: #636363; }
   .lens-row.quiet .lens[aria-pressed="true"] { color: #111; border-bottom-color: #111; }
-  .lens-row .sep { color: #ddd; font-size: 11px; }
+  .lens-row .sep { color: #e2e2e2; font-size: var(--type); }
 
   /* ---------- the grid: the only view ---------- */
   .grid {
@@ -496,7 +543,13 @@ const navLinks = [
   }
   .entry[hidden] { display: none; }
 
-  .tile { display: block; transition: transform 0.35s ease; }
+  /* the title moves ABOVE its image and sits under a hairline: each tile becomes
+     a labelled specimen, and the labels line up across the row like a catalogue. */
+  .tile {
+    display: flex;
+    flex-direction: column-reverse;
+    transition: transform 0.35s ease;
+  }
   .entry:hover .tile, .entry:focus-within .tile { transform: translateY(-4px); transition-duration: 0.2s; }
   .tile .media {
     display: block;
@@ -520,13 +573,17 @@ const navLinks = [
   }
   .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
 
-  /* caption, not headline: the tile titles sit in the label register */
   .entry h3 {
-    margin-top: 1rem;
-    font-size: 12px;
+    order: 2;                 /* belt and braces with column-reverse */
+    margin: 0 0 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e8e8e8;
+    /* a fixed two-line band so every image in a row starts on the same line */
+    min-height: calc(0.75rem + 2.9em);
+    font-size: var(--type);
     font-weight: 500;
     line-height: 1.45;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     text-transform: lowercase;
     color: #111;
   }
@@ -534,14 +591,14 @@ const navLinks = [
 
   /* ---------- nine at a time ---------- */
   .more-wrap {
-    text-align: center;
-    padding-bottom: 8rem;
+    padding-bottom: 8rem;   /* on the axis, not centred */
   }
   .more {
     font-family: 'Schibsted Grotesk', sans-serif;
-    font-size: 10px;
+    font-size: var(--type);
     font-weight: 500;
-    letter-spacing: 0.18em;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
     text-transform: lowercase;
     color: #bbb;
     background: none;
@@ -554,8 +611,9 @@ const navLinks = [
   .more[hidden] { display: none; }
 
   .empty {
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: var(--type);
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
     color: #999;
     padding: 2rem 0;
   }
@@ -563,17 +621,18 @@ const navLinks = [
 
   /* ---------- foot ---------- */
   .foot {
-    padding: 0 1.75rem 6rem;
-    font-size: 11px;
+    padding: 0 var(--gutter) 6rem;
+    font-size: var(--type);
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
     color: #999;
   }
   .foot a { color: #999; }
   .foot a:hover { color: #111; }
   .foot .dot { margin: 0 0.5rem; color: #ddd; }
 
-  /* ---------- tooling only: variant switcher, not part of the design ---------- */
+  /* ---------- tooling only: variant switcher, exempt from the two-size rule ---------- */
   .proto-pill {
     position: fixed;
     z-index: 99;
@@ -601,21 +660,24 @@ const navLinks = [
 
   @media (max-width: 1100px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
+    .intro-cols { grid-template-columns: minmax(0, 44ch) minmax(0, 22ch); column-gap: 2.5rem; }
+    .lately { grid-column: 2; }
   }
 
   @media (max-width: 900px) {
+    :root { --gutter: 20px; }
     html { scroll-snap-type: none; }
-    .shell, .bar, .video-chrome { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .bar { gap: 1.5rem; font-size: 10px; letter-spacing: 0.1em; }
-    .bar .wordmark { font-size: 10px; letter-spacing: 0.1em; }
+    .bar { gap: 1.5rem; letter-spacing: 0.1em; }
+    .bar .wordmark { letter-spacing: 0.1em; }
     .bar .links { gap: 1rem; }
     .overlay { padding: 7rem 0 7rem; }
-    /* the reserved slot stacks under the intro */
-    .intro-cols { grid-template-columns: 1fr; gap: 3.5rem; }
-    .lately { margin-top: 0; min-height: 14rem; }
+    /* the reserved slot stacks under the intro; the axis survives */
+    .intro-cols { grid-template-columns: minmax(0, 1fr); }
+    .intro .name-slot, .intro .lead { grid-column: 1; }
+    .lately { grid-column: 1; grid-row: auto; margin-top: 3.5rem; min-height: 14rem; }
     .lately::after { margin-top: 9rem; }
-    .works { padding: 6rem 1.25rem 0; }
-    .foot { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .works { padding: 6rem var(--gutter) 0; }
+    .intro .lead { letter-spacing: 0.18em; }
   }
 
   @media (max-width: 700px) {
@@ -804,29 +866,59 @@ const navLinks = [
   // under reduced motion nothing plays: the poster still shows via the
   // backdrop's CSS background and the untouched poster attribute.
 
-  /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
-     Start = centred in the viewport at full size. End = the invisible .name-slot that
-     sits above the intro lead. We measure both, then interpolate transform against
-     scroll progress across the dark act. No crossfade, no second element. */
   var nameEl = document.getElementById('name');
   var slotEl = document.getElementById('name-slot');
   var overlayEl = document.getElementById('intro');
   var groundEl = document.getElementById('ground');
   var barEl = document.getElementById('bar');
+  var worksH2 = document.querySelector('.works-head h2');
 
-  var M = { x0: 0, y0: 0, x1: 0, yDoc: 0, s1: 0.2, end: 1 };
+  /* ---------- THE ARCHITECTURAL SIZE IS MEASURED, NOT DECLARED ----------
+     Both display words are fitted to the full measure. Tracking is in em, so
+     rendered width is exactly linear in font-size: measure once at 100px, then
+     scale. This is the whole thesis — the big size is a RELATIONSHIP to the
+     page width, not a number someone typed. */
+  function gutter() {
+    var v = getComputedStyle(document.documentElement).getPropertyValue('--gutter');
+    return parseFloat(v) || 28;
+  }
+
+  function fitToMeasure(el, avail) {
+    if (!el || avail <= 0) return;
+    el.style.fontSize = '100px';
+    var w = el.getBoundingClientRect().width;
+    if (!w) return;
+    el.style.fontSize = (100 * avail / w).toFixed(2) + 'px';
+  }
+
+  function fitAll() {
+    var g = gutter();
+    fitToMeasure(nameEl, window.innerWidth - g * 2);
+    if (worksH2 && worksH2.parentElement) {
+      fitToMeasure(worksH2, worksH2.parentElement.getBoundingClientRect().width);
+    }
+  }
+
+  /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
+     Start = flush left on the axis, sitting low on screen 1 at the architectural
+     size. End = the invisible .name-slot, same axis, at the 13px working size.
+     Because both share the left edge, the travel is PURELY VERTICAL: the word
+     only falls and shrinks — roughly 1:28. No crossfade, no second element. */
+  var M = { x0: 0, y0: 0, x1: 0, yDoc: 0, s1: 0.04, end: 1 };
   var docked = null;
   var inked = null;
 
   function measure() {
     nameEl.style.transform = 'none';
+    fitAll();                                      // size first, then place
     var nr = nameEl.getBoundingClientRect();       // left:0 / top:0, so this is its natural size
     var sr = slotEl.getBoundingClientRect();
     var nf = parseFloat(getComputedStyle(nameEl).fontSize) || 1;
     var sf = parseFloat(getComputedStyle(slotEl).fontSize) || 1;
 
-    M.x0 = (window.innerWidth - nr.width) / 2;
-    M.y0 = (window.innerHeight - nr.height) / 2;
+    M.x0 = gutter();                               // flush to the axis, not centred
+    // sits low, a fifth of the viewport up from the bottom; clamped clear of the bar
+    M.y0 = Math.max(80, window.innerHeight - nr.height - window.innerHeight * 0.18);
     M.x1 = sr.left + (window.pageXOffset || 0);
     M.yDoc = sr.top + (window.pageYOffset || 0);   // the slot's position in the document
     M.s1 = sf / nf;                                // both use line-height 1, so top-left aligns
