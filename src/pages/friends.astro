@@ -12,89 +12,316 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 
 <Layout title="Friends — Divya" description="Friends and collaborators of Divya.">
-  <section aria-label="Friends and collaborators">
-    <h1 class="sr-only">Friends</h1>
-    <h2 class="section-title animate-in">collaborators</h2>
-    <div class="friends-grid" data-stagger-children data-stagger-ms="80">
-      {collaborators.map((f) => (
-        <div class="friend-card animate-in">
-          <div class="friend-card-top">
+  <!-- Sora is not in the shared Layout head yet (it still preloads Montserrat),
+       so this page asks for its own face. rel=stylesheet is body-ok in HTML. -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap"
+  />
+
+  <div class="page">
+    <h1 class="chapter">friends</h1>
+
+    <section class="block" aria-labelledby="lbl-collaborators">
+      <h2 class="label" id="lbl-collaborators">collaborators</h2>
+
+      <div class="mates">
+        {collaborators.map((f) => (
+          <article class="mate">
             {f.photo ? (
               <img
-                class="friend-photo"
+                class="mate-photo"
                 src={`${base}${f.photo}`}
                 alt={`Photo of ${f.name}`}
+                width="800"
+                height="1000"
                 loading="lazy"
                 decoding="async"
               />
             ) : (
-              <div class="friend-photo friend-photo-fallback"></div>
+              <div class="mate-photo mate-photo--empty"></div>
             )}
-            <div class="friend-info">
-              <div class="friend-name">
-                {f.url ? (
-                  <a href={f.url} target="_blank" rel="noopener noreferrer">{f.name}<svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-                ) : f.name}
-              </div>
-              {f.role && (
-                <div class="friend-role">{f.role}</div>
-              )}
-              {f.description && (
-                <div class="friend-desc">{f.description}</div>
-              )}
-              {f.projects.length > 0 && (
-                <div class="friend-projects">
-                  {f.projects.map((p) => {
-                    const slug = titleToSlug.get(p)
-                    return slug ? (
-                      <a href={`${base}/works/${slug}/`} class="friend-project-tag">{p}</a>
-                    ) : (
-                      <span class="friend-project-tag">{p}</span>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
+
+            <h3 class="mate-name">
+              {f.url ? (
+                <a href={f.url} target="_blank" rel="noopener noreferrer">
+                  {f.name}<span class="ext" aria-hidden="true">&#8599;</span>
+                </a>
+              ) : f.name}
+            </h3>
+
+            {f.role && <p class="mate-role">{f.role}</p>}
+            {f.description && <p class="mate-desc">{f.description}</p>}
+
+            {f.projects.length > 0 && (
+              <p class="tags">
+                {f.projects.map((p) => {
+                  const slug = titleToSlug.get(p)
+                  return slug ? (
+                    <a href={`${base}/works/${slug}/`} class="tag">{p}</a>
+                  ) : (
+                    <span class="tag">{p}</span>
+                  )
+                })}
+              </p>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
 
     {mentions.length > 0 && (
-      <>
-        <h2 class="section-title animate-in" style="margin-top: 3rem;">cool friends who do cool things</h2>
-        <div class="mentions-list" data-stagger-children data-stagger-ms="80">
+      <section class="block" aria-labelledby="lbl-mentions">
+        <h2 class="label" id="lbl-mentions">cool friends who do cool things</h2>
+
+        <ul class="pals">
           {mentions.map((f) => (
-            <div class="mention-item animate-in">
-              <div class="mention-header">
-                <span class="mention-name">
+            <li class="pal">
+              <div class="pal-who">
+                <h3 class="pal-name">
                   {f.url ? (
-                    <a href={f.url} target="_blank" rel="noopener noreferrer">{f.name}<svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
+                    <a href={f.url} target="_blank" rel="noopener noreferrer">
+                      {f.name}<span class="ext" aria-hidden="true">&#8599;</span>
+                    </a>
                   ) : f.name}
-                </span>
+                </h3>
+                {f.role && <p class="pal-role">{f.role}</p>}
                 {f.projects.length > 0 && (
-                  <span class="mention-projects">
+                  <p class="tags">
                     {f.projects.map((p) => {
                       const slug = titleToSlug.get(p)
                       return slug ? (
-                        <a href={`${base}/works/${slug}/`} class="friend-project-tag">{p}</a>
+                        <a href={`${base}/works/${slug}/`} class="tag">{p}</a>
                       ) : (
-                        <span class="friend-project-tag">{p}</span>
+                        <span class="tag">{p}</span>
                       )
                     })}
-                  </span>
+                  </p>
                 )}
               </div>
-              {f.role && (
-                <div class="mention-role">{f.role}</div>
-              )}
-              {f.description && (
-                <div class="mention-desc">{f.description}</div>
-              )}
-            </div>
+              {f.description && <p class="pal-desc">{f.description}</p>}
+            </li>
           ))}
-        </div>
-      </>
+        </ul>
+      </section>
     )}
-  </section>
+  </div>
 </Layout>
+
+<style>
+  /* =====================================================================
+     FRIENDS — the landing's language, page-scoped.
+
+     One seed: --r = 24px. It is the column gutter, the body line box, and
+     the unit every vertical space on this page is a multiple of.
+
+     One grid: three columns inside the Layout's .content box, so column 1's
+     left line is the same line the top bar's wordmark hangs on.
+
+     Two runs of people. Collaborators get pictures and take a column each.
+     Mentions have no pictures, so they become an index instead of a grid:
+     who on column 1, what they do on columns 2-3, hairline between.
+     ===================================================================== */
+
+  .page {
+    --r: 1.5rem;
+    --gutter: var(--r);
+
+    --ink: #222;
+    --mid: #636363;
+    --quiet: #999;
+    --hair: #eee;
+
+    /* body sits on the module: one line = one rhythm unit */
+    --t-body: 0.9375rem;   /* 15px */
+    --lh-body: var(--r);
+    --measure: 52ch;
+
+    font-family: 'Sora', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    color: var(--ink);
+    padding-top: calc(var(--r) * 4);
+    padding-bottom: calc(var(--r) * 4);
+  }
+
+  /* ---------- the chapter word ---------- */
+  .chapter {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    text-transform: lowercase;
+    color: var(--ink);
+    margin-bottom: calc(var(--r) * 4);
+  }
+
+  /* ---------- a section: a quiet label on a hairline, then the run ---------- */
+  .block + .block { margin-top: calc(var(--r) * 5); }
+
+  .label {
+    font-size: 0.75rem;      /* 12px */
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: lowercase;
+    color: var(--quiet);
+    border-top: 1px solid var(--hair);
+    padding-top: calc(var(--r) * 0.75);
+    margin-bottom: calc(var(--r) * 2.5);
+  }
+
+  /* ---------- collaborators: one to a column ---------- */
+  .mates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    row-gap: calc(var(--r) * 3.5);
+    align-items: start;
+  }
+
+  /* a consistent aspect for every face, so the row reads as one band */
+  .mate-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    background: #f4f4f4;
+    margin-bottom: calc(var(--r) * 1.25);
+  }
+  .mate-photo--empty { height: auto; }
+
+  .mate-name {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: var(--lh-body);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .mate-role {
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: calc(var(--r) * 0.75);
+    letter-spacing: 0.06em;
+    color: var(--quiet);
+    margin-top: calc(var(--r) * 0.25);
+  }
+
+  .mate-desc {
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    color: var(--mid);
+    max-width: var(--measure);
+    margin-top: var(--r);
+  }
+
+  /* ---------- mentions: no pictures, so an index instead of a grid ---------- */
+  .pals { list-style: none; }
+
+  .pal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    align-items: baseline;
+    border-top: 1px solid var(--hair);
+    padding: calc(var(--r) * 1.5) 0;
+  }
+  .pal:first-child { border-top: 0; padding-top: 0; }
+
+  .pal-who { grid-column: 1; }
+
+  .pal-name {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: var(--lh-body);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .pal-role {
+    font-size: 0.75rem;
+    line-height: calc(var(--r) * 0.75);
+    letter-spacing: 0.06em;
+    color: var(--quiet);
+    margin-top: calc(var(--r) * 0.25);
+  }
+
+  .pal-desc {
+    grid-column: 2 / -1;
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    color: var(--mid);
+    max-width: var(--measure);
+  }
+
+  /* ---------- whisper metadata: the projects a friend is on ---------- */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--r) * 0.25) var(--r);
+    margin-top: var(--r);
+    font-size: 0.75rem;
+    line-height: calc(var(--r) * 0.75);
+    letter-spacing: 0.04em;
+    color: var(--quiet);
+  }
+  .tag { color: var(--quiet); }
+  a.tag {
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color var(--hover-on, 0.2s) ease, border-color var(--hover-on, 0.2s) ease;
+  }
+  a.tag:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* ---------- links ---------- */
+  .page a { color: inherit; text-decoration: none; }
+  .page a:visited { color: inherit; }
+
+  .mate-name a,
+  .pal-name a {
+    border-bottom: 1px solid var(--hair);
+    transition: border-color var(--hover-on, 0.2s) ease;
+  }
+  .mate-name a:hover,
+  .pal-name a:hover { border-bottom-color: var(--ink); }
+
+  .ext {
+    display: inline-block;
+    margin-left: 0.3em;
+    font-size: 0.7em;
+    color: #bbb;
+    vertical-align: 0.15em;
+  }
+
+  .page a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  /* ================= the grid narrows; the rhythm does not =================
+     --r never changes, so the page keeps its air at every width; only the
+     number of columns redraws. */
+  @media (max-width: 1000px) {
+    .mates { grid-template-columns: repeat(2, 1fr); }
+    .pal { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 700px) {
+    .page {
+      padding-top: calc(var(--r) * 2.5);
+      padding-bottom: calc(var(--r) * 2.5);
+    }
+    .chapter { margin-bottom: calc(var(--r) * 2.5); }
+    .block + .block { margin-top: calc(var(--r) * 3.5); }
+    .label { margin-bottom: calc(var(--r) * 1.75); }
+
+    .mates { grid-template-columns: 1fr; row-gap: calc(var(--r) * 2.5); }
+    .mate-photo { aspect-ratio: 3 / 2; }
+
+    .pal { grid-template-columns: 1fr; row-gap: var(--r); }
+    .pal-who,
+    .pal-desc { grid-column: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page a,
+    a.tag { transition: none; }
+  }
+</style>

@@ -39,12 +39,14 @@ const flow = 'https://divyatak.github.io/creative-visuals/particles/';
 const webcam = 'https://divyatak.github.io/creative-visuals/webcam/';
 const lineBefore = 'https://divya.studiotypo.xyz';
 
+// STATUS is two-valued now: something is either still moving or it is closed.
+// "in progress" and "ongoing" said the same thing, so there is one word for it.
 const additions = [
   {
     id: 'metro-museum',
     title: 'Metro Museum of the Forgotten',
     year: 2026,
-    status: 'in progress',
+    status: 'ongoing',
     bucket: 'games',
     img: '/clips/poster-7.jpg',
     alt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
@@ -143,93 +145,79 @@ const navLinks = [
 <title>divya tak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- All eight picker candidates. Only the weights the page actually uses are
-     requested: 400/500/700 for the voice faces, 400/500 for the label faces —
-     except Space Mono (no 500 exists) and Fragment Mono (400 only), so those
-     ask for 400 and let the browser resolve 500 down. When a pair is chosen for
-     real, this collapses back to two families. -->
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;700&family=Instrument+Sans:wght@400;500;700&family=Sora:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Space+Mono&family=Fragment+Mono&display=swap" rel="stylesheet" />
+<!-- One family, three weights. Sora carries the voice AND the label layer. -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
   /* =====================================================================
-     TYPE SYSTEM — GRID-LOCKED. Nothing on this page has a size or a space
-     that isn't derived from one of three things: the columns, the mono
-     ruler, or the rhythm unit. There are no round numbers left.
+     TYPE SYSTEM — GRID-LOCKED, ONE FAMILY. Nothing on this page has a size
+     or a space that isn't derived from the columns, the ruler, or the
+     rhythm unit. There are no round numbers left.
 
      ---------------------------------------------------------------------
      1. THE SEED.  --r = 1.5rem = 24px.
-     It is the folio's column gap. It is also the row gap, the vertical
-     rhythm unit, and exactly one line of body text. Every vertical space on
-     the page is a multiple or a simple fraction of it, and every horizontal
-     gap is it. The grid measures the same in both directions.
+     It is the folio's column gap, the vertical rhythm unit, and exactly one
+     line of body text. Every vertical space is a multiple or a simple
+     fraction of it.
 
-     2. THE COLUMNS.  Three of them, edge to edge, gutter --r, outer edge
-     1.25×--r. The dark act has no measurements of its own — it borrows
-     these, so the name, the intro, the lately card, the nav, the chapter
-     word and the lenses all start on one of three vertical lines.
+     2. THE COLUMNS.  Three, edge to edge, gutter --r, outer edge 1.25×--r.
+     The dark act has no measurements of its own — it borrows these, so the
+     name, the intro, the lately slot, the nav, the chapter word and the
+     lenses all start on one of three vertical lines.
 
-     3. TWO AXES, AND WHERE THEY CHANGE HANDS. Everything above the tiles
-     hangs off the columns' LEFT lines. From the tiles down, the folio turns
-     to the columns' CENTRE lines: the tile captions are centred under their
-     covers, and the more control and the email follow the same axis to the
-     bottom of the page. Both are grid lines — the folio just stops reading
-     left-to-right and starts reading column-by-column, which is what a
-     caption under a picture actually is.
+     3. TWO AXES. Everything above the tiles hangs off the columns' LEFT
+     lines. From the tiles down the folio turns to their CENTRE lines: the
+     captions are centred under their covers, and the more control and the
+     email follow the same axis to the bottom.
 
-     4. DISPLAY TYPE IS MEASURED IN COLUMNS. Three strings are sized so that
-     their ink spans an exact number of columns — no rems involved:
-         the name at rest   = 3 columns (the whole row)
-         the name docked    = 1 column  (one tile)
-         "works"            = 3 columns (a full row of type, where a row of
-                                         tiles is about to be)
-     ...plus the subtitle, which fills columns 1–2. So the name's journey is a
-     division of the grid, not a shrink to an arbitrary size, and it pivots on
-     column 1's left line, which it never leaves.
+     4. DISPLAY TYPE IS MEASURED IN COLUMNS. Four strings are sized so their
+     ink spans an exact number of columns:
+         the name at rest   = 3 columns      the subtitle = columns 1–2
+         the name docked    = 1 column       "works"      = 3 columns
+     The name's journey is a division of the grid, not a shrink to an
+     arbitrary size, and it pivots on column 1's left line, which it never
+     leaves.
 
-     The divisors are real ink runs computed from the TTFs (advances +
-     kerning − first glyph's left sidebearing − last glyph's right one + the
-     letter-spacing between them). Because the voice face is switchable, they
-     are VARIABLES, and the picker rewrites the run and the sidebearing
-     together — otherwise a font swap would silently break the column fit:
+     THE NAME IS SET IN CAPS, and caps cost width: "DIVYA TAK" runs 5.339em
+     against the lowercase 4.346em, so filling the same three columns makes
+     the type ~19% smaller. That is the honest consequence of the case
+     change, not a bug. Caps also don't want the lowercase's tight tracking,
+     so the name runs at -0.015em where lowercase ran at -0.035em.
 
-         face                name(700)      works(400)     subtitle(500)
-         Space Grotesk       4.158 / .046   2.575 / .053   14.692 / .055
-         Schibsted Grotesk   4.188 / .031   2.636 / .030   14.074 / .041
-         Instrument Sans     3.998 / .024   2.518 / .028   13.976 / .043
-         Sora                4.346 / .039   2.792 / .026   15.480 / .052
+     5. THE RULER — N CHARACTERS TO A COLUMN. Previously this leaned on a
+     monospace's fixed advance. With one proportional family the idea
+     survives but the basis changes: the ruler is now calibrated against
+     SORA'S AVERAGE ADVANCE (a–z at 400 = 0.5774em, measured at runtime), so
+     "N characters to a column" means N average characters. Same formula,
+     honest basis: size = col ÷ N ÷ advance.
 
-     font-size = (the span it must fill) ÷ (the run). The negative text-indent
-     is the first glyph's left sidebearing, so the INK, not the invisible box,
-     hangs on the line. Optical alignment is what makes a grid feel true
-     rather than merely be true. Display line-heights (1, 1.02, 0.78) are ink
-     crops, not rhythm multiples — display type hugs its own ink; only text
-     stacks on a module.
+         N = 50   captions       content, read as words
+         N = 58   lenses         controls
+         N = 62   nav + wordmark wayfinding
+         N = 70   micro labels   more · scroll cue · card marks
+         N = 76   dates, quiet   the smallest readouts
 
-     5. THE MONO RULER — CHARACTERS PER COLUMN. A monospace advance is a unit
-     of measurement: N characters fill a column at col ÷ N ÷ advance. Each
-     role gets its own N, chosen for what it has to hold, and the ladder is
-     the hierarchy:
+     6. KEEPING THE LABELS INSTRUMENTAL WITHOUT A MONOSPACE. Losing the mono
+     removes the thing that made a label look like a label, so three other
+     axes do that work instead — and deliberately, not by accident:
+         CASE      nav, wordmark, micro labels and dates go UPPERCASE.
+                   Lenses stay lowercase: "interactive pieces" is too wide in
+                   caps, and the copy may not be reworded.
+         TRACKING  the label layer runs 0.06em → 0.22em, opening as it
+                   shrinks; the voice layer runs -0.035em → 0. Nothing in the
+                   middle. That gap is what separates the two registers.
+         WEIGHT    labels sit at 500 against body copy's 400.
+     One consequence: in a proportional face a weight change CHANGES WIDTH,
+     so the active lens no longer thickens — it would nudge the whole row off
+     its line. Colour and the underline carry that state now.
 
-         N = 50   tile captions    content, read as words
-         N = 56   nav + wordmark   wayfinding
-         N = 62   lenses, email,   controls, the empty state, card identifiers
-                  empty state
-         N = 68   micro labels     lately · more · scroll cue · card sources
-         N = 74   separators, dates
-
-     CAREFUL: the four label candidates are NOT all 0.600em. JetBrains Mono
-     and IBM Plex Mono are; Space Mono is 0.612 and Fragment Mono 0.618. So
-     the advance is a variable too and the picker sets it — otherwise
-     "62 characters to a column" would quietly become 60 on two of the four.
-     Space Mono has no 500 weight and Fragment Mono ships 400 only, so on
-     those two the wordmark and the active lens lose their weight step and
-     lean on colour alone. Tracking runs inverse to the ruler — the smaller
-     the step, the more air — and uppercase micro labels take double.
-
-     6. THE RHYTHM. Body: one line = --r exactly, so paragraphs stack on the
-     24px module. Mono: one line = 0.75×--r, so four mono lines equal three
-     body lines. The nav bar is three mono line-boxes tall. Each tile reserves
-     a caption band of exactly 1.5×--r — two mono lines — so a title that
-     wraps can never knock its row out of alignment with the next.
+     7. THE RHYTHM. Body: one line = --r, so paragraphs stack on the 24px
+     module. Label: one line = 0.75×--r, so four label lines equal three body
+     lines. Each tile reserves a caption band of exactly 1.5×--r — two label
+     lines — so a title that wraps can never knock its row out of alignment.
+     Row gap is 2.5×--r against a column gap of 1×--r: the rows carry
+     captions inside them, so the break between rows has to beat the gap
+     between a picture and its own caption, or the caption starts to look
+     like it belongs to the row below.
      ===================================================================== */
 
   :root {
@@ -243,18 +231,18 @@ const navLinks = [
     --col: calc((var(--span-all) - 2 * var(--gutter)) / 3);
     --span-2: calc(2 * var(--col) + var(--gutter));
     --dock-w: var(--col);              /* the name shrinks to exactly one column */
-    --dock-gap: calc(var(--r) * 1.25); /* shared: the lately rule hangs off it too */
+    --dock-gap: calc(var(--r) * 1.5);
 
-    /* ---------- the voice face, and the metrics that belong to it ----------
-       the picker rewrites all seven of these together */
-    --sans: 'Space Grotesk', system-ui, sans-serif;
-    --run-name: 4.158;   --ti-name: 0.046;
-    --run-works: 2.575;  --ti-works: 0.053;
-    --run-sub: 14.692;   --ti-sub: 0.055;
+    --sans: 'Sora', system-ui, sans-serif;
 
-    /* ---------- the label face, and its advance ---------- */
-    --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
-    --mono-adv: 0.600;
+    /* ---------- measured at runtime; these are the offline defaults ----------
+       ink run of each column-measured string, and its first glyph's left
+       sidebearing (which becomes a negative indent, so the INK hangs on the
+       line rather than the invisible box) */
+    --run-name: 5.339;   --ti-name: 0.082;   /* "DIVYA TAK" 700 @ -0.015em */
+    --run-works: 2.792;  --ti-works: 0.026;  /* "works"     400 @ -0.040em */
+    --run-sub: 15.480;   --ti-sub: 0.052;    /* the subtitle 500 @ -0.020em */
+    --label-adv: 0.5774;                     /* a–z average at 400 */
 
     /* ---------- display, measured in columns ---------- */
     --t-name:  calc(var(--span-all) / var(--run-name));
@@ -262,28 +250,28 @@ const navLinks = [
     --t-works: calc(var(--span-all) / var(--run-works));
     --t-sub:   calc(var(--span-2) / var(--run-sub));
 
-    /* ---------- the mono ruler: N characters to a column ---------- */
-    --n-title: 50;
-    --n-nav: 56;
-    --n-label: 62;
-    --n-micro: 68;
-    --n-quiet: 74;
-    --t-title: clamp(12px,   calc(var(--col) / var(--n-title) / var(--mono-adv)), 16px);
-    --t-nav:   clamp(11px,   calc(var(--col) / var(--n-nav)   / var(--mono-adv)), 14px);
-    --t-label: clamp(10.5px, calc(var(--col) / var(--n-label) / var(--mono-adv)), 13px);
-    --t-micro: clamp(10px,   calc(var(--col) / var(--n-micro) / var(--mono-adv)), 12px);
-    --t-quiet: clamp(9.5px,  calc(var(--col) / var(--n-quiet) / var(--mono-adv)), 11px);
+    /* ---------- the ruler: N average characters to a column ---------- */
+    --n-caption: 50;
+    --n-lens: 58;
+    --n-nav: 62;
+    --n-micro: 70;
+    --n-quiet: 76;
+    --t-caption: clamp(13px,   calc(var(--col) / var(--n-caption) / var(--label-adv)), 18px);
+    --t-lens:    clamp(11.5px, calc(var(--col) / var(--n-lens)    / var(--label-adv)), 16px);
+    --t-nav:     clamp(11px,   calc(var(--col) / var(--n-nav)     / var(--label-adv)), 15px);
+    --t-micro:   clamp(10px,   calc(var(--col) / var(--n-micro)   / var(--label-adv)), 13px);
+    --t-quiet:   clamp(9.5px,  calc(var(--col) / var(--n-quiet)   / var(--label-adv)), 12px);
 
     /* ---------- reading ----------
        Sized against the column it sits in, leading locked to the module, and
-       capped at a real measure — 26em is ~51 characters, which is what this
-       copy actually renders at, at every breakpoint. Where the column is
-       narrower the paragraph fills it; where it is wider the measure governs
-       and the column merely hosts. The left edge stays on the line either way. */
+       capped at a real measure — 26em is ~51 characters at every breakpoint. */
     --t-body: clamp(14px, calc(var(--col) / 28), 16px);
     --measure: 26em;
-    --lh-body: var(--r);                 /* one body line  = one rhythm unit  */
-    --lh-mono: calc(var(--r) * 0.75);    /* four mono lines = three body lines */
+    --lh-body: var(--r);                 /* one body line   = one rhythm unit  */
+    --lh-label: calc(var(--r) * 0.75);   /* four label lines = three body lines */
+
+    /* ---------- motion ---------- */
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -301,18 +289,13 @@ const navLinks = [
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum' 1;
   }
-  /* THE INSTRUMENT VOICE — one rule, everywhere the page labels itself.
-     It also sets the mono line box, so every label, control and caption on the
-     page stacks on the same 0.75×--r baseline. */
-  .bar, .lens, .lens-row .sep, .lately .label, .entry h3,
-  .more, .empty, .foot, .scroll-cue,
-  .card .src, .card .card-date, .card .repo, .card .commit {
-    font-family: var(--mono);
-    line-height: var(--lh-mono);
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: 'tnum' 1;
+  /* THE LABEL LAYER — one line box for everything that labels rather than
+     speaks, so the whole instrument layer stacks on the same baseline. */
+  .bar, .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue,
+  .woven-foot, .artifact figcaption, .stamp {
+    line-height: var(--lh-label);
   }
-  /* hairline mono over moving video blooms; hold the strokes thin */
+  /* light type over moving video blooms; hold the strokes thin */
   .bar, .lately, .scroll-cue, .intro, .name {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -347,8 +330,8 @@ const navLinks = [
   /* ---------- one nav bar, hung on the same three columns ----------
      wordmark on column 1; the four links spread across columns 2–3 so the first
      opens exactly on column 2's line and the last closes on column 3's right.
-     Padding is 0.75×--r top and bottom, which is the mono line box — so the bar
-     is exactly three mono lines tall. */
+     Uppercase and widely tracked: this is the instrument register, and the bar
+     is chrome, so it stays tight while the rest of the page opens up. */
   .bar {
     position: fixed;
     top: 0;
@@ -361,9 +344,9 @@ const navLinks = [
     align-items: baseline;
     padding: calc(var(--r) * 0.75) var(--edge);
     font-size: var(--t-nav);
-    font-weight: 400;
-    letter-spacing: 0.09em;
-    text-transform: lowercase;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     transition: background-color 0.25s ease, border-color 0.25s ease;
     border-bottom: 1px solid transparent;
   }
@@ -371,7 +354,8 @@ const navLinks = [
     grid-column: 1;
     font-size: var(--t-nav);
     font-weight: 500;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: #fff;
     opacity: 1;
     transition: opacity 0.3s ease, color 0.25s ease;
@@ -396,7 +380,7 @@ const navLinks = [
   .bar.ink a { color: #999; }
   .bar.ink a:hover { color: #222; }
 
-  /* ---------- the one name: a full row of type that divides down to one column ----------
+  /* ---------- the one name: a full row of caps that divides down to one column ----------
      The box is 100vw − 2×edge, which is what makes the morph script's centring
      maths ((innerWidth − width) / 2) land on --edge — column 1's line — so the
      name's left edge is nailed to that line for the whole flight and only the
@@ -409,14 +393,13 @@ const navLinks = [
     width: calc(100vw - 2 * var(--edge));
     white-space: nowrap;
     transform-origin: 0 0;
-    font-family: var(--sans);
     font-weight: 700;
     font-size: var(--t-name);
     line-height: 1;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.015em;
     text-indent: calc(var(--ti-name) * -1em);
     color: #fff;
-    text-transform: lowercase;
+    text-transform: uppercase;
     pointer-events: none;
     opacity: 0;
     will-change: transform;
@@ -444,7 +427,7 @@ const navLinks = [
     grid-template-columns: repeat(3, 1fr);
     column-gap: var(--gutter);
     align-content: end;
-    padding: 0 var(--edge) calc(var(--r) * 2);
+    padding: 0 var(--edge) calc(var(--r) * 3);
   }
   /* the cue is not centred: it marks column 3's line, the last one the name reaches */
   .scroll-cue {
@@ -463,11 +446,10 @@ const navLinks = [
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: calc(var(--r) * 5) 0 calc(var(--r) * 4);
+    padding: calc(var(--r) * 7) 0 calc(var(--r) * 6);
     scroll-snap-align: start;
     /* a measured, nowrap line's trailing sidebearing is a few px of empty space
-       past the last grid line; clip it so it never becomes document scroll.
-       clip (not hidden/auto) so no scroll container is created. */
+       past the last grid line; clip it so it never becomes document scroll. */
     overflow-x: clip;
     background: linear-gradient(
       to bottom,
@@ -485,7 +467,6 @@ const navLinks = [
     align-items: start;
     max-width: none;
   }
-  /* the intro subdivides its two columns into the same two columns */
   .intro {
     grid-column: 1 / span 2;
     display: grid;
@@ -504,26 +485,27 @@ const navLinks = [
   .intro > p:nth-of-type(3),
   .intro > p:nth-of-type(4) { max-width: var(--measure); }
 
-  /* name docks on column 1 · subtitle spans 1–2 · the two body paragraphs take
-     one column each */
+  /* name docks on column 1 · subtitle spans 1–2 · BOTH body paragraphs stack in
+     column 1, so the reading is one continuous column and column 2 becomes the
+     air that the subtitle's width needs */
   @media (min-width: 701px) {
     .intro > .name-slot        { grid-column: 1;      grid-row: 1; }
     .intro > .subtitle         { grid-column: 1 / -1; grid-row: 2; }
     .intro > p:nth-of-type(3)  { grid-column: 1;      grid-row: 3; }
-    .intro > p:nth-of-type(4)  { grid-column: 2;      grid-row: 3; }
+    .intro > p:nth-of-type(4)  { grid-column: 1;      grid-row: 4; }
   }
+  .intro > p:nth-of-type(3) { margin-bottom: calc(var(--r) * 1.25); }
 
   /* the slot the big name lands in — invisible, it only holds the position.
      TYPOGRAPHICALLY IDENTICAL to .name in every respect except size, which is
      the one thing the morph script is allowed to read as a difference. */
   .name-slot {
-    font-family: var(--sans);
     font-size: var(--t-dock);
     font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.015em;
     text-indent: calc(var(--ti-name) * -1em);
-    text-transform: lowercase;
+    text-transform: uppercase;
     white-space: nowrap;
     visibility: hidden;
     margin-bottom: var(--dock-gap);
@@ -531,7 +513,6 @@ const navLinks = [
 
   /* the claim, set to fill columns 1–2 exactly — one rank under the docked name */
   .intro .subtitle {
-    font-family: var(--sans);
     font-size: var(--t-sub);
     font-weight: 500;
     line-height: 1.02;
@@ -539,7 +520,7 @@ const navLinks = [
     text-indent: calc(var(--ti-sub) * -1em);
     white-space: nowrap;
     color: #fff;
-    margin-bottom: calc(var(--r) * 1.5);
+    margin-bottom: calc(var(--r) * 2.5);
   }
 
   .intro a {
@@ -548,101 +529,141 @@ const navLinks = [
   }
   .intro a:hover { border-bottom-color: #fff; }
 
-  /* ---------- the lately slot: column 3, one living update ----------
-     The rule starts exactly where the subtitle's line does. Depth is fixed at
-     10×--r so switching sources never shifts the column. */
+  /* =====================================================================
+     LATELY — column 3. No rule, no label, no card box. Three different
+     STRUCTURES for one living update, switched from the tooling picker:
+
+       1 WOVEN    the update as prose in the intro's own register — a
+                  sentence that happens to be this week's fact, with the
+                  artefact set inline in the line of text like a word.
+       2 ARTIFACT the object almost alone: a square, chromeless, with one
+                  word and a date hanging off its bottom edge on the column
+                  line. The source is withheld until you hover it.
+       3 STAMP    a dated imprint. Two hairlines and nothing else — here the
+                  rule IS the idea, because an index entry is a thing you
+                  read between two lines.
+
+     Its top aligns with the body's first line (dock + gap + subtitle + its
+     margin), so the slot reads as the third column of the same block. Depth
+     is pinned so switching patterns never shifts the column.
+     ===================================================================== */
   .lately {
     grid-column: 3;
-    margin-top: calc(var(--t-dock) + var(--dock-gap));
-    padding-top: calc(var(--r) * 0.5);
-    min-height: calc(var(--r) * 10);
-    border-top: 1px solid rgba(255,255,255,0.28);
+    margin-top: calc(
+      var(--t-dock) + var(--dock-gap) +
+      var(--t-sub) * 1.02 + var(--r) * 2.5
+    );
+    min-height: calc(var(--r) * 14);
   }
-  .lately .label {
+  .lately-view[hidden] { display: none; }
+
+  /* ---- 1 · WOVEN ---- */
+  .woven {
+    font-size: calc(var(--t-body) * 1.15);
+    line-height: calc(var(--r) * 1.5);
+    letter-spacing: -0.005em;
+    color: rgba(255,255,255,0.88);
+    max-width: var(--measure);
+  }
+  .woven a { border-bottom: 1px solid rgba(255,255,255,0.4); }
+  .woven a:hover { border-bottom-color: #fff; }
+  /* the artefact sits IN the sentence, sized to the line it lives on */
+  .woven .inline-thumb {
+    display: inline-block;
+    width: calc(var(--r) * 1.4);
+    height: calc(var(--r) * 1.4);
+    object-fit: cover;
+    vertical-align: -0.42em;
+    margin: 0 0.12em;
+  }
+  .woven-foot {
     display: block;
-    font-size: var(--t-micro);
+    margin-top: calc(var(--r) * 1.25);
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+  }
+
+  /* ---- 2 · ARTIFACT ---- */
+  .artifact { max-width: calc(var(--r) * 11); }
+  .artifact img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  .artifact figcaption {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    column-gap: var(--r);
+    margin-top: calc(var(--r) * 0.75);
+  }
+  .artifact .word {
+    font-size: var(--t-caption);
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.9);
+  }
+  .artifact .when {
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+  }
+  /* held in reserve — the row's height is always there, only the ink arrives */
+  .artifact .whence {
+    grid-column: 1 / -1;
+    font-size: var(--t-quiet);
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.5);
+    opacity: 0;
+    transition: opacity 0.28s var(--ease);
   }
+  .artifact:hover .whence,
+  .artifact:focus-within .whence { opacity: 1; }
 
-  /* one card, never a feed. The three sources differ in WHICH VOICE carries the
-     payload, which is the whole question: an essay speaks in the voice face, a
-     commit speaks in the label face, a photograph barely speaks at all. */
-  .card { margin-top: calc(var(--r) * 1.5); }
-  .card[hidden] { display: none; }
-  .card .src {
-    display: block;
-    font-size: var(--t-micro);
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.42);
-    margin-bottom: calc(var(--r) * 0.75);
+  /* ---- 3 · STAMP ---- */
+  .stamp {
+    border-top: 1px solid rgba(255,255,255,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding: calc(var(--r) * 0.75) 0;
   }
-  .card .src em { font-style: normal; color: rgba(255,255,255,0.22); }
-  .card .card-date {
-    display: block;
+  .stamp .imprint {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--r);
     font-size: var(--t-quiet);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-  }
-  /* SUBSTACK — an essay, so the title takes the voice face and the largest rank
-     in the card */
-  .card .card-title {
-    font-family: var(--sans);
-    font-size: calc(var(--t-body) * 1.35);
     font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .stamp .subject {
+    margin: calc(var(--r) * 0.75) 0 calc(var(--r) * 0.5);
+    font-size: calc(var(--t-body) * 1.15);
     line-height: calc(var(--r) * 1.25);
     letter-spacing: -0.01em;
     color: #fff;
-    margin-bottom: calc(var(--r) * 0.5);
   }
-  .card .card-line {
-    font-size: calc(var(--t-body) * 0.9);
-    line-height: var(--lh-body);
-    color: rgba(255,255,255,0.6);
-    margin-bottom: calc(var(--r) * 0.75);
-    max-width: var(--measure);
-  }
-  /* GITHUB — a repo and a commit subject are identifiers, not prose, so the card
-     stays in the label face throughout and reads as instrumentation */
-  .card .repo {
-    font-size: var(--t-label);
+  .stamp .whence {
+    display: block;
+    font-size: var(--t-quiet);
     font-weight: 500;
-    letter-spacing: 0.04em;
-    color: #fff;
-    margin-bottom: calc(var(--r) * 0.25);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
   }
-  .card .commit {
-    font-size: var(--t-label);
-    letter-spacing: 0.04em;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: calc(var(--r) * 0.75);
-  }
-  /* the activity count folds into the date readout so the whole github card
-     stays in the label face — nothing here is prose, so nothing takes the voice */
-  /* INSTAGRAM — the picture is the payload; type gets out of the way and runs
-     beside it. The thumbnail is 5×--r square, so it sits on the rhythm too. */
-  .card .shot {
-    display: flex;
-    gap: var(--r);
-    align-items: flex-start;
-  }
-  .card .shot img {
-    flex: none;
-    width: calc(var(--r) * 5);
-    height: calc(var(--r) * 5);
-    object-fit: cover;
-  }
-  .card .shot .card-line { margin-bottom: calc(var(--r) * 0.5); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .backdrop video { transition: none; }
-    .scroll-cue, .tile, .tile .media video, .bar, .bar .wordmark { transition: none !important; }
+    .scroll-cue, .tile, .tile .media video, .bar, .bar .wordmark,
+    .artifact .whence { transition: none !important; }
   }
 
   /* ---------- solid ground: the folio slides over the video ---------- */
@@ -653,8 +674,8 @@ const navLinks = [
   }
 
   .works {
-    padding: calc(var(--r) * 3) var(--edge) 0;
-    scroll-margin-top: calc(var(--r) * 2.25); /* the bar is three mono lines tall */
+    padding: calc(var(--r) * 5) var(--edge) 0;
+    scroll-margin-top: calc(var(--r) * 2.25); /* the bar is three label lines tall */
     /* guard: a measured run's trailing sidebearing can sit a few px past the last
        grid line. clip, not scroll — and it never reaches the ink. */
     overflow-x: clip;
@@ -663,14 +684,13 @@ const navLinks = [
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     column-gap: var(--gutter);
-    padding-bottom: calc(var(--r) * 2);
+    padding-bottom: calc(var(--r) * 4);
   }
   /* a whole row of type where a whole row of tiles is about to be. Sized from the
      grid, weighted DOWN to 400 so it stays quieter than the name despite being
      larger — size comes from the columns, hierarchy from the weight. */
   .works-head h2 {
     grid-column: 1 / -1;
-    font-family: var(--sans);
     font-size: var(--t-works);
     font-weight: 400;
     line-height: 0.78;
@@ -683,15 +703,15 @@ const navLinks = [
 
   /* ---------- lenses: buckets open on column 1's line, status closes on
        column 3's right. One size for both rows — the quiet row stays quiet on
-       colour alone, so the two share a baseline and a step. ---------- */
+       colour alone. ---------- */
   .lenses {
     grid-column: 1 / -1;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: calc(var(--r) * 0.5) var(--r);
-    margin-top: calc(var(--r) * 1.5);
+    gap: calc(var(--r) * 0.75) var(--r);
+    margin-top: calc(var(--r) * 2.5);
   }
   .lens-row {
     display: flex;
@@ -701,41 +721,44 @@ const navLinks = [
   }
   .lens-row.quiet { justify-content: flex-end; }
   .lens {
-    font-family: var(--mono);
-    font-size: var(--t-label);
+    font-family: inherit;
+    font-size: var(--t-lens);
     font-weight: 400;
     text-transform: lowercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: #999;
     background: none;
     border: none;
     border-bottom: 1px solid transparent;
-    padding: 0 0 calc(var(--r) / 8);
+    padding: 0 0 calc(var(--r) / 6);
     cursor: pointer;
+    transition: color 0.2s ease;
   }
   .lens:hover { color: #222; }
+  /* NO weight change on the active state: in a proportional face that would
+     widen the word and shove the rest of the row off its line. Colour and the
+     rule carry it. */
   .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
-  /* a weight change costs zero width in a monospace, so the active state never
-     shifts the row off its line (Space Mono / Fragment Mono have no 500 — there
-     the colour and the rule carry it alone) */
-  .lens[aria-pressed="true"] { font-weight: 500; }
   .lens-row.quiet .lens { color: #bbb; }
   .lens-row.quiet .lens:hover { color: #636363; }
   .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
   .lens-row .sep { color: #ddd; font-size: var(--t-quiet); }
 
-  /* ---------- the grid: the only view. Gutter is the same in both axes. ---------- */
+  /* ---------- the grid ----------
+     column gap 1×--r (that IS the grid's gutter); row gap 2.5×--r, because each
+     row carries its captions inside it and the row break must beat the gap
+     between a picture and its own caption. */
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     align-items: start;
     column-gap: var(--gutter);
-    row-gap: var(--gutter);
-    padding-bottom: calc(var(--r) * 2);
+    row-gap: calc(var(--r) * 2.5);
+    padding-bottom: calc(var(--r) * 3);
   }
   .entry[hidden] { display: none; }
 
-  .tile { display: block; transition: transform 0.35s ease; }
+  .tile { display: block; transition: transform 0.35s var(--ease); }
   .entry:hover .tile, .entry:focus-within .tile {
     transform: translateY(calc(var(--r) / -6));
     transition-duration: 0.2s;
@@ -763,16 +786,15 @@ const navLinks = [
   .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
 
   /* CAPTION UNDER THE COVER, centred on the column's centre line. The band is
-     reserved at 1.5×--r — two mono lines — so a title that wraps cannot knock
-     its row out of step with the row beneath. 0.75×--r of air above it, which
-     is one mono line, so the caption sits a line clear of its picture. */
+     reserved at 1.5×--r — two label lines — so a title that wraps cannot knock
+     its row out of step with the row beneath. */
   .entry h3 {
-    margin-top: calc(var(--r) * 0.75);
+    margin-top: var(--r);
     min-height: calc(var(--r) * 1.5);
     text-align: center;
-    font-size: var(--t-title);
+    font-size: var(--t-caption);
     font-weight: 400;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.06em;
     text-transform: lowercase;
     color: #222;
   }
@@ -781,39 +803,42 @@ const navLinks = [
   /* ---------- nine at a time — on the same centre axis as the captions ---------- */
   .more-wrap {
     text-align: center;
-    padding-bottom: calc(var(--r) * 4);
+    padding-bottom: calc(var(--r) * 6);
   }
   .more {
-    font-family: var(--mono);
+    font-family: inherit;
     font-size: var(--t-micro);
     font-weight: 500;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #bbb;
     background: none;
     border: none;
     border-bottom: 1px solid #eee;
-    padding: 0 0 calc(var(--r) / 8);
+    padding: 0 0 calc(var(--r) / 6);
     cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
   }
   .more:hover { color: #222; border-bottom-color: #222; }
   .more[hidden] { display: none; }
 
   .empty {
     text-align: center;
-    font-size: var(--t-label);
+    font-size: var(--t-lens);
     letter-spacing: 0.06em;
     color: #999;
-    padding: calc(var(--r) * 1.5) 0;
+    padding: calc(var(--r) * 2) 0;
   }
   .empty[hidden] { display: none; }
 
   /* ---------- foot: one line, the quiet end of the centre axis ---------- */
   .foot {
     text-align: center;
-    padding: 0 var(--edge) calc(var(--r) * 5);
-    font-size: var(--t-label);
-    letter-spacing: 0.1em;
+    padding: 0 var(--edge) calc(var(--r) * 6);
+    font-size: var(--t-nav);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     color: #bbb;
   }
   .foot a { color: #bbb; transition: color 0.25s ease; }
@@ -834,19 +859,16 @@ const navLinks = [
     .scroll-cue { grid-column: 2; }
     .intro-cols { grid-template-columns: repeat(2, 1fr); }
     .intro { grid-column: 1 / -1; }
-    .lately {
-      grid-column: 1 / -1;
-      margin-top: calc(var(--r) * 2.5);
-      min-height: 0;
-    }
+    .lately { grid-column: 1 / -1; margin-top: calc(var(--r) * 3.5); min-height: 0; }
     .works-head { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 900px) {
     :root { --edge: calc(var(--r) * 0.75); }
     html { scroll-snap-type: none; }
-    .overlay { padding: calc(var(--r) * 4) 0 calc(var(--r) * 3); }
-    .works { padding-top: calc(var(--r) * 2.5); }
+    .overlay { padding: calc(var(--r) * 5) 0 calc(var(--r) * 4); }
+    .works { padding-top: calc(var(--r) * 3.5); }
+    .works-head { padding-bottom: calc(var(--r) * 3); }
   }
 
   @media (max-width: 700px) {
@@ -855,36 +877,30 @@ const navLinks = [
       --span-2: var(--span-all);
       /* one column is now the whole width, so the dock is set as a fraction of it
          — otherwise the name would have nowhere to shrink to */
-      --dock-w: calc(var(--span-all) * 0.42);
+      --dock-w: calc(var(--span-all) * 0.46);
     }
-    .grid { grid-template-columns: 1fr; }
-    .bar { display: flex; gap: calc(var(--r) * 0.75); align-items: baseline; letter-spacing: 0.04em; }
+    .grid { grid-template-columns: 1fr; row-gap: calc(var(--r) * 2); }
+    .bar { display: flex; gap: calc(var(--r) * 0.75); align-items: baseline; letter-spacing: 0.08em; }
     .bar .links { flex: 1; }
     .opening { grid-template-columns: 1fr; }
     .scroll-cue { grid-column: 1; }
     .intro-cols, .intro { grid-template-columns: 1fr; }
     .intro > p { grid-column: 1; }
-    /* stacked now, so they need the module between them */
-    .intro > p:nth-of-type(3) { margin-bottom: var(--r); }
     .works-head { grid-template-columns: 1fr; }
-    /* the two lens rows stop being ends of a line and become a stack */
     .lenses { justify-content: flex-start; }
     .lens-row.quiet { justify-content: flex-start; }
   }
 
   /* =====================================================================
-     TOOLING ONLY — the three pickers. Not part of the design: fixed to the
-     bottom-left in a system monospace so they can never be mistaken for it.
+     TOOLING ONLY — the lately pattern switcher. Not part of the design:
+     fixed bottom-left in a system monospace so it can never be mistaken
+     for it.
      ===================================================================== */
   .proto-tools {
     position: fixed;
     left: 0.75rem;
     bottom: 0.75rem;
     z-index: 99;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.35rem;
     font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
     font-size: 11px;
     line-height: 1;
@@ -932,7 +948,7 @@ const navLinks = [
   </header>
 
   <!-- ============ the name: one element, it becomes the docked title ============ -->
-  <h1 class="name" id="name">divya tak</h1>
+  <h1 class="name" id="name">DIVYA TAK</h1>
 
   <div class="stage">
 
@@ -947,7 +963,7 @@ const navLinks = [
         <div class="intro-cols">
           <div class="intro">
             <!-- the slot the fixed name lands in; it holds space and nothing else -->
-            <p class="name-slot" id="name-slot" aria-hidden="true">divya tak</p>
+            <p class="name-slot" id="name-slot" aria-hidden="true">DIVYA TAK</p>
             <p class="subtitle">Creative technologist and artist</p>
             <p>Hi! Hello! I'm Divya. I am a cross domain creative human. I love making many things with many people.</p>
             <p>
@@ -958,36 +974,45 @@ const navLinks = [
             </p>
           </div>
 
-          <!-- LATELY — three mocked update cards, one visible at a time, switched
-               from the tooling picker. All content is SAMPLE: the "mock" tag on
-               each source label says so on the page itself. -->
+          <!-- LATELY — three structures for one living update. All content is
+               SAMPLE; each pattern says so quietly in its own register. -->
           <aside class="lately" aria-label="lately">
-            <span class="label">lately</span>
 
-            <article class="card" id="card-substack" data-card="substack">
-              <span class="src">substack <em>&middot; mock</em></span>
-              <p class="card-title">notes from the metro museum build</p>
-              <p class="card-line">On drawing a station that never existed, and why the fog had to arrive before the light did.</p>
-              <span class="card-date">09 aug 2026</span>
+            <!-- 1 · WOVEN: the update as a sentence, artefact set inline -->
+            <article class="lately-view" data-view="1">
+              <p class="woven">
+                This week I have mostly been fogging
+                <img class="inline-thumb" src="/playground/lenticular.webp" alt="" width="240" height="240" />
+                the east hall of the <a href="https://divyatak.github.io/creative-visuals/particles/" target="_blank" rel="noopener">Metro Museum</a>,
+                and writing down what the light did.
+              </p>
+              <span class="woven-foot">09 aug 2026 &middot; mock</span>
             </article>
 
-            <article class="card" id="card-github" data-card="github" hidden>
-              <span class="src">github <em>&middot; mock</em></span>
-              <p class="repo">divyatak/metro-museum</p>
-              <p class="commit">art direction sandbox: fog and light pass</p>
-              <span class="card-date">7 commits this week &middot; 11 aug 2026</span>
+            <!-- 2 · ARTIFACT: the object nearly alone, source withheld until hover -->
+            <article class="lately-view" data-view="2" hidden>
+              <figure class="artifact" tabindex="0">
+                <img src="/playground/lenticular.webp" alt="A lenticular print test, sample image standing in for a recent post" width="480" height="480" loading="lazy" />
+                <figcaption>
+                  <span class="word">lenticular</span>
+                  <span class="when">06 aug &middot; mock</span>
+                  <span class="whence">instagram</span>
+                </figcaption>
+              </figure>
             </article>
 
-            <article class="card" id="card-insta" data-card="insta" hidden>
-              <span class="src">instagram <em>&middot; mock</em></span>
-              <div class="shot">
-                <img src="/playground/lenticular.webp" alt="A lenticular print test, sample image standing in for a recent post" width="240" height="240" loading="lazy" />
-                <div class="shot-text">
-                  <p class="card-line">lenticular tests, finally behaving themselves</p>
-                  <span class="card-date">06 aug 2026</span>
-                </div>
+            <!-- 3 · STAMP: a dated imprint. Here the rules ARE the idea. -->
+            <article class="lately-view" data-view="3" hidden>
+              <div class="stamp">
+                <span class="imprint">
+                  <span>lately</span>
+                  <span>2026 &middot; 08 &middot; 09</span>
+                </span>
+                <p class="subject">notes from the metro museum build</p>
+                <span class="whence">substack &middot; mock</span>
               </div>
             </article>
+
           </aside>
         </div>
       </div>
@@ -1010,7 +1035,6 @@ const navLinks = [
           </div>
           <div class="lens-row quiet" role="group" aria-label="filter by status">
             <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-status="in progress" aria-pressed="false">in progress</button><span class="sep" aria-hidden="true">&middot;</span>
             <button class="lens" data-status="ongoing" aria-pressed="false">ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
             <button class="lens" data-status="finished" aria-pressed="false">finished</button>
           </div>
@@ -1060,27 +1084,13 @@ const navLinks = [
 
   </main>
 
-  <!-- ============ tooling only — face and lately pickers ============ -->
+  <!-- ============ tooling only — lately pattern switcher ============ -->
   <div class="proto-tools" id="tools">
-    <div class="pill" id="pick-voice">
-      <span class="k">voice</span>
-      <button type="button" data-voice="Space Grotesk" aria-pressed="true">grotesk</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-voice="Schibsted Grotesk" aria-pressed="false">schibsted</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-voice="Instrument Sans" aria-pressed="false">instrument</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-voice="Sora" aria-pressed="false">sora</button>
-    </div>
-    <div class="pill" id="pick-label">
-      <span class="k">label</span>
-      <button type="button" data-label="JetBrains Mono" aria-pressed="true">jetbrains</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-label="IBM Plex Mono" aria-pressed="false">plex</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-label="Space Mono" aria-pressed="false">spacemono</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-label="Fragment Mono" aria-pressed="false">fragment</button>
-    </div>
     <div class="pill" id="pick-lately">
       <span class="k">lately</span>
-      <button type="button" data-lately="substack" aria-pressed="true">substack</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-lately="github" aria-pressed="false">github</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-lately="insta" aria-pressed="false">insta</button>
+      <button type="button" data-lately="1" aria-pressed="true">1</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-lately="2" aria-pressed="false">2</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-lately="3" aria-pressed="false">3</button>
     </div>
   </div>
 
@@ -1090,7 +1100,6 @@ const navLinks = [
 
   /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
   // 12 cuts of 5.2s each, composed offline with ffmpeg at a uniform 1920x1080.
-  // Kept here so anything that needs to reason about playback time still can.
   // Sources 5 and 6 no longer exist in /clips/, so they are not in the order.
   var order = ['2a','7a','1a','4a','8b','3a','2b','7b','1b','4b','8a','3b'];
   var MONTAGE_SECONDS = 62.4;
@@ -1106,9 +1115,7 @@ const navLinks = [
   }
 
   /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
-     Start = centred in the viewport at full size. End = the invisible .name-slot that
-     sits above the intro subtitle. We measure both, then interpolate transform against
-     scroll progress across the dark act. No crossfade, no second element.
+     Start = centred in the viewport at full size. End = the invisible .name-slot.
      Because the name's box is exactly the grid's full span, "centred" resolves to
      column 1's left line, and the slot sits on that same line — the horizontal term
      cancels out and the name only ever changes size. */
@@ -1134,7 +1141,6 @@ const navLinks = [
     M.x1 = sr.left + (window.pageXOffset || 0);
     M.yDoc = sr.top + (window.pageYOffset || 0);   // the slot's position in the document
     M.s1 = sf / nf;                                // both use line-height 1, so top-left aligns
-    // scroll distance between the two snap points, measured from the document
     M.end = Math.max(1, overlayEl.getBoundingClientRect().top + (window.pageYOffset || 0));
     paint();
     nameEl.classList.add('ready');
@@ -1175,8 +1181,64 @@ const navLinks = [
     resizeTimer = setTimeout(measure, 120);
   });
 
+  /* ==================================================================
+     TYPE CALIBRATION. The display sizes are (column span ÷ the string's
+     ink run) and the optical indent is that string's first-glyph
+     sidebearing — both are properties of the face, and the ruler divides
+     by the face's average advance. Rather than trust numbers typed into a
+     stylesheet, the page measures Sora itself: canvas TextMetrics reports
+     real ink bounds after real shaping, kerning included. The values in
+     :root are the offline defaults; the canvas has the last word.
+     ================================================================== */
+  var FAM = '"Sora"';
+  var PROBE = 200;   // measure big, divide down: keeps rounding out of the em value
+  var cx = document.createElement('canvas').getContext('2d');
+
+  // NOTE: text and tracking must match the stylesheet. The name is uppercased
+  // in CSS, so it is the UPPERCASE string that has to be measured.
+  var MEASURED = [
+    { v: 'name',  weight: 700, text: 'DIVYA TAK',                       ls: -0.015 },
+    { v: 'works', weight: 400, text: 'works',                           ls: -0.040 },
+    { v: 'sub',   weight: 500, text: 'Creative technologist and artist', ls: -0.020 }
+  ];
+
+  function inkOf(weight, text, ls) {
+    cx.font = weight + ' ' + PROBE + 'px ' + FAM;
+    var m = cx.measureText(text);
+    if (!m || typeof m.actualBoundingBoxRight !== 'number') return null;
+    var lsb = -m.actualBoundingBoxLeft / PROBE;
+    var ink = (m.actualBoundingBoxRight + m.actualBoundingBoxLeft) / PROBE;
+    // CSS puts the tracking between glyphs; the ink run spans n-1 of those gaps
+    return { run: ink + (text.length - 1) * ls, lsb: lsb };
+  }
+
+  // the ruler's basis: one average lowercase character
+  function avgAdv() {
+    cx.font = '400 ' + PROBE + 'px ' + FAM;
+    var w = cx.measureText('abcdefghijklmnopqrstuvwxyz').width;
+    return w ? w / 26 / PROBE : null;
+  }
+
+  function calibrate() {
+    var root = document.documentElement;
+    for (var i = 0; i < MEASURED.length; i++) {
+      var s = MEASURED[i];
+      var m = inkOf(s.weight, s.text, s.ls);
+      if (!m || !(m.run > 0)) continue; // keep the stylesheet default
+      root.style.setProperty('--run-' + s.v, m.run.toFixed(4));
+      root.style.setProperty('--ti-' + s.v, m.lsb.toFixed(4));
+    }
+    var a = avgAdv();
+    if (a > 0) root.style.setProperty('--label-adv', a.toFixed(4));
+    measure();
+  }
+
   measure();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(calibrate);
+  } else {
+    calibrate();
+  }
   window.addEventListener('load', measure);
 
   /* ---------- wheel assist: the dark act's two screens snap decisively ----------
@@ -1207,7 +1269,7 @@ const navLinks = [
   /* ---------- folio: lenses (bucket, status) + nine at a time ---------- */
   var bucketBtns = document.querySelectorAll('.lens[data-bucket]');
   var statusBtns = document.querySelectorAll('.lens[data-status]');
-  var items = document.querySelectorAll('.entry');
+  var items = [].slice.call(document.querySelectorAll('.entry'));
   var emptyEl = document.getElementById('empty');
   var moreBtn = document.getElementById('more');
   var bucket = 'all';
@@ -1216,19 +1278,93 @@ const navLinks = [
   var PAGE = 9;
   var shown = PAGE;
 
-  // keepPage=true when the visitor asked for more; any lens change starts over
-  function apply(keepPage) {
-    if (!keepPage) shown = PAGE;
-    var matched = 0;
+  /* ---------- the sort animation ----------
+     A filter change is a rearrangement, not a repaint, so it is animated as
+     one: the tiles that are leaving fade first and only then does the layout
+     commit, so nothing ever jumps under the cursor. Survivors are moved with
+     FLIP — read where they were, let the browser reflow, then start them from
+     the old position and let them travel to the new one, which is a transform
+     and therefore free. Newcomers arrive last, a beat behind the movement, so
+     the eye follows the rearrangement before it is asked to read anything new. */
+  var OUT = 130, MOVE = 320, IN = 240;
+  var EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+  var canAnimate = !prefersReduced && typeof document.body.animate === 'function';
+  var busy = false;
+
+  // work out the target state WITHOUT committing it, so the leavers can be
+  // animated before the layout moves
+  function target(keepPage) {
+    var page = keepPage ? shown : PAGE;
+    var matched = 0, vis = [];
     items.forEach(function (el) {
       var bOk = bucket === 'all' || el.dataset.bucket === bucket;
       var sOk = status === 'latest' || el.dataset.status === status;
-      var hit = bOk && sOk;
-      if (hit) matched++;
-      el.hidden = !(hit && matched <= shown);
+      if (bOk && sOk) {
+        matched++;
+        if (matched <= page) vis.push(el);
+      }
     });
-    emptyEl.hidden = matched > 0;
-    moreBtn.hidden = matched <= shown; // no counts, it just goes quiet when done
+    return { vis: vis, matched: matched, page: page };
+  }
+
+  function commit(t) {
+    shown = t.page;
+    for (var i = 0; i < items.length; i++) {
+      items[i].hidden = t.vis.indexOf(items[i]) === -1;
+    }
+    emptyEl.hidden = t.matched > 0;
+    moreBtn.hidden = t.matched <= t.page; // no counts, it just goes quiet when done
+  }
+
+  function apply(keepPage, animate) {
+    var t = target(keepPage);
+    if (!animate || !canAnimate || busy) { commit(t); return; }
+
+    var before = [];
+    items.forEach(function (el) {
+      if (!el.hidden) before.push({ el: el, rect: el.getBoundingClientRect() });
+    });
+    var leaving = before.filter(function (b) { return t.vis.indexOf(b.el) === -1; });
+
+    busy = true;
+    function land() {
+      commit(t);
+      items.forEach(function (el) {
+        if (el.hidden) return;
+        var was = null;
+        for (var i = 0; i < before.length; i++) {
+          if (before[i].el === el) { was = before[i].rect; break; }
+        }
+        if (was) {
+          var now = el.getBoundingClientRect();
+          var dx = was.left - now.left, dy = was.top - now.top;
+          if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+            el.animate(
+              [{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }],
+              { duration: MOVE, easing: EASE }
+            );
+          }
+        } else {
+          el.animate(
+            [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+            { duration: IN, delay: 90, easing: EASE, fill: 'backwards' }
+          );
+        }
+      });
+      setTimeout(function () { busy = false; }, MOVE);
+    }
+
+    if (leaving.length) {
+      leaving.forEach(function (b) {
+        b.el.animate(
+          [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px) scale(0.985)' }],
+          { duration: OUT, easing: 'ease-in' }
+        );
+      });
+      setTimeout(land, OUT);
+    } else {
+      land();
+    }
   }
 
   bucketBtns.forEach(function (b) {
@@ -1237,7 +1373,7 @@ const navLinks = [
       bucketBtns.forEach(function (o) {
         o.setAttribute('aria-pressed', o.dataset.bucket === bucket ? 'true' : 'false');
       });
-      apply(false);
+      apply(false, true);
     });
   });
 
@@ -1247,16 +1383,16 @@ const navLinks = [
       statusBtns.forEach(function (o) {
         o.setAttribute('aria-pressed', o.dataset.status === status ? 'true' : 'false');
       });
-      apply(false);
+      apply(false, true);
     });
   });
 
   moreBtn.addEventListener('click', function () {
     shown += PAGE;
-    apply(true);
+    apply(true, true);
   });
 
-  apply(false);
+  apply(false, false);
 
   /* ---------- hover footage: only where a real clip exists ---------- */
   if (!prefersReduced) {
@@ -1303,151 +1439,29 @@ const navLinks = [
     });
   });
 
-  /* ==================================================================
-     TOOLING — face pickers and the lately switcher.
-
-     A voice face cannot be swapped on its own. The display sizes are
-     (column span ÷ the string's ink run), and the optical indent is that
-     string's first-glyph sidebearing — both are properties of the FACE, so
-     changing the family without changing them would leave the display type
-     sized for the wrong font and it would stop fitting its columns.
-
-     Rather than trust a hard-coded table, the page MEASURES each face when
-     it is selected. Canvas TextMetrics reports real ink bounds after real
-     shaping — kerning included — which is the only way to be right: the
-     offline numbers below were computed from the TTFs and two of the four
-     faces kern via GPOS, which a font parser reading only the legacy `kern`
-     table misses, leaving those faces ~1.5% short of the last grid line.
-     The table survives as the pre-JS default (and as a sanity check); the
-     canvas has the last word. Same for the label face's advance, which the
-     mono ruler divides by.
-     ================================================================== */
-  var VOICE = {
-    'Space Grotesk':     "'Space Grotesk', system-ui, sans-serif",
-    'Schibsted Grotesk': "'Schibsted Grotesk', system-ui, sans-serif",
-    'Instrument Sans':   "'Instrument Sans', system-ui, sans-serif",
-    'Sora':              "'Sora', system-ui, sans-serif"
-  };
-  var LABEL = {
-    'JetBrains Mono': "'JetBrains Mono', ui-monospace, monospace",
-    'IBM Plex Mono':  "'IBM Plex Mono', ui-monospace, monospace",
-    'Space Mono':     "'Space Mono', ui-monospace, monospace",
-    'Fragment Mono':  "'Fragment Mono', ui-monospace, monospace"
-  };
-
-  // the three strings whose ink is measured against the columns, and the
-  // tracking each carries — these MUST match the stylesheet
-  var MEASURED = [
-    { v: 'name',  weight: 700, text: 'divya tak',                        ls: -0.035 },
-    { v: 'works', weight: 400, text: 'works',                            ls: -0.040 },
-    { v: 'sub',   weight: 500, text: 'Creative technologist and artist',  ls: -0.020 }
-  ];
-
-  var PROBE = 200; // measure big, divide down: keeps rounding out of the em value
-  var cx = document.createElement('canvas').getContext('2d');
-
-  // ink run in em, and the first glyph's left sidebearing in em
-  function inkOf(family, weight, text, ls) {
-    cx.font = weight + ' ' + PROBE + 'px ' + family;
-    var m = cx.measureText(text);
-    if (!m || typeof m.actualBoundingBoxRight !== 'number') return null;
-    var lsb = -m.actualBoundingBoxLeft / PROBE;
-    var ink = (m.actualBoundingBoxRight + m.actualBoundingBoxLeft) / PROBE;
-    // CSS puts the tracking between glyphs; the ink run spans n-1 of those gaps
-    return { run: ink + (text.length - 1) * ls, lsb: lsb };
-  }
-
-  // a monospace's advance, straight off ten identical cells
-  function advOf(family) {
-    cx.font = '400 ' + PROBE + 'px ' + family;
-    var w = cx.measureText('MMMMMMMMMM').width;
-    return w ? w / 10 / PROBE : null;
-  }
-
-  var root = document.documentElement;
-  function store(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
-  function read(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
-
-  function press(container, attr, value) {
-    container.querySelectorAll('button[' + attr + ']').forEach(function (b) {
-      b.setAttribute('aria-pressed', b.getAttribute(attr) === value ? 'true' : 'false');
-    });
-  }
-
-  function remeasure() {
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-    else measure();
-  }
-
-  // load the weights we are about to measure, THEN measure — otherwise the
-  // canvas hands back the fallback face's metrics and the fit is silently wrong
-  function whenReady(key, weights) {
-    var q = '"' + key + '"';
-    var jobs = [];
-    if (document.fonts && document.fonts.load) {
-      for (var i = 0; i < weights.length; i++) {
-        jobs.push(document.fonts.load(weights[i] + ' ' + PROBE + 'px ' + q));
-      }
-    }
-    return Promise.all(jobs).catch(function () {});
-  }
-
-  function setVoice(key) {
-    var stack = VOICE[key];
-    if (!stack) return;
-    root.style.setProperty('--sans', stack);
-    press(document.getElementById('pick-voice'), 'data-voice', key);
-    store('proto-voice', key);
-    whenReady(key, [700, 400, 500]).then(function () {
-      for (var i = 0; i < MEASURED.length; i++) {
-        var s = MEASURED[i];
-        var m = inkOf('"' + key + '"', s.weight, s.text, s.ls);
-        if (!m || !(m.run > 0)) continue; // keep the stylesheet default
-        root.style.setProperty('--run-' + s.v, m.run.toFixed(4));
-        root.style.setProperty('--ti-' + s.v, m.lsb.toFixed(4));
-      }
-      measure();
-    });
-  }
-
-  function setLabel(key) {
-    var stack = LABEL[key];
-    if (!stack) return;
-    root.style.setProperty('--mono', stack);
-    press(document.getElementById('pick-label'), 'data-label', key);
-    store('proto-label', key);
-    whenReady(key, [400, 500]).then(function () {
-      var a = advOf('"' + key + '"');
-      if (a > 0) root.style.setProperty('--mono-adv', a.toFixed(4));
-      measure();
-    });
-  }
-
-  var cards = document.querySelectorAll('.card[data-card]');
+  /* ---------- tooling: which lately pattern is on show ---------- */
+  var views = [].slice.call(document.querySelectorAll('.lately-view'));
   function setLately(key) {
     var any = false;
-    cards.forEach(function (c) {
-      var on = c.dataset.card === key;
-      c.hidden = !on;
+    views.forEach(function (v) {
+      var on = v.dataset.view === key;
+      v.hidden = !on;
       if (on) any = true;
     });
     if (!any) return;
-    press(document.getElementById('pick-lately'), 'data-lately', key);
-    store('proto-lately', key);
-    remeasure(); // the slot's height can change, and the slot anchors the morph
+    document.querySelectorAll('#pick-lately button').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.lately === key ? 'true' : 'false');
+    });
+    try { sessionStorage.setItem('proto-lately', key); } catch (e) {}
+    measure(); // the slot anchors the morph, so re-read it
   }
-
   document.getElementById('tools').addEventListener('click', function (e) {
     var b = e.target.closest('button');
-    if (!b) return;
-    if (b.dataset.voice) setVoice(b.dataset.voice);
-    else if (b.dataset.label) setLabel(b.dataset.label);
-    else if (b.dataset.lately) setLately(b.dataset.lately);
+    if (b && b.dataset.lately) setLately(b.dataset.lately);
   });
-
-  setVoice(read('proto-voice') || 'Space Grotesk');
-  setLabel(read('proto-label') || 'JetBrains Mono');
-  setLately(read('proto-lately') || 'substack');
+  var savedLately = null;
+  try { savedLately = sessionStorage.getItem('proto-lately'); } catch (e) {}
+  setLately(savedLately || '1');
 })();
 </script>
 </body>
