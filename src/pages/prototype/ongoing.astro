@@ -13,7 +13,7 @@ const isExt = (h) => typeof h === 'string' && h.indexOf('http') === 0;
 const ON_PAPER = ['comic', 'zine', 'illustration', 'photocomics'];
 const bucketFor = (cats = []) => {
   if (cats.indexOf('game') !== -1) return 'games';
-  if (cats.some((c) => ON_PAPER.indexOf(c) !== -1)) return 'on paper';
+  if (cats.some((c) => ON_PAPER.indexOf(c) !== -1)) return 'comics';
   return 'none'; // e.g. Mixed meanings (ai / conceptual) — visible under "all" only
 };
 
@@ -143,7 +143,12 @@ const navLinks = [
 <title>divya tak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<!-- All eight picker candidates. Only the weights the page actually uses are
+     requested: 400/500/700 for the voice faces, 400/500 for the label faces —
+     except Space Mono (no 500 exists) and Fragment Mono (400 only), so those
+     ask for 400 and let the browser resolve 500 down. When a pair is chosen for
+     real, this collapses back to two families. -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;700&family=Instrument+Sans:wght@400;500;700&family=Sora:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Space+Mono&family=Fragment+Mono&display=swap" rel="stylesheet" />
 <style>
   /* =====================================================================
      TYPE SYSTEM — GRID-LOCKED. Nothing on this page has a size or a space
@@ -159,54 +164,72 @@ const navLinks = [
 
      2. THE COLUMNS.  Three of them, edge to edge, gutter --r, outer edge
      1.25×--r. The dark act has no measurements of its own — it borrows
-     these, so the name, the intro, the reserved slot, the nav, the chapter
-     word, the lenses, the captions and the footer all start on one of three
-     vertical lines. You can feel where the tiles will be before an image
-     has loaded.
+     these, so the name, the intro, the lately card, the nav, the chapter
+     word and the lenses all start on one of three vertical lines.
 
-     3. DISPLAY TYPE IS MEASURED IN COLUMNS. Three strings are sized so that
+     3. TWO AXES, AND WHERE THEY CHANGE HANDS. Everything above the tiles
+     hangs off the columns' LEFT lines. From the tiles down, the folio turns
+     to the columns' CENTRE lines: the tile captions are centred under their
+     covers, and the more control and the email follow the same axis to the
+     bottom of the page. Both are grid lines — the folio just stops reading
+     left-to-right and starts reading column-by-column, which is what a
+     caption under a picture actually is.
+
+     4. DISPLAY TYPE IS MEASURED IN COLUMNS. Three strings are sized so that
      their ink spans an exact number of columns — no rems involved:
          the name at rest   = 3 columns (the whole row)
          the name docked    = 1 column  (one tile)
          "works"            = 3 columns (a full row of type, where a row of
                                          tiles is about to be)
-     so the name's journey is a division of the grid, not a shrink to an
-     arbitrary size, and it pivots on column 1's left line, which it never
-     leaves. The sizes come off the real ink runs, computed from the TTFs
-     (advances + kerning − first glyph's left sidebearing − last glyph's
-     right one + the letter-spacing between them):
-         "divya tak"                  SG 700, ls -0.035em →  4.158 em
-         "works"                      SG 400, ls -0.040em →  2.575 em
-         "I make interactive things." SG 500, ls -0.020em → 11.534 em
-     font-size = (the span it must fill) ÷ (that number). Each also carries a
-     negative text-indent equal to its first glyph's left sidebearing (d .046,
-     w .053, I .073) so the INK, not the invisible box, hangs on the line.
-     Optical alignment is what makes a grid feel true rather than merely be
-     true. Their line-heights (1, 0.98, 0.78) are ink crops, not rhythm
-     multiples — display type hugs its own ink; only text stacks on a module.
+     ...plus the subtitle, which fills columns 1–2. So the name's journey is a
+     division of the grid, not a shrink to an arbitrary size, and it pivots on
+     column 1's left line, which it never leaves.
 
-     4. THE MONO RULER — CHARACTERS PER COLUMN. JetBrains Mono has a fixed
-     0.600em advance, so a character is a unit of measurement and N of them
-     fill a column at col ÷ (N × 0.6). Each role gets its own N, chosen for
-     what it has to hold, and the ladder is the hierarchy:
+     The divisors are real ink runs computed from the TTFs (advances +
+     kerning − first glyph's left sidebearing − last glyph's right one + the
+     letter-spacing between them). Because the voice face is switchable, they
+     are VARIABLES, and the picker rewrites the run and the sidebearing
+     together — otherwise a font swap would silently break the column fit:
 
-         N = 50   tile titles      col/30      content, read as words
-         N = 56   nav + wordmark   col/33.6    wayfinding
-         N = 62   lenses, foot,    col/37.2    controls and the empty state
+         face                name(700)      works(400)     subtitle(500)
+         Space Grotesk       4.158 / .046   2.575 / .053   14.692 / .055
+         Schibsted Grotesk   4.188 / .031   2.636 / .030   14.074 / .041
+         Instrument Sans     3.998 / .024   2.518 / .028   13.976 / .043
+         Sora                4.346 / .039   2.792 / .026   15.480 / .052
+
+     font-size = (the span it must fill) ÷ (the run). The negative text-indent
+     is the first glyph's left sidebearing, so the INK, not the invisible box,
+     hangs on the line. Optical alignment is what makes a grid feel true
+     rather than merely be true. Display line-heights (1, 1.02, 0.78) are ink
+     crops, not rhythm multiples — display type hugs its own ink; only text
+     stacks on a module.
+
+     5. THE MONO RULER — CHARACTERS PER COLUMN. A monospace advance is a unit
+     of measurement: N characters fill a column at col ÷ N ÷ advance. Each
+     role gets its own N, chosen for what it has to hold, and the ladder is
+     the hierarchy:
+
+         N = 50   tile captions    content, read as words
+         N = 56   nav + wordmark   wayfinding
+         N = 62   lenses, email,   controls, the empty state, card identifiers
                   empty state
-         N = 68   micro labels     col/40.8    lately · pause · more · cue
-         N = 74   status lenses,   col/44.4    the quietest row on the page
-                  separators
+         N = 68   micro labels     lately · more · scroll cue · card sources
+         N = 74   separators, dates
 
-     Tracking runs inverse to the ruler — the smaller the step, the more air —
-     and the uppercase micro labels take double, because caps set flush read
-     as a lump. Every clamp keeps the ladder in order at every breakpoint.
+     CAREFUL: the four label candidates are NOT all 0.600em. JetBrains Mono
+     and IBM Plex Mono are; Space Mono is 0.612 and Fragment Mono 0.618. So
+     the advance is a variable too and the picker sets it — otherwise
+     "62 characters to a column" would quietly become 60 on two of the four.
+     Space Mono has no 500 weight and Fragment Mono ships 400 only, so on
+     those two the wordmark and the active lens lose their weight step and
+     lean on colour alone. Tracking runs inverse to the ruler — the smaller
+     the step, the more air — and uppercase micro labels take double.
 
-     5. THE RHYTHM. Body: one line = --r exactly, so paragraphs stack on the
+     6. THE RHYTHM. Body: one line = --r exactly, so paragraphs stack on the
      24px module. Mono: one line = 0.75×--r, so four mono lines equal three
-     body lines and the label layer interleaves with the reading layer instead
-     of fighting it. The nav bar is three mono line-boxes tall. The tile's
-     caption band is exactly 3×--r. Section paddings are 2, 3, 4 and 5 --r.
+     body lines. The nav bar is three mono line-boxes tall. Each tile reserves
+     a caption band of exactly 1.5×--r — two mono lines — so a title that
+     wraps can never knock its row out of alignment with the next.
      ===================================================================== */
 
   :root {
@@ -222,33 +245,45 @@ const navLinks = [
     --dock-w: var(--col);              /* the name shrinks to exactly one column */
     --dock-gap: calc(var(--r) * 1.25); /* shared: the lately rule hangs off it too */
 
+    /* ---------- the voice face, and the metrics that belong to it ----------
+       the picker rewrites all seven of these together */
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --run-name: 4.158;   --ti-name: 0.046;
+    --run-works: 2.575;  --ti-works: 0.053;
+    --run-sub: 14.692;   --ti-sub: 0.055;
+
+    /* ---------- the label face, and its advance ---------- */
+    --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+    --mono-adv: 0.600;
+
     /* ---------- display, measured in columns ---------- */
-    --t-name:  calc(var(--span-all) / 4.158);
-    --t-dock:  calc(var(--dock-w) / 4.158);
-    --t-works: calc(var(--span-all) / 2.575);
-    --t-lead:  calc(var(--span-2) / 11.534);
+    --t-name:  calc(var(--span-all) / var(--run-name));
+    --t-dock:  calc(var(--dock-w) / var(--run-name));
+    --t-works: calc(var(--span-all) / var(--run-works));
+    --t-sub:   calc(var(--span-2) / var(--run-sub));
 
     /* ---------- the mono ruler: N characters to a column ---------- */
-    --t-title: clamp(12px,   calc(var(--col) / 30),   16px);  /* N = 50 */
-    --t-nav:   clamp(11px,   calc(var(--col) / 33.6), 14px);  /* N = 56 */
-    --t-label: clamp(10.5px, calc(var(--col) / 37.2), 13px);  /* N = 62 */
-    --t-micro: clamp(10px,   calc(var(--col) / 40.8), 12px);  /* N = 68 */
-    --t-quiet: clamp(9.5px,  calc(var(--col) / 44.4), 11px);  /* N = 74 */
+    --n-title: 50;
+    --n-nav: 56;
+    --n-label: 62;
+    --n-micro: 68;
+    --n-quiet: 74;
+    --t-title: clamp(12px,   calc(var(--col) / var(--n-title) / var(--mono-adv)), 16px);
+    --t-nav:   clamp(11px,   calc(var(--col) / var(--n-nav)   / var(--mono-adv)), 14px);
+    --t-label: clamp(10.5px, calc(var(--col) / var(--n-label) / var(--mono-adv)), 13px);
+    --t-micro: clamp(10px,   calc(var(--col) / var(--n-micro) / var(--mono-adv)), 12px);
+    --t-quiet: clamp(9.5px,  calc(var(--col) / var(--n-quiet) / var(--mono-adv)), 11px);
 
-    /* ---------- reading ---------- */
-    /* Sized against the column it sits in, leading locked to the module, and
-       capped at a real measure. Space Grotesk averages ~0.465em per character
-       in this copy, so 26em is ~56 characters — the line length the eye tracks
-       without losing its return. Where the column is narrower than that the
-       paragraph simply fills it; where it is wider, the measure governs and the
-       column merely hosts. The left edge stays on the grid line either way. */
+    /* ---------- reading ----------
+       Sized against the column it sits in, leading locked to the module, and
+       capped at a real measure — 26em is ~51 characters, which is what this
+       copy actually renders at, at every breakpoint. Where the column is
+       narrower the paragraph fills it; where it is wider the measure governs
+       and the column merely hosts. The left edge stays on the line either way. */
     --t-body: clamp(14px, calc(var(--col) / 28), 16px);
     --measure: 26em;
     --lh-body: var(--r);                 /* one body line  = one rhythm unit  */
     --lh-mono: calc(var(--r) * 0.75);    /* four mono lines = three body lines */
-
-    --sans: 'Space Grotesk', system-ui, sans-serif;
-    --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -269,15 +304,16 @@ const navLinks = [
   /* THE INSTRUMENT VOICE — one rule, everywhere the page labels itself.
      It also sets the mono line box, so every label, control and caption on the
      page stacks on the same 0.75×--r baseline. */
-  .bar, .lens, .lens-row .sep, .lately .label, .entry h3, .motion-toggle,
-  .more, .empty, .foot, .scroll-cue {
+  .bar, .lens, .lens-row .sep, .lately .label, .entry h3,
+  .more, .empty, .foot, .scroll-cue,
+  .card .src, .card .card-date, .card .repo, .card .commit {
     font-family: var(--mono);
     line-height: var(--lh-mono);
     font-variant-numeric: tabular-nums;
     font-feature-settings: 'tnum' 1;
   }
   /* hairline mono over moving video blooms; hold the strokes thin */
-  .bar, .lately .label, .motion-toggle, .scroll-cue, .intro, .name {
+  .bar, .lately, .scroll-cue, .intro, .name {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -378,7 +414,7 @@ const navLinks = [
     font-size: var(--t-name);
     line-height: 1;
     letter-spacing: -0.035em;
-    text-indent: -0.046em;
+    text-indent: calc(var(--ti-name) * -1em);
     color: #fff;
     text-transform: lowercase;
     pointer-events: none;
@@ -410,8 +446,7 @@ const navLinks = [
     align-content: end;
     padding: 0 var(--edge) calc(var(--r) * 2);
   }
-  /* the cue is not centred any more: it marks column 3's line, the last one the
-     name reaches */
+  /* the cue is not centred: it marks column 3's line, the last one the name reaches */
   .scroll-cue {
     grid-column: 3;
     justify-self: start;
@@ -432,8 +467,7 @@ const navLinks = [
     scroll-snap-align: start;
     /* a measured, nowrap line's trailing sidebearing is a few px of empty space
        past the last grid line; clip it so it never becomes document scroll.
-       clip (not hidden/auto) so no scroll container is created — and
-       .video-chrome is a sibling, not a descendant, so stickiness is untouched. */
+       clip (not hidden/auto) so no scroll container is created. */
     overflow-x: clip;
     background: linear-gradient(
       to bottom,
@@ -443,7 +477,7 @@ const navLinks = [
       rgba(0,0,0,0.95) 100%
     );
   }
-  /* the folio's three columns, borrowed whole: intro on 1–2, reserved slot on 3 */
+  /* the folio's three columns, borrowed whole: intro on 1–2, lately on 3 */
   .intro-cols {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -467,55 +501,17 @@ const navLinks = [
      column it is measured against — min-content must not win here */
   .intro > * { min-width: 0; }
   .intro p { margin-bottom: 0; }
-  /* the reading paragraphs fill their column up to a 30em ceiling, so the measure
-     holds near 56 characters instead of stretching with a very wide viewport */
   .intro > p:nth-of-type(3),
-  .intro > p:nth-of-type(4),
-  .intro > .coda { max-width: var(--measure); }
+  .intro > p:nth-of-type(4) { max-width: var(--measure); }
 
-  /* name docks on column 1 · lead spans 1–2 · the two body paragraphs take one
-     column each · the coda returns to column 1 */
+  /* name docks on column 1 · subtitle spans 1–2 · the two body paragraphs take
+     one column each */
   @media (min-width: 701px) {
     .intro > .name-slot        { grid-column: 1;      grid-row: 1; }
-    .intro > .lead             { grid-column: 1 / -1; grid-row: 2; }
+    .intro > .subtitle         { grid-column: 1 / -1; grid-row: 2; }
     .intro > p:nth-of-type(3)  { grid-column: 1;      grid-row: 3; }
     .intro > p:nth-of-type(4)  { grid-column: 2;      grid-row: 3; }
-    .intro > .coda             { grid-column: 1;      grid-row: 4; }
   }
-
-  /* ---------- the reserved slot: held space, on purpose ----------
-     Column 3, and its rule starts exactly where the lead's line does, so the
-     emptiness is obviously measured rather than missing. Its depth and its far
-     hairline are both counted in rhythm units. */
-  .lately {
-    grid-column: 3;
-    margin-top: calc(var(--t-dock) + var(--dock-gap));
-    padding-top: calc(var(--r) * 0.5);
-    min-height: calc(var(--r) * 13);
-    border-top: 1px solid rgba(255,255,255,0.28);
-  }
-  .lately .label {
-    display: block;
-    font-size: var(--t-micro);
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-  }
-  /* one hairline far below, one gutter wide — even the tick is a grid unit */
-  .lately::after {
-    content: '';
-    display: block;
-    width: var(--r);
-    height: 1px;
-    margin-top: calc(var(--r) * 8);
-    background: rgba(255,255,255,0.16);
-  }
-  .intro a {
-    color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,0.35);
-  }
-  .intro a:hover { border-bottom-color: #fff; }
 
   /* the slot the big name lands in — invisible, it only holds the position.
      TYPOGRAPHICALLY IDENTICAL to .name in every respect except size, which is
@@ -526,58 +522,122 @@ const navLinks = [
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.035em;
-    text-indent: -0.046em;
+    text-indent: calc(var(--ti-name) * -1em);
     text-transform: lowercase;
     white-space: nowrap;
     visibility: hidden;
     margin-bottom: var(--dock-gap);
   }
 
-  /* the human sentence, set to fill columns 1–2 exactly */
-  .intro .lead {
+  /* the claim, set to fill columns 1–2 exactly — one rank under the docked name */
+  .intro .subtitle {
     font-family: var(--sans);
-    font-size: var(--t-lead);
+    font-size: var(--t-sub);
     font-weight: 500;
-    line-height: 0.98;
+    line-height: 1.02;
     letter-spacing: -0.02em;
-    text-indent: -0.073em;
+    text-indent: calc(var(--ti-sub) * -1em);
     white-space: nowrap;
     color: #fff;
     margin-bottom: calc(var(--r) * 1.5);
   }
-  .intro .coda {
-    margin-top: calc(var(--r) * 2);
-    font-size: calc(var(--t-body) * 0.9);
-    color: rgba(255,255,255,0.55);
-  }
 
-  /* ---------- video chrome: the only right-aligned thing, closing column 3 ---------- */
-  .video-chrome {
-    position: sticky;
-    bottom: 0;
-    z-index: 3;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 var(--edge) var(--r);
-    margin-top: calc(var(--r) * -2);
-    pointer-events: none;
+  .intro a {
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.35);
   }
-  .video-chrome > * { pointer-events: auto; }
-  .motion-toggle {
-    background: none;
-    color: rgba(255,255,255,0.6);
-    border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.3);
-    font-family: var(--mono);
+  .intro a:hover { border-bottom-color: #fff; }
+
+  /* ---------- the lately slot: column 3, one living update ----------
+     The rule starts exactly where the subtitle's line does. Depth is fixed at
+     10×--r so switching sources never shifts the column. */
+  .lately {
+    grid-column: 3;
+    margin-top: calc(var(--t-dock) + var(--dock-gap));
+    padding-top: calc(var(--r) * 0.5);
+    min-height: calc(var(--r) * 10);
+    border-top: 1px solid rgba(255,255,255,0.28);
+  }
+  .lately .label {
+    display: block;
     font-size: var(--t-micro);
     font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    padding: 0 0 calc(var(--r) / 8);
-    cursor: pointer;
+    color: rgba(255,255,255,0.5);
   }
-  .motion-toggle:hover { color: #fff; border-bottom-color: #fff; }
+
+  /* one card, never a feed. The three sources differ in WHICH VOICE carries the
+     payload, which is the whole question: an essay speaks in the voice face, a
+     commit speaks in the label face, a photograph barely speaks at all. */
+  .card { margin-top: calc(var(--r) * 1.5); }
+  .card[hidden] { display: none; }
+  .card .src {
+    display: block;
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.42);
+    margin-bottom: calc(var(--r) * 0.75);
+  }
+  .card .src em { font-style: normal; color: rgba(255,255,255,0.22); }
+  .card .card-date {
+    display: block;
+    font-size: var(--t-quiet);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  /* SUBSTACK — an essay, so the title takes the voice face and the largest rank
+     in the card */
+  .card .card-title {
+    font-family: var(--sans);
+    font-size: calc(var(--t-body) * 1.35);
+    font-weight: 500;
+    line-height: calc(var(--r) * 1.25);
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-bottom: calc(var(--r) * 0.5);
+  }
+  .card .card-line {
+    font-size: calc(var(--t-body) * 0.9);
+    line-height: var(--lh-body);
+    color: rgba(255,255,255,0.6);
+    margin-bottom: calc(var(--r) * 0.75);
+    max-width: var(--measure);
+  }
+  /* GITHUB — a repo and a commit subject are identifiers, not prose, so the card
+     stays in the label face throughout and reads as instrumentation */
+  .card .repo {
+    font-size: var(--t-label);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: calc(var(--r) * 0.25);
+  }
+  .card .commit {
+    font-size: var(--t-label);
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: calc(var(--r) * 0.75);
+  }
+  /* the activity count folds into the date readout so the whole github card
+     stays in the label face — nothing here is prose, so nothing takes the voice */
+  /* INSTAGRAM — the picture is the payload; type gets out of the way and runs
+     beside it. The thumbnail is 5×--r square, so it sits on the rhythm too. */
+  .card .shot {
+    display: flex;
+    gap: var(--r);
+    align-items: flex-start;
+  }
+  .card .shot img {
+    flex: none;
+    width: calc(var(--r) * 5);
+    height: calc(var(--r) * 5);
+    object-fit: cover;
+  }
+  .card .shot .card-line { margin-bottom: calc(var(--r) * 0.5); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -615,20 +675,22 @@ const navLinks = [
     font-weight: 400;
     line-height: 0.78;
     letter-spacing: -0.04em;
-    text-indent: -0.053em;
+    text-indent: calc(var(--ti-works) * -1em);
     white-space: nowrap;
     text-transform: lowercase;
     color: #222;
   }
 
-  /* ---------- lenses: two rows, opening on columns 1 and 2 ---------- */
+  /* ---------- lenses: buckets open on column 1's line, status closes on
+       column 3's right. One size for both rows — the quiet row stays quiet on
+       colour alone, so the two share a baseline and a step. ---------- */
   .lenses {
     grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--gutter);
-    /* the two rows are different sizes; they share a baseline, not a box top */
+    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
+    justify-content: space-between;
+    gap: calc(var(--r) * 0.5) var(--r);
     margin-top: calc(var(--r) * 1.5);
   }
   .lens-row {
@@ -637,9 +699,7 @@ const navLinks = [
     align-items: baseline;
     gap: calc(var(--r) / 3);
   }
-  .lens-row:first-child { grid-column: 1; }
-  .lens-row.quiet { grid-column: 2; }
-  .lens-row + .lens-row { margin-top: 0; }
+  .lens-row.quiet { justify-content: flex-end; }
   .lens {
     font-family: var(--mono);
     font-size: var(--t-label);
@@ -656,9 +716,10 @@ const navLinks = [
   .lens:hover { color: #222; }
   .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
   /* a weight change costs zero width in a monospace, so the active state never
-     shifts the row off its column line */
+     shifts the row off its line (Space Mono / Fragment Mono have no 500 — there
+     the colour and the rule carry it alone) */
   .lens[aria-pressed="true"] { font-weight: 500; }
-  .lens-row.quiet .lens { font-size: var(--t-quiet); letter-spacing: 0.12em; color: #bbb; }
+  .lens-row.quiet .lens { color: #bbb; }
   .lens-row.quiet .lens:hover { color: #636363; }
   .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
   .lens-row .sep { color: #ddd; font-size: var(--t-quiet); }
@@ -674,7 +735,7 @@ const navLinks = [
   }
   .entry[hidden] { display: none; }
 
-  .tile { position: relative; display: block; transition: transform 0.35s ease; }
+  .tile { display: block; transition: transform 0.35s ease; }
   .entry:hover .tile, .entry:focus-within .tile {
     transform: translateY(calc(var(--r) / -6));
     transition-duration: 0.2s;
@@ -701,41 +762,26 @@ const navLinks = [
   }
   .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
 
-  /* TITLE ↔ IMAGE: the title lives inside the frame, flush on the tile's own
-     column line (padding-left 0 — deliberately asymmetric, because only the left
-     edge is a grid line) and held off the right frame by one gutter. Title and
-     image are one object, so every row is an unbroken band of 16:10.
-     The band is exactly 3×--r tall: 1.75 ramp + one mono line (0.75) + 0.5 base.
-     At N=50 the longest title in the set is one line at every breakpoint. */
+  /* CAPTION UNDER THE COVER, centred on the column's centre line. The band is
+     reserved at 1.5×--r — two mono lines — so a title that wraps cannot knock
+     its row out of step with the row beneath. 0.75×--r of air above it, which
+     is one mono line, so the caption sits a line clear of its picture. */
   .entry h3 {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2;
-    padding: calc(var(--r) * 1.75) var(--r) calc(var(--r) * 0.5) 0;
+    margin-top: calc(var(--r) * 0.75);
+    min-height: calc(var(--r) * 1.5);
+    text-align: center;
     font-size: var(--t-title);
     font-weight: 400;
     letter-spacing: 0.01em;
     text-transform: lowercase;
-    color: #fff;
-    /* weighted for the palest covers in the set, where white mono on a bright
-       frame is the hardest read */
-    text-shadow: 0 1px 3px rgba(0,0,0,0.55);
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,0.86) 0%,
-      rgba(0,0,0,0.60) 30%,
-      rgba(0,0,0,0.20) 64%,
-      rgba(0,0,0,0) 100%
-    );
+    color: #222;
   }
-  .entry.seen h3::after { content: ' \00b7'; color: rgba(255,255,255,0.6); }
+  .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
 
-  /* ---------- nine at a time: opens on column 1, like the first tile ---------- */
+  /* ---------- nine at a time — on the same centre axis as the captions ---------- */
   .more-wrap {
-    text-align: left;
-    padding-bottom: calc(var(--r) * 5);
+    text-align: center;
+    padding-bottom: calc(var(--r) * 4);
   }
   .more {
     font-family: var(--mono);
@@ -754,6 +800,7 @@ const navLinks = [
   .more[hidden] { display: none; }
 
   .empty {
+    text-align: center;
     font-size: var(--t-label);
     letter-spacing: 0.06em;
     color: #999;
@@ -761,20 +808,16 @@ const navLinks = [
   }
   .empty[hidden] { display: none; }
 
-  /* ---------- foot: three links, one per column — the grid's closing ruler ---------- */
+  /* ---------- foot: one line, the quiet end of the centre axis ---------- */
   .foot {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    column-gap: var(--gutter);
-    padding: 0 var(--edge) calc(var(--r) * 4);
+    text-align: center;
+    padding: 0 var(--edge) calc(var(--r) * 5);
     font-size: var(--t-label);
     letter-spacing: 0.1em;
-    color: #999;
+    color: #bbb;
   }
-  .foot a { color: #999; }
+  .foot a { color: #bbb; transition: color 0.25s ease; }
   .foot a:hover { color: #222; }
-  /* the separators were doing the grid's job; the columns do it better */
-  .foot .dot { display: none; }
 
   /* ================= the grid narrows; the type narrows with it =================
      --r never changes, so the rhythm is constant at every width; only the
@@ -782,7 +825,7 @@ const navLinks = [
   @media (max-width: 1100px) {
     :root {
       --col: calc((var(--span-all) - var(--gutter)) / 2);
-      --span-2: var(--span-all);   /* the lead now fills the whole measure */
+      --span-2: var(--span-all);   /* the subtitle now fills the whole measure */
       --dock-w: var(--col);        /* still exactly one column */
     }
     .grid { grid-template-columns: repeat(2, 1fr); }
@@ -794,11 +837,9 @@ const navLinks = [
     .lately {
       grid-column: 1 / -1;
       margin-top: calc(var(--r) * 2.5);
-      min-height: calc(var(--r) * 8);
+      min-height: 0;
     }
-    .lately::after { margin-top: calc(var(--r) * 5); }
-    .works-head, .lenses { grid-template-columns: repeat(2, 1fr); }
-    .foot { grid-template-columns: repeat(2, 1fr); row-gap: calc(var(--r) * 0.5); }
+    .works-head { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 900px) {
@@ -824,11 +865,54 @@ const navLinks = [
     .intro-cols, .intro { grid-template-columns: 1fr; }
     .intro > p { grid-column: 1; }
     /* stacked now, so they need the module between them */
-    .intro > p:nth-of-type(3), .intro > p:nth-of-type(4) { margin-bottom: var(--r); }
-    .works-head, .lenses, .foot { grid-template-columns: 1fr; }
-    .lens-row.quiet { grid-column: 1; margin-top: calc(var(--r) * 0.5); }
-    .foot { row-gap: calc(var(--r) * 0.25); }
+    .intro > p:nth-of-type(3) { margin-bottom: var(--r); }
+    .works-head { grid-template-columns: 1fr; }
+    /* the two lens rows stop being ends of a line and become a stack */
+    .lenses { justify-content: flex-start; }
+    .lens-row.quiet { justify-content: flex-start; }
   }
+
+  /* =====================================================================
+     TOOLING ONLY — the three pickers. Not part of the design: fixed to the
+     bottom-left in a system monospace so they can never be mistaken for it.
+     ===================================================================== */
+  .proto-tools {
+    position: fixed;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .proto-tools .pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+  }
+  .proto-tools .k { color: rgba(255,255,255,0.35); }
+  .proto-tools button {
+    font: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+  }
+  .proto-tools button:hover { color: #fff; }
+  .proto-tools button[aria-pressed="true"] { color: #fff; font-weight: 700; }
+  .proto-tools .d { color: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
@@ -864,7 +948,7 @@ const navLinks = [
           <div class="intro">
             <!-- the slot the fixed name lands in; it holds space and nothing else -->
             <p class="name-slot" id="name-slot" aria-hidden="true">divya tak</p>
-            <p class="lead">I make interactive things.</p>
+            <p class="subtitle">Creative technologist and artist</p>
             <p>Hi! Hello! I'm Divya. I am a cross domain creative human. I love making many things with many people.</p>
             <p>
               I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener">Joyus</a>
@@ -872,22 +956,42 @@ const navLinks = [
               I make games with <a href="https://charutak.xyz" target="_blank" rel="noopener">Charu</a>.
               I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener">Varun Ramanna</a> on VFX projects.
             </p>
-            <p class="coda">You are at the home of some of my creations.</p>
           </div>
 
-          <!-- RESERVED SLOT — "lately / new stuff".
-               The space is intentional and stays empty until its design exists.
-               Do not fill this with a list, a feed, or placeholder content. -->
+          <!-- LATELY — three mocked update cards, one visible at a time, switched
+               from the tooling picker. All content is SAMPLE: the "mock" tag on
+               each source label says so on the page itself. -->
           <aside class="lately" aria-label="lately">
             <span class="label">lately</span>
+
+            <article class="card" id="card-substack" data-card="substack">
+              <span class="src">substack <em>&middot; mock</em></span>
+              <p class="card-title">notes from the metro museum build</p>
+              <p class="card-line">On drawing a station that never existed, and why the fog had to arrive before the light did.</p>
+              <span class="card-date">09 aug 2026</span>
+            </article>
+
+            <article class="card" id="card-github" data-card="github" hidden>
+              <span class="src">github <em>&middot; mock</em></span>
+              <p class="repo">divyatak/metro-museum</p>
+              <p class="commit">art direction sandbox: fog and light pass</p>
+              <span class="card-date">7 commits this week &middot; 11 aug 2026</span>
+            </article>
+
+            <article class="card" id="card-insta" data-card="insta" hidden>
+              <span class="src">instagram <em>&middot; mock</em></span>
+              <div class="shot">
+                <img src="/playground/lenticular.webp" alt="A lenticular print test, sample image standing in for a recent post" width="240" height="240" loading="lazy" />
+                <div class="shot-text">
+                  <p class="card-line">lenticular tests, finally behaving themselves</p>
+                  <span class="card-date">06 aug 2026</span>
+                </div>
+              </div>
+            </article>
           </aside>
         </div>
       </div>
     </section>
-
-    <div class="video-chrome">
-      <button class="motion-toggle" id="motion-toggle" aria-pressed="false" aria-label="pause background clips">pause</button>
-    </div>
   </div>
 
   <!-- ============ the folio: white ground slides over the video ============ -->
@@ -902,7 +1006,7 @@ const navLinks = [
             <button class="lens" data-bucket="all" aria-pressed="true">all</button><span class="sep" aria-hidden="true">&middot;</span>
             <button class="lens" data-bucket="games" aria-pressed="false">games</button><span class="sep" aria-hidden="true">&middot;</span>
             <button class="lens" data-bucket="interactive pieces" aria-pressed="false">interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
-            <button class="lens" data-bucket="on paper" aria-pressed="false">on paper</button>
+            <button class="lens" data-bucket="comics" aria-pressed="false">comics</button>
           </div>
           <div class="lens-row quiet" role="group" aria-label="filter by status">
             <button class="lens" data-status="latest" aria-pressed="true">latest</button><span class="sep" aria-hidden="true">&middot;</span>
@@ -913,7 +1017,7 @@ const navLinks = [
         </div>
       </div>
 
-      <!-- ---- the grid: image + title, nothing else ---- -->
+      <!-- ---- the grid: image + caption, nothing else ---- -->
       <div class="grid" id="grid">
         {works.map((w) => (
           <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
@@ -951,12 +1055,34 @@ const navLinks = [
     </section>
 
     <footer class="foot">
-      <a href="/friends/">friends</a><span class="dot" aria-hidden="true">&middot;</span>
-      <a href="/about/">about</a><span class="dot" aria-hidden="true">&middot;</span>
       <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
     </footer>
 
   </main>
+
+  <!-- ============ tooling only — face and lately pickers ============ -->
+  <div class="proto-tools" id="tools">
+    <div class="pill" id="pick-voice">
+      <span class="k">voice</span>
+      <button type="button" data-voice="Space Grotesk" aria-pressed="true">grotesk</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-voice="Schibsted Grotesk" aria-pressed="false">schibsted</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-voice="Instrument Sans" aria-pressed="false">instrument</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-voice="Sora" aria-pressed="false">sora</button>
+    </div>
+    <div class="pill" id="pick-label">
+      <span class="k">label</span>
+      <button type="button" data-label="JetBrains Mono" aria-pressed="true">jetbrains</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-label="IBM Plex Mono" aria-pressed="false">plex</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-label="Space Mono" aria-pressed="false">spacemono</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-label="Fragment Mono" aria-pressed="false">fragment</button>
+    </div>
+    <div class="pill" id="pick-lately">
+      <span class="k">lately</span>
+      <button type="button" data-lately="substack" aria-pressed="true">substack</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-lately="github" aria-pressed="false">github</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-lately="insta" aria-pressed="false">insta</button>
+    </div>
+  </div>
 
 <script is:inline>
 (function () {
@@ -971,42 +1097,17 @@ const navLinks = [
   var CUT = MONTAGE_SECONDS / order.length; // 5.2s
 
   var vid = document.getElementById('vid');
-  var toggle = document.getElementById('motion-toggle');
-  var paused = prefersReduced;
-  var started = false;
 
-  function start() {
-    started = true;
+  // Under reduced motion nothing plays and nothing is offered: the poster still
+  // shows, via the backdrop's CSS background and the untouched poster attribute.
+  if (!prefersReduced) {
     vid.classList.add('on');
     vid.play().catch(function () {});
   }
 
-  function setToggleUi() {
-    toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
-    toggle.setAttribute('aria-label', paused ? 'play background clips' : 'pause background clips');
-    toggle.textContent = paused ? 'play' : 'pause';
-  }
-
-  toggle.addEventListener('click', function () {
-    paused = !paused;
-    setToggleUi();
-    if (paused) {
-      vid.pause();
-    } else if (!started) {
-      start(); // reduced-motion visitors opt in here
-    } else {
-      vid.play().catch(function () {});
-    }
-  });
-
-  setToggleUi();
-  if (!prefersReduced) start();
-  // under reduced motion nothing plays: the poster still shows via the
-  // backdrop's CSS background and the untouched poster attribute.
-
   /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
      Start = centred in the viewport at full size. End = the invisible .name-slot that
-     sits above the intro lead. We measure both, then interpolate transform against
+     sits above the intro subtitle. We measure both, then interpolate transform against
      scroll progress across the dark act. No crossfade, no second element.
      Because the name's box is exactly the grid's full span, "centred" resolves to
      column 1's left line, and the slot sits on that same line — the horizontal term
@@ -1201,6 +1302,152 @@ const navLinks = [
       a.addEventListener('click', function () { mark(el.dataset.id); });
     });
   });
+
+  /* ==================================================================
+     TOOLING — face pickers and the lately switcher.
+
+     A voice face cannot be swapped on its own. The display sizes are
+     (column span ÷ the string's ink run), and the optical indent is that
+     string's first-glyph sidebearing — both are properties of the FACE, so
+     changing the family without changing them would leave the display type
+     sized for the wrong font and it would stop fitting its columns.
+
+     Rather than trust a hard-coded table, the page MEASURES each face when
+     it is selected. Canvas TextMetrics reports real ink bounds after real
+     shaping — kerning included — which is the only way to be right: the
+     offline numbers below were computed from the TTFs and two of the four
+     faces kern via GPOS, which a font parser reading only the legacy `kern`
+     table misses, leaving those faces ~1.5% short of the last grid line.
+     The table survives as the pre-JS default (and as a sanity check); the
+     canvas has the last word. Same for the label face's advance, which the
+     mono ruler divides by.
+     ================================================================== */
+  var VOICE = {
+    'Space Grotesk':     "'Space Grotesk', system-ui, sans-serif",
+    'Schibsted Grotesk': "'Schibsted Grotesk', system-ui, sans-serif",
+    'Instrument Sans':   "'Instrument Sans', system-ui, sans-serif",
+    'Sora':              "'Sora', system-ui, sans-serif"
+  };
+  var LABEL = {
+    'JetBrains Mono': "'JetBrains Mono', ui-monospace, monospace",
+    'IBM Plex Mono':  "'IBM Plex Mono', ui-monospace, monospace",
+    'Space Mono':     "'Space Mono', ui-monospace, monospace",
+    'Fragment Mono':  "'Fragment Mono', ui-monospace, monospace"
+  };
+
+  // the three strings whose ink is measured against the columns, and the
+  // tracking each carries — these MUST match the stylesheet
+  var MEASURED = [
+    { v: 'name',  weight: 700, text: 'divya tak',                        ls: -0.035 },
+    { v: 'works', weight: 400, text: 'works',                            ls: -0.040 },
+    { v: 'sub',   weight: 500, text: 'Creative technologist and artist',  ls: -0.020 }
+  ];
+
+  var PROBE = 200; // measure big, divide down: keeps rounding out of the em value
+  var cx = document.createElement('canvas').getContext('2d');
+
+  // ink run in em, and the first glyph's left sidebearing in em
+  function inkOf(family, weight, text, ls) {
+    cx.font = weight + ' ' + PROBE + 'px ' + family;
+    var m = cx.measureText(text);
+    if (!m || typeof m.actualBoundingBoxRight !== 'number') return null;
+    var lsb = -m.actualBoundingBoxLeft / PROBE;
+    var ink = (m.actualBoundingBoxRight + m.actualBoundingBoxLeft) / PROBE;
+    // CSS puts the tracking between glyphs; the ink run spans n-1 of those gaps
+    return { run: ink + (text.length - 1) * ls, lsb: lsb };
+  }
+
+  // a monospace's advance, straight off ten identical cells
+  function advOf(family) {
+    cx.font = '400 ' + PROBE + 'px ' + family;
+    var w = cx.measureText('MMMMMMMMMM').width;
+    return w ? w / 10 / PROBE : null;
+  }
+
+  var root = document.documentElement;
+  function store(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+  function read(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+
+  function press(container, attr, value) {
+    container.querySelectorAll('button[' + attr + ']').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.getAttribute(attr) === value ? 'true' : 'false');
+    });
+  }
+
+  function remeasure() {
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    else measure();
+  }
+
+  // load the weights we are about to measure, THEN measure — otherwise the
+  // canvas hands back the fallback face's metrics and the fit is silently wrong
+  function whenReady(key, weights) {
+    var q = '"' + key + '"';
+    var jobs = [];
+    if (document.fonts && document.fonts.load) {
+      for (var i = 0; i < weights.length; i++) {
+        jobs.push(document.fonts.load(weights[i] + ' ' + PROBE + 'px ' + q));
+      }
+    }
+    return Promise.all(jobs).catch(function () {});
+  }
+
+  function setVoice(key) {
+    var stack = VOICE[key];
+    if (!stack) return;
+    root.style.setProperty('--sans', stack);
+    press(document.getElementById('pick-voice'), 'data-voice', key);
+    store('proto-voice', key);
+    whenReady(key, [700, 400, 500]).then(function () {
+      for (var i = 0; i < MEASURED.length; i++) {
+        var s = MEASURED[i];
+        var m = inkOf('"' + key + '"', s.weight, s.text, s.ls);
+        if (!m || !(m.run > 0)) continue; // keep the stylesheet default
+        root.style.setProperty('--run-' + s.v, m.run.toFixed(4));
+        root.style.setProperty('--ti-' + s.v, m.lsb.toFixed(4));
+      }
+      measure();
+    });
+  }
+
+  function setLabel(key) {
+    var stack = LABEL[key];
+    if (!stack) return;
+    root.style.setProperty('--mono', stack);
+    press(document.getElementById('pick-label'), 'data-label', key);
+    store('proto-label', key);
+    whenReady(key, [400, 500]).then(function () {
+      var a = advOf('"' + key + '"');
+      if (a > 0) root.style.setProperty('--mono-adv', a.toFixed(4));
+      measure();
+    });
+  }
+
+  var cards = document.querySelectorAll('.card[data-card]');
+  function setLately(key) {
+    var any = false;
+    cards.forEach(function (c) {
+      var on = c.dataset.card === key;
+      c.hidden = !on;
+      if (on) any = true;
+    });
+    if (!any) return;
+    press(document.getElementById('pick-lately'), 'data-lately', key);
+    store('proto-lately', key);
+    remeasure(); // the slot's height can change, and the slot anchors the morph
+  }
+
+  document.getElementById('tools').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b.dataset.voice) setVoice(b.dataset.voice);
+    else if (b.dataset.label) setLabel(b.dataset.label);
+    else if (b.dataset.lately) setLately(b.dataset.lately);
+  });
+
+  setVoice(read('proto-voice') || 'Space Grotesk');
+  setLabel(read('proto-label') || 'JetBrains Mono');
+  setLately(read('proto-lately') || 'substack');
 })();
 </script>
 </body>
