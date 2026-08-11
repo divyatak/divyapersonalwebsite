@@ -1,3 +1,4 @@
+<!-- PROTOTYPE — canonical direction: "ongoing", type system C (grid-locked). Promote to real pages next. -->
 ---
 // PROTOTYPE — landing rebuild after the design interview.
 // Dark act = two snap screens over the fixed video. White act = the folio, free scroll.
@@ -142,11 +143,114 @@ const navLinks = [
 <title>divya tak</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
-  /* ---------- one type system ----------
-     name 7.5rem max · docked name 1.1rem · lead 1.9rem · body 15px
-     tile title 14px · whisper 11px · nav 12px. Spacing in 0.5rem steps. */
+  /* =====================================================================
+     TYPE SYSTEM — GRID-LOCKED. Nothing on this page has a size or a space
+     that isn't derived from one of three things: the columns, the mono
+     ruler, or the rhythm unit. There are no round numbers left.
+
+     ---------------------------------------------------------------------
+     1. THE SEED.  --r = 1.5rem = 24px.
+     It is the folio's column gap. It is also the row gap, the vertical
+     rhythm unit, and exactly one line of body text. Every vertical space on
+     the page is a multiple or a simple fraction of it, and every horizontal
+     gap is it. The grid measures the same in both directions.
+
+     2. THE COLUMNS.  Three of them, edge to edge, gutter --r, outer edge
+     1.25×--r. The dark act has no measurements of its own — it borrows
+     these, so the name, the intro, the reserved slot, the nav, the chapter
+     word, the lenses, the captions and the footer all start on one of three
+     vertical lines. You can feel where the tiles will be before an image
+     has loaded.
+
+     3. DISPLAY TYPE IS MEASURED IN COLUMNS. Three strings are sized so that
+     their ink spans an exact number of columns — no rems involved:
+         the name at rest   = 3 columns (the whole row)
+         the name docked    = 1 column  (one tile)
+         "works"            = 3 columns (a full row of type, where a row of
+                                         tiles is about to be)
+     so the name's journey is a division of the grid, not a shrink to an
+     arbitrary size, and it pivots on column 1's left line, which it never
+     leaves. The sizes come off the real ink runs, computed from the TTFs
+     (advances + kerning − first glyph's left sidebearing − last glyph's
+     right one + the letter-spacing between them):
+         "divya tak"                  SG 700, ls -0.035em →  4.158 em
+         "works"                      SG 400, ls -0.040em →  2.575 em
+         "I make interactive things." SG 500, ls -0.020em → 11.534 em
+     font-size = (the span it must fill) ÷ (that number). Each also carries a
+     negative text-indent equal to its first glyph's left sidebearing (d .046,
+     w .053, I .073) so the INK, not the invisible box, hangs on the line.
+     Optical alignment is what makes a grid feel true rather than merely be
+     true. Their line-heights (1, 0.98, 0.78) are ink crops, not rhythm
+     multiples — display type hugs its own ink; only text stacks on a module.
+
+     4. THE MONO RULER — CHARACTERS PER COLUMN. JetBrains Mono has a fixed
+     0.600em advance, so a character is a unit of measurement and N of them
+     fill a column at col ÷ (N × 0.6). Each role gets its own N, chosen for
+     what it has to hold, and the ladder is the hierarchy:
+
+         N = 50   tile titles      col/30      content, read as words
+         N = 56   nav + wordmark   col/33.6    wayfinding
+         N = 62   lenses, foot,    col/37.2    controls and the empty state
+                  empty state
+         N = 68   micro labels     col/40.8    lately · pause · more · cue
+         N = 74   status lenses,   col/44.4    the quietest row on the page
+                  separators
+
+     Tracking runs inverse to the ruler — the smaller the step, the more air —
+     and the uppercase micro labels take double, because caps set flush read
+     as a lump. Every clamp keeps the ladder in order at every breakpoint.
+
+     5. THE RHYTHM. Body: one line = --r exactly, so paragraphs stack on the
+     24px module. Mono: one line = 0.75×--r, so four mono lines equal three
+     body lines and the label layer interleaves with the reading layer instead
+     of fighting it. The nav bar is three mono line-boxes tall. The tile's
+     caption band is exactly 3×--r. Section paddings are 2, 3, 4 and 5 --r.
+     ===================================================================== */
+
+  :root {
+    /* ---------- the seed ---------- */
+    --r: 1.5rem;
+
+    /* ---------- the grid ---------- */
+    --gutter: var(--r);
+    --edge: calc(var(--r) * 1.25);
+    --span-all: calc(100vw - 2 * var(--edge));
+    --col: calc((var(--span-all) - 2 * var(--gutter)) / 3);
+    --span-2: calc(2 * var(--col) + var(--gutter));
+    --dock-w: var(--col);              /* the name shrinks to exactly one column */
+    --dock-gap: calc(var(--r) * 1.25); /* shared: the lately rule hangs off it too */
+
+    /* ---------- display, measured in columns ---------- */
+    --t-name:  calc(var(--span-all) / 4.158);
+    --t-dock:  calc(var(--dock-w) / 4.158);
+    --t-works: calc(var(--span-all) / 2.575);
+    --t-lead:  calc(var(--span-2) / 11.534);
+
+    /* ---------- the mono ruler: N characters to a column ---------- */
+    --t-title: clamp(12px,   calc(var(--col) / 30),   16px);  /* N = 50 */
+    --t-nav:   clamp(11px,   calc(var(--col) / 33.6), 14px);  /* N = 56 */
+    --t-label: clamp(10.5px, calc(var(--col) / 37.2), 13px);  /* N = 62 */
+    --t-micro: clamp(10px,   calc(var(--col) / 40.8), 12px);  /* N = 68 */
+    --t-quiet: clamp(9.5px,  calc(var(--col) / 44.4), 11px);  /* N = 74 */
+
+    /* ---------- reading ---------- */
+    /* Sized against the column it sits in, leading locked to the module, and
+       capped at a real measure. Space Grotesk averages ~0.465em per character
+       in this copy, so 26em is ~56 characters — the line length the eye tracks
+       without losing its return. Where the column is narrower than that the
+       paragraph simply fills it; where it is wider, the measure governs and the
+       column merely hosts. The left edge stays on the grid line either way. */
+    --t-body: clamp(14px, calc(var(--col) / 28), 16px);
+    --measure: 26em;
+    --lh-body: var(--r);                 /* one body line  = one rhythm unit  */
+    --lh-mono: calc(var(--r) * 0.75);    /* four mono lines = three body lines */
+
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html {
     scroll-behavior: smooth;
@@ -154,11 +258,28 @@ const navLinks = [
     scroll-snap-type: y proximity;
   }
   body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--sans);
     color: #222;
     background: #111;
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  /* THE INSTRUMENT VOICE — one rule, everywhere the page labels itself.
+     It also sets the mono line box, so every label, control and caption on the
+     page stacks on the same 0.75×--r baseline. */
+  .bar, .lens, .lens-row .sep, .lately .label, .entry h3, .motion-toggle,
+  .more, .empty, .foot, .scroll-cue {
+    font-family: var(--mono);
+    line-height: var(--lh-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  /* hairline mono over moving video blooms; hold the strokes thin */
+  .bar, .lately .label, .motion-toggle, .scroll-cue, .intro, .name {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   img { max-width: 100%; display: block; }
   a { color: inherit; text-decoration: none; }
@@ -187,27 +308,34 @@ const navLinks = [
     background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.34) 100%);
   }
 
-  /* ---------- one nav bar for the whole page ---------- */
+  /* ---------- one nav bar, hung on the same three columns ----------
+     wordmark on column 1; the four links spread across columns 2–3 so the first
+     opens exactly on column 2's line and the last closes on column 3's right.
+     Padding is 0.75×--r top and bottom, which is the mono line box — so the bar
+     is exactly three mono lines tall. */
   .bar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 6;
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-    padding: 1.25rem 3rem;
-    font-size: 12px;
-    letter-spacing: 0.08em;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    align-items: baseline;
+    padding: calc(var(--r) * 0.75) var(--edge);
+    font-size: var(--t-nav);
+    font-weight: 400;
+    letter-spacing: 0.09em;
     text-transform: lowercase;
     transition: background-color 0.25s ease, border-color 0.25s ease;
     border-bottom: 1px solid transparent;
   }
   .bar .wordmark {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    grid-column: 1;
+    font-size: var(--t-nav);
+    font-weight: 500;
+    letter-spacing: 0.1em;
     color: #fff;
     opacity: 1;
     transition: opacity 0.3s ease, color 0.25s ease;
@@ -215,7 +343,7 @@ const navLinks = [
   /* on screen 1 the big name is the wordmark, so the bar keeps quiet */
   body:not(.docked) .bar .wordmark { opacity: 0; pointer-events: none; }
   .bar .links {
-    flex: 1;
+    grid-column: 2 / -1;
     display: flex;
     justify-content: space-between;
   }
@@ -232,19 +360,25 @@ const navLinks = [
   .bar.ink a { color: #999; }
   .bar.ink a:hover { color: #222; }
 
-  /* ---------- the one name: fixed, driven by scroll, never crossfaded ---------- */
+  /* ---------- the one name: a full row of type that divides down to one column ----------
+     The box is 100vw − 2×edge, which is what makes the morph script's centring
+     maths ((innerWidth − width) / 2) land on --edge — column 1's line — so the
+     name's left edge is nailed to that line for the whole flight and only the
+     scale changes. Everything here is em-based, so it survives the scale. */
   .name {
     position: fixed;
     left: 0;
     top: 0;
     z-index: 2; /* above the stage, under the white ground */
-    width: max-content;
+    width: calc(100vw - 2 * var(--edge));
     white-space: nowrap;
     transform-origin: 0 0;
-    font-weight: 800;
-    font-size: clamp(2.8rem, 8vw, 7.5rem);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: var(--t-name);
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
+    text-indent: -0.046em;
     color: #fff;
     text-transform: lowercase;
     pointer-events: none;
@@ -257,26 +391,32 @@ const navLinks = [
   .stage { position: relative; z-index: 1; }
   .stage a { color: #fff; }
 
+  /* the dark act has no measurements of its own — it borrows the folio's */
   .shell {
-    max-width: 1420px;
-    margin: 0 auto;
-    padding: 0 3rem;
+    max-width: none;
+    margin: 0;
+    padding: 0 var(--edge);
   }
-  .shell.narrow { max-width: 1180px; }
+  .shell.narrow { max-width: none; }
 
   /* ---------- screen 1 ---------- */
   .opening {
     position: relative;
     height: 100vh;
     scroll-snap-align: start;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    align-content: end;
+    padding: 0 var(--edge) calc(var(--r) * 2);
   }
+  /* the cue is not centred any more: it marks column 3's line, the last one the
+     name reaches */
   .scroll-cue {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
+    grid-column: 3;
+    justify-self: start;
     color: rgba(255,255,255,0.7);
-    font-size: 17px;
+    font-size: var(--t-micro);
     transition: opacity 0.3s ease;
   }
   .scroll-cue:hover { color: #fff; }
@@ -288,8 +428,13 @@ const navLinks = [
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding: 8rem 0 8rem;
+    padding: calc(var(--r) * 5) 0 calc(var(--r) * 4);
     scroll-snap-align: start;
+    /* a measured, nowrap line's trailing sidebearing is a few px of empty space
+       past the last grid line; clip it so it never becomes document scroll.
+       clip (not hidden/auto) so no scroll container is created — and
+       .video-chrome is a sibling, not a descendant, so stickiness is untouched. */
+    overflow-x: clip;
     background: linear-gradient(
       to bottom,
       rgba(0,0,0,0) 0%,
@@ -298,44 +443,72 @@ const navLinks = [
       rgba(0,0,0,0.95) 100%
     );
   }
-  /* intro on the left (~2/3), the reserved slot on the right (~1/3) */
+  /* the folio's three columns, borrowed whole: intro on 1–2, reserved slot on 3 */
   .intro-cols {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
     align-items: start;
-    gap: 3rem;
-    /* held in from the shell's full width so the 2/3 column stays close to the
-       intro's own 54ch measure — otherwise the ratio reads as a void */
-    max-width: 940px;
+    max-width: none;
   }
+  /* the intro subdivides its two columns into the same two columns */
   .intro {
+    grid-column: 1 / span 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--gutter);
+    align-content: start;
+    max-width: none;
     color: rgba(255,255,255,0.76);
-    max-width: 54ch;
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
   }
-  .intro p { margin-bottom: 1rem; }
+  /* a nowrap measured line would otherwise force its own track wider than the
+     column it is measured against — min-content must not win here */
+  .intro > * { min-width: 0; }
+  .intro p { margin-bottom: 0; }
+  /* the reading paragraphs fill their column up to a 30em ceiling, so the measure
+     holds near 56 characters instead of stretching with a very wide viewport */
+  .intro > p:nth-of-type(3),
+  .intro > p:nth-of-type(4),
+  .intro > .coda { max-width: var(--measure); }
+
+  /* name docks on column 1 · lead spans 1–2 · the two body paragraphs take one
+     column each · the coda returns to column 1 */
+  @media (min-width: 701px) {
+    .intro > .name-slot        { grid-column: 1;      grid-row: 1; }
+    .intro > .lead             { grid-column: 1 / -1; grid-row: 2; }
+    .intro > p:nth-of-type(3)  { grid-column: 1;      grid-row: 3; }
+    .intro > p:nth-of-type(4)  { grid-column: 2;      grid-row: 3; }
+    .intro > .coda             { grid-column: 1;      grid-row: 4; }
+  }
 
   /* ---------- the reserved slot: held space, on purpose ----------
-     A rule, a label, and nothing else. The height is the point. */
+     Column 3, and its rule starts exactly where the lead's line does, so the
+     emptiness is obviously measured rather than missing. Its depth and its far
+     hairline are both counted in rhythm units. */
   .lately {
-    margin-top: 2.6rem;   /* drops the rule to the lead's line, past the docked name */
-    padding-top: 0.75rem;
-    min-height: 22rem;
+    grid-column: 3;
+    margin-top: calc(var(--t-dock) + var(--dock-gap));
+    padding-top: calc(var(--r) * 0.5);
+    min-height: calc(var(--r) * 13);
     border-top: 1px solid rgba(255,255,255,0.28);
   }
   .lately .label {
     display: block;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: lowercase;
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     color: rgba(255,255,255,0.5);
   }
-  /* one hairline far below, so the emptiness reads as measured, not missing */
+  /* one hairline far below, one gutter wide — even the tick is a grid unit */
   .lately::after {
     content: '';
     display: block;
-    width: 2.5rem;
+    width: var(--r);
     height: 1px;
-    margin-top: 15rem;
+    margin-top: calc(var(--r) * 8);
     background: rgba(255,255,255,0.16);
   }
   .intro a {
@@ -344,32 +517,41 @@ const navLinks = [
   }
   .intro a:hover { border-bottom-color: #fff; }
 
-  /* the slot the big name lands in — invisible, it only holds the position */
+  /* the slot the big name lands in — invisible, it only holds the position.
+     TYPOGRAPHICALLY IDENTICAL to .name in every respect except size, which is
+     the one thing the morph script is allowed to read as a difference. */
   .name-slot {
-    font-size: 1.1rem;
-    font-weight: 800;
+    font-family: var(--sans);
+    font-size: var(--t-dock);
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
+    text-indent: -0.046em;
     text-transform: lowercase;
+    white-space: nowrap;
     visibility: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--dock-gap);
   }
 
+  /* the human sentence, set to fill columns 1–2 exactly */
   .intro .lead {
-    font-size: clamp(1.6rem, 2.6vw, 1.9rem);
-    font-weight: 600;
-    line-height: 1.3;
+    font-family: var(--sans);
+    font-size: var(--t-lead);
+    font-weight: 500;
+    line-height: 0.98;
     letter-spacing: -0.02em;
+    text-indent: -0.073em;
+    white-space: nowrap;
     color: #fff;
-    margin-bottom: 1.5rem;
+    margin-bottom: calc(var(--r) * 1.5);
   }
   .intro .coda {
-    margin-top: 2rem;
-    margin-bottom: 0;
+    margin-top: calc(var(--r) * 2);
+    font-size: calc(var(--t-body) * 0.9);
     color: rgba(255,255,255,0.55);
   }
 
-  /* ---------- video chrome ---------- */
+  /* ---------- video chrome: the only right-aligned thing, closing column 3 ---------- */
   .video-chrome {
     position: sticky;
     bottom: 0;
@@ -377,8 +559,8 @@ const navLinks = [
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 0 3rem 1.5rem;
-    margin-top: -3.5rem;
+    padding: 0 var(--edge) var(--r);
+    margin-top: calc(var(--r) * -2);
     pointer-events: none;
   }
   .video-chrome > * { pointer-events: auto; }
@@ -387,11 +569,12 @@ const navLinks = [
     color: rgba(255,255,255,0.6);
     border: none;
     border-bottom: 1px solid rgba(255,255,255,0.3);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: lowercase;
-    padding: 0 0 2px;
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0 0 calc(var(--r) / 8);
     cursor: pointer;
   }
   .motion-toggle:hover { color: #fff; border-bottom-color: #fff; }
@@ -409,63 +592,93 @@ const navLinks = [
     background: #fff;
   }
 
-  /* the folio runs edge to edge; only a small gutter holds it off the viewport */
   .works {
-    padding: 8rem 1.75rem 0;
-    scroll-margin-top: 3.5rem;
+    padding: calc(var(--r) * 3) var(--edge) 0;
+    scroll-margin-top: calc(var(--r) * 2.25); /* the bar is three mono lines tall */
+    /* guard: a measured run's trailing sidebearing can sit a few px past the last
+       grid line. clip, not scroll — and it never reaches the ink. */
+    overflow-x: clip;
   }
-  .works-head { padding-bottom: 3rem; }
-  /* a chapter opening, not a label */
+  .works-head {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    padding-bottom: calc(var(--r) * 2);
+  }
+  /* a whole row of type where a whole row of tiles is about to be. Sized from the
+     grid, weighted DOWN to 400 so it stays quieter than the name despite being
+     larger — size comes from the columns, hierarchy from the weight. */
   .works-head h2 {
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.03em;
+    grid-column: 1 / -1;
+    font-family: var(--sans);
+    font-size: var(--t-works);
+    font-weight: 400;
+    line-height: 0.78;
+    letter-spacing: -0.04em;
+    text-indent: -0.053em;
+    white-space: nowrap;
     text-transform: lowercase;
     color: #222;
-    margin-bottom: 1.75rem;
   }
 
-  /* ---------- lenses ---------- */
+  /* ---------- lenses: two rows, opening on columns 1 and 2 ---------- */
+  .lenses {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    /* the two rows are different sizes; they share a baseline, not a box top */
+    align-items: baseline;
+    margin-top: calc(var(--r) * 1.5);
+  }
   .lens-row {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.5rem;
+    gap: calc(var(--r) / 3);
   }
-  .lens-row + .lens-row { margin-top: 0.5rem; }
+  .lens-row:first-child { grid-column: 1; }
+  .lens-row.quiet { grid-column: 2; }
+  .lens-row + .lens-row { margin-top: 0; }
   .lens {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
+    font-family: var(--mono);
+    font-size: var(--t-label);
+    font-weight: 400;
     text-transform: lowercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     color: #999;
     background: none;
     border: none;
     border-bottom: 1px solid transparent;
-    padding: 0 0 2px;
+    padding: 0 0 calc(var(--r) / 8);
     cursor: pointer;
   }
   .lens:hover { color: #222; }
   .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
-  .lens-row.quiet .lens { font-size: 11px; color: #bbb; }
+  /* a weight change costs zero width in a monospace, so the active state never
+     shifts the row off its column line */
+  .lens[aria-pressed="true"] { font-weight: 500; }
+  .lens-row.quiet .lens { font-size: var(--t-quiet); letter-spacing: 0.12em; color: #bbb; }
   .lens-row.quiet .lens:hover { color: #636363; }
   .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
-  .lens-row .sep { color: #ddd; font-size: 12px; }
+  .lens-row .sep { color: #ddd; font-size: var(--t-quiet); }
 
-  /* ---------- the grid: the only view ---------- */
+  /* ---------- the grid: the only view. Gutter is the same in both axes. ---------- */
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     align-items: start;
-    column-gap: 1.5rem;
-    row-gap: 2.5rem;
-    padding-bottom: 3.5rem;
+    column-gap: var(--gutter);
+    row-gap: var(--gutter);
+    padding-bottom: calc(var(--r) * 2);
   }
   .entry[hidden] { display: none; }
 
-  .tile { display: block; transition: transform 0.35s ease; }
-  .entry:hover .tile, .entry:focus-within .tile { transform: translateY(-4px); transition-duration: 0.2s; }
+  .tile { position: relative; display: block; transition: transform 0.35s ease; }
+  .entry:hover .tile, .entry:focus-within .tile {
+    transform: translateY(calc(var(--r) / -6));
+    transition-duration: 0.2s;
+  }
   .tile .media {
     display: block;
     position: relative;
@@ -488,74 +701,133 @@ const navLinks = [
   }
   .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
 
+  /* TITLE ↔ IMAGE: the title lives inside the frame, flush on the tile's own
+     column line (padding-left 0 — deliberately asymmetric, because only the left
+     edge is a grid line) and held off the right frame by one gutter. Title and
+     image are one object, so every row is an unbroken band of 16:10.
+     The band is exactly 3×--r tall: 1.75 ramp + one mono line (0.75) + 0.5 base.
+     At N=50 the longest title in the set is one line at every breakpoint. */
   .entry h3 {
-    margin-top: 1rem;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.35;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: calc(var(--r) * 1.75) var(--r) calc(var(--r) * 0.5) 0;
+    font-size: var(--t-title);
+    font-weight: 400;
+    letter-spacing: 0.01em;
     text-transform: lowercase;
-    color: #222;
+    color: #fff;
+    /* weighted for the palest covers in the set, where white mono on a bright
+       frame is the hardest read */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.55);
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.86) 0%,
+      rgba(0,0,0,0.60) 30%,
+      rgba(0,0,0,0.20) 64%,
+      rgba(0,0,0,0) 100%
+    );
   }
-  .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
+  .entry.seen h3::after { content: ' \00b7'; color: rgba(255,255,255,0.6); }
 
-  /* ---------- nine at a time ---------- */
+  /* ---------- nine at a time: opens on column 1, like the first tile ---------- */
   .more-wrap {
-    text-align: center;
-    padding-bottom: 8rem;
+    text-align: left;
+    padding-bottom: calc(var(--r) * 5);
   }
   .more {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: lowercase;
+    font-family: var(--mono);
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     color: #bbb;
     background: none;
     border: none;
     border-bottom: 1px solid #eee;
-    padding: 0 0 3px;
+    padding: 0 0 calc(var(--r) / 8);
     cursor: pointer;
   }
   .more:hover { color: #222; border-bottom-color: #222; }
   .more[hidden] { display: none; }
 
   .empty {
-    font-size: 12px;
+    font-size: var(--t-label);
+    letter-spacing: 0.06em;
     color: #999;
-    padding: 2rem 0;
+    padding: calc(var(--r) * 1.5) 0;
   }
   .empty[hidden] { display: none; }
 
-  /* ---------- foot ---------- */
+  /* ---------- foot: three links, one per column — the grid's closing ruler ---------- */
   .foot {
-    padding: 0 1.75rem 6rem;
-    font-size: 12px;
-    letter-spacing: 0.06em;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    padding: 0 var(--edge) calc(var(--r) * 4);
+    font-size: var(--t-label);
+    letter-spacing: 0.1em;
     color: #999;
   }
   .foot a { color: #999; }
   .foot a:hover { color: #222; }
-  .foot .dot { margin: 0 0.5rem; color: #ddd; }
+  /* the separators were doing the grid's job; the columns do it better */
+  .foot .dot { display: none; }
 
+  /* ================= the grid narrows; the type narrows with it =================
+     --r never changes, so the rhythm is constant at every width; only the
+     columns (and therefore the ruler that reads them) redraw. */
   @media (max-width: 1100px) {
+    :root {
+      --col: calc((var(--span-all) - var(--gutter)) / 2);
+      --span-2: var(--span-all);   /* the lead now fills the whole measure */
+      --dock-w: var(--col);        /* still exactly one column */
+    }
     .grid { grid-template-columns: repeat(2, 1fr); }
+    .bar { grid-template-columns: repeat(2, 1fr); }
+    .opening { grid-template-columns: repeat(2, 1fr); }
+    .scroll-cue { grid-column: 2; }
+    .intro-cols { grid-template-columns: repeat(2, 1fr); }
+    .intro { grid-column: 1 / -1; }
+    .lately {
+      grid-column: 1 / -1;
+      margin-top: calc(var(--r) * 2.5);
+      min-height: calc(var(--r) * 8);
+    }
+    .lately::after { margin-top: calc(var(--r) * 5); }
+    .works-head, .lenses { grid-template-columns: repeat(2, 1fr); }
+    .foot { grid-template-columns: repeat(2, 1fr); row-gap: calc(var(--r) * 0.5); }
   }
 
   @media (max-width: 900px) {
+    :root { --edge: calc(var(--r) * 0.75); }
     html { scroll-snap-type: none; }
-    .shell, .bar, .video-chrome { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .bar { gap: 1.5rem; font-size: 11px; letter-spacing: 0.04em; }
-    .bar .links { gap: 1rem; }
-    .overlay { padding: 7rem 0 7rem; }
-    /* the reserved slot stacks under the intro */
-    .intro-cols { grid-template-columns: 1fr; gap: 3.5rem; }
-    .lately { margin-top: 0; min-height: 14rem; }
-    .lately::after { margin-top: 9rem; }
-    .works { padding: 6rem 1.25rem 0; }
-    .foot { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .overlay { padding: calc(var(--r) * 4) 0 calc(var(--r) * 3); }
+    .works { padding-top: calc(var(--r) * 2.5); }
   }
 
   @media (max-width: 700px) {
-    .grid { grid-template-columns: 1fr; row-gap: 3rem; }
+    :root {
+      --col: var(--span-all);
+      --span-2: var(--span-all);
+      /* one column is now the whole width, so the dock is set as a fraction of it
+         — otherwise the name would have nowhere to shrink to */
+      --dock-w: calc(var(--span-all) * 0.42);
+    }
+    .grid { grid-template-columns: 1fr; }
+    .bar { display: flex; gap: calc(var(--r) * 0.75); align-items: baseline; letter-spacing: 0.04em; }
+    .bar .links { flex: 1; }
+    .opening { grid-template-columns: 1fr; }
+    .scroll-cue { grid-column: 1; }
+    .intro-cols, .intro { grid-template-columns: 1fr; }
+    .intro > p { grid-column: 1; }
+    /* stacked now, so they need the module between them */
+    .intro > p:nth-of-type(3), .intro > p:nth-of-type(4) { margin-bottom: var(--r); }
+    .works-head, .lenses, .foot { grid-template-columns: 1fr; }
+    .lens-row.quiet { grid-column: 1; margin-top: calc(var(--r) * 0.5); }
+    .foot { row-gap: calc(var(--r) * 0.25); }
   }
 </style>
 </head>
@@ -735,7 +1007,10 @@ const navLinks = [
   /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
      Start = centred in the viewport at full size. End = the invisible .name-slot that
      sits above the intro lead. We measure both, then interpolate transform against
-     scroll progress across the dark act. No crossfade, no second element. */
+     scroll progress across the dark act. No crossfade, no second element.
+     Because the name's box is exactly the grid's full span, "centred" resolves to
+     column 1's left line, and the slot sits on that same line — the horizontal term
+     cancels out and the name only ever changes size. */
   var nameEl = document.getElementById('name');
   var slotEl = document.getElementById('name-slot');
   var overlayEl = document.getElementById('intro');
