@@ -1,8 +1,7 @@
 ---
-// TEMPORARY: the works index now lives on the new landing (/prototype/ongoing/#works).
-// This page redirects there until the landing is promoted to the real homepage.
-// Individual /works/[slug]/ pages remain live and linked from the new folio.
-const target = '/prototype/ongoing/#works'
+// The works index lives on the landing folio. This stub forwards straight
+// there — one hop, no prototype interstitial.
+const target = '/#works'
 ---
 <html lang="en">
 <head>
@@ -13,7 +12,7 @@ const target = '/prototype/ongoing/#works'
   <script is:inline define:vars={{ target }}>window.location.replace(target)</script>
 </head>
 <body>
-  <p style="font-family: Montserrat, sans-serif; padding: 2rem;">
+  <p style="font-family: 'Sora', system-ui, sans-serif; padding: 2rem;">
     <a href={target}>works have moved &#8594;</a>
   </p>
 </body>

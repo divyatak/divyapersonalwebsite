@@ -2,12 +2,25 @@
 import Layout from '../layouts/Layout.astro'
 import friendsData from '../data/generated-friends.json'
 import works from '../data/generated-projects.json'
+import { extraWorks } from '../data/extra-works.js'
+import { EXCLUDED } from '../data/excluded.js'
 
 const { collaborators, mentions } = friendsData
 
-// Map project titles to slugs so friend project tags can link to them
+// Map project titles to slugs so friend project tags can link to them.
+// Three rules, each learned the hard way:
+//   · excluded works get no link (their pages aren't built — a tag would 404)
+//   · the hand-kept works (extra-works.js) are part of the map too
+//   · duplicate titles keep the FIRST slug seen — the pipeline emits years
+//     newest-first, so "(un)seen Life" links to the current edition
 const titleToSlug = new Map<string, string>()
-works.flatMap(y => y.projects).forEach(p => titleToSlug.set(p.title, p.slug))
+works
+  .flatMap(y => y.projects)
+  .filter(p => EXCLUDED.indexOf(p.slug) === -1)
+  .forEach(p => { if (!titleToSlug.has(p.title)) titleToSlug.set(p.title, p.slug) })
+extraWorks
+  .filter((w: any) => EXCLUDED.indexOf(w.slug) === -1)
+  .forEach((w: any) => { if (!titleToSlug.has(w.title)) titleToSlug.set(w.title, w.slug) })
 const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 ---
 

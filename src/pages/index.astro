@@ -40,7 +40,8 @@ const withOf = (names) =>
         : names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1])
     : '';
 
-const CURRENT_YEAR = 2026;
+// derived, not typed: last year's "(un)seen" editions close by themselves
+const CURRENT_YEAR = new Date().getFullYear();
 
 /* ---------- the five that are not in the pipeline ----------
    They have real work pages now (src/data/extra-works.js feeds /works/[slug]),
@@ -407,6 +408,9 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
     pointer-events: none;
     opacity: 0;
     will-change: transform;
+    /* a soft ground shadow so the name survives the pool's palest clips —
+       the scrim alone can't promise contrast against 25 different films */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 4px 28px rgba(0,0,0,0.35);
   }
   .name.ready { opacity: 1; }
 
@@ -701,7 +705,7 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
     font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #c9973b;
+    color: #96701a; /* still amber, dark enough to actually read (≥4.5:1) */
   }
 
   /* ---------- nine at a time — on the same centre axis as the captions ---------- */
@@ -893,7 +897,7 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
         ))}
       </div>
 
-      <p class="empty" id="empty" hidden>Nothing under this lens yet.</p>
+      <p class="empty" id="empty" aria-live="polite" hidden>Nothing under this lens yet.</p>
 
       <div class="more-wrap">
         <button class="more" id="more" type="button" hidden>More</button>
@@ -934,44 +938,93 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
   var playlist = shuffle(CLIPS.slice());
   var players = [document.getElementById('vid'), document.getElementById('vid2')];
   var vid = players[0]; // the bar/name morph code below reads this one; both stay in sync visually
-  var clipIdx = 0;
   var active = 0;
+  var clipIdx = 0;      // where the ACTIVE clip sits in the endless playlist walk
+  var nextIdx = 1;      // what the idle player is loading
+  var waiting = false;  // the active clip ended and we owe a swap
+  var watchdog = null;
 
   function clipAt(i) { return playlist[i % playlist.length]; }
 
-  function preloadNext() {
+  /* THE POOL FORGIVES. A clip that 404s, stalls or refuses to decode is
+     skipped, never mourned — there are two dozen others. The swap only ever
+     cuts to a clip that is actually ready; until then the outgoing player
+     holds its last frame, so the backdrop can slow down but never die to a
+     black screen. */
+  function loadIdle() {
     var idle = players[1 - active];
-    idle.src = clipAt(clipIdx + 1);
+    idle.dataset.ready = '';
+    idle.src = clipAt(nextIdx);
     idle.load();
   }
 
+  function skipIdleClip() {
+    nextIdx++;
+    if (nextIdx - clipIdx <= playlist.length) loadIdle();
+  }
+
+  function armWatchdog() {
+    if (watchdog) clearTimeout(watchdog);
+    watchdog = setTimeout(function () {
+      if (waiting && players[1 - active].dataset.ready !== '1') skipIdleClip();
+      if (waiting) armWatchdog();
+    }, 8000);
+  }
+
   function swap() {
+    waiting = false;
+    if (watchdog) { clearTimeout(watchdog); watchdog = null; }
     var next = players[1 - active];
-    clipIdx++;
     next.classList.add('on');
     next.play().catch(function () {});
     players[active].classList.remove('on');
     active = 1 - active;
-    preloadNext();
+    clipIdx = nextIdx;
+    nextIdx = clipIdx + 1;
+    loadIdle();
   }
+
+  players.forEach(function (p) {
+    p.addEventListener('ended', function () {
+      if (p !== players[active]) return;
+      if (players[1 - active].dataset.ready === '1') swap();
+      else { waiting = true; armWatchdog(); }
+    });
+    p.addEventListener('canplay', function () {
+      if (p !== players[1 - active]) return;
+      p.dataset.ready = '1';
+      if (waiting) swap();
+    });
+    p.addEventListener('error', function () {
+      if (p === players[1 - active]) skipIdleClip();
+    });
+  });
 
   function startMontage() {
     var v = players[active];
-    v.src = clipAt(clipIdx);
     var reveal = function () {
+      if (v.classList.contains('on')) return;
       v.classList.add('on');
       v.play().catch(function () {});
-      preloadNext();
+      loadIdle();
     };
-    if (v.readyState >= 3) reveal();
-    else v.addEventListener('canplay', reveal, { once: true });
+    v.addEventListener('canplay', reveal);
+    v.addEventListener('error', function () {
+      // the first clip itself is broken: walk forward until one loads
+      if (clipIdx < playlist.length) {
+        clipIdx++;
+        nextIdx = clipIdx + 1;
+        v.src = clipAt(clipIdx);
+        v.load();
+      }
+    });
+    v.src = clipAt(clipIdx);
     v.load();
   }
 
   // Under reduced motion nothing plays and nothing is offered: the poster still
   // shows, via the backdrop's CSS background and the untouched poster attribute.
   if (!prefersReduced) {
-    players.forEach(function (p) { p.addEventListener('ended', swap); });
     startMontage();
   }
 
@@ -1109,7 +1162,10 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
   var coarse = window.matchMedia('(pointer: coarse)').matches;
   if (!prefersReduced && !coarse) {
     var lockUntil = 0;
-    var THRESHOLD = 8;
+    // high enough that a gentle trackpad tick doesn't fire the snap, short
+    // enough a lock that a deliberate second gesture is never swallowed
+    var THRESHOLD = 24;
+    var LOCK = 400;
     window.addEventListener('wheel', function (e) {
       if (e.ctrlKey) return;                       // pinch zoom
       var y = window.pageYOffset || 0;
@@ -1119,12 +1175,15 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
       if (now < lockUntil) { e.preventDefault(); return; } // swallow the tail of a gesture
       if (e.deltaY > THRESHOLD && y < end - 4) {
         e.preventDefault();
-        lockUntil = now + 700;
+        lockUntil = now + LOCK;
         window.scrollTo({ top: end, behavior: 'smooth' });
       } else if (e.deltaY < -THRESHOLD && y > 4) {
         e.preventDefault();
-        lockUntil = now + 700;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        lockUntil = now + LOCK;
+        // scrolling back UP from the folio lands on screen 2 first — snapping
+        // all the way to the top past the intro was a trap
+        var target = y < end - 8 && y > end * 0.55 ? end : 0;
+        window.scrollTo({ top: target, behavior: 'smooth' });
       }
     }, { passive: false });
   }
@@ -1153,6 +1212,9 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
   var EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
   var canAnimate = !prefersReduced && typeof document.body.animate === 'function';
   var busy = false;
+  // each apply() takes a ticket; a stale land() (superseded by a faster second
+  // click) must never commit its old target over the new one
+  var applySeq = 0;
 
   // work out the target state WITHOUT committing it, so the leavers can be
   // animated before the layout moves
@@ -1181,6 +1243,7 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
 
   function apply(keepPage, animate) {
     var t = target(keepPage);
+    var seq = ++applySeq;
     if (!animate || !canAnimate || busy) { commit(t); return; }
 
     var before = [];
@@ -1191,6 +1254,7 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
 
     busy = true;
     function land() {
+      if (seq !== applySeq) { busy = false; return; } // superseded mid-flight
       commit(t);
       items.forEach(function (el) {
         if (el.hidden) return;
@@ -1218,13 +1282,20 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
     }
 
     if (leaving.length) {
-      leaving.forEach(function (b) {
-        b.el.animate(
+      // fill:forwards so a late timer never flashes the leavers back — but a
+      // persisted fill would keep the tile invisible if it later returns, so
+      // land() cancels these the moment the elements are actually hidden
+      var leaveAnims = leaving.map(function (b) {
+        return b.el.animate(
           [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px) scale(0.985)' }],
-          { duration: OUT, easing: 'ease-in' }
+          { duration: OUT, easing: 'ease-in', fill: 'forwards' }
         );
       });
-      setTimeout(land, OUT);
+      var landAndClear = function () {
+        land();
+        leaveAnims.forEach(function (a) { a.cancel(); });
+      };
+      setTimeout(landAndClear, OUT);
     } else {
       land();
     }

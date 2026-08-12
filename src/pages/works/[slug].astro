@@ -44,7 +44,8 @@ export function getStaticPaths() {
           ? names[0]
           : names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1])
       : ''
-  const CURRENT_YEAR = 2026
+  // derived, not typed: last year's "(un)seen" editions close by themselves
+  const CURRENT_YEAR = new Date().getFullYear()
 
   // The pipeline groups everything pre-2020 into a label:"earlier" group whose
   // year is 0, so the real year comes off the cover path.
@@ -298,7 +299,7 @@ const metaDescription = work.what
 >
   <article class="wk" aria-label={`Work: ${work.title}`}>
 
-    <a class="wk-back" href={`${base}/works/`} aria-label="Back to works">&#8592;</a>
+    <a class="wk-back" href={`${base}/#works`} aria-label="Back to works">&#8592;</a>
 
     <header class="wk-head">
       <h1 class="wk-title">{work.title}</h1>
@@ -326,6 +327,9 @@ const metaDescription = work.what
               loop
               playsinline
               preload="metadata"
+              style={b.media.width && b.media.height
+                ? `aspect-ratio: ${b.media.width} / ${b.media.height}`
+                : undefined}
               aria-label={`${work.title}, video`}
             ></video>
           </figure>
@@ -348,7 +352,7 @@ const metaDescription = work.what
       <div class="wk-out">
         <div class="wk-itch">
           <h2 class="wk-label wk-itch-label">Play it</h2>
-          <iframe src={work.itch} title={`${work.title} on itch.io`} loading="lazy"></iframe>
+          <iframe src={work.itch} title={`${work.title} on itch.io`} loading="lazy" referrerpolicy="no-referrer"></iframe>
         </div>
       </div>
     )}
@@ -363,7 +367,8 @@ const metaDescription = work.what
                   src={youtubeEmbedUrl(m.src)}
                   title={`${work.title}, video ${i + 1}`}
                   loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  referrerpolicy="no-referrer"
+                  allow="autoplay; encrypted-media; picture-in-picture"
                   allowfullscreen
                 ></iframe>
               </div>
@@ -576,9 +581,14 @@ const metaDescription = work.what
         }
 
         document.getElementById('wked-save').addEventListener('click', function () {
-          post(serialize(), 'saved')
+          var layout = serialize()
+          // an empty page is almost never intended — make it deliberate
+          if (!layout.flow.length && !window.confirm('Save an EMPTY page? Every block has been removed.')) return
+          post(layout, 'saved')
         })
         document.getElementById('wked-reset').addEventListener('click', function () {
+          // reset deletes hand-edited text that may exist nowhere else
+          if (!window.confirm('Reset to the automatic layout? Your saved arrangement AND text edits for this page will be discarded.')) return
           post(null, 'reset')
         })
       })()
@@ -593,6 +603,17 @@ const metaDescription = work.what
   (function () {
     var vids = document.querySelectorAll('.wk-flow video')
     if (!vids.length) return
+    // the 16/9 CSS ratio is only a pre-metadata placeholder; the real ratio
+    // takes over the moment the file says what it is (portrait clips included)
+    function fit(v) {
+      if (v.videoWidth && v.videoHeight) {
+        v.style.aspectRatio = v.videoWidth + ' / ' + v.videoHeight
+      }
+    }
+    vids.forEach(function (v) {
+      if (v.readyState >= 1) fit(v)
+      else v.addEventListener('loadedmetadata', function () { fit(v) }, { once: true })
+    })
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       vids.forEach(function (v) { v.setAttribute('controls', '') })
       return
@@ -782,6 +803,13 @@ const metaDescription = work.what
     width: 100%;
     height: auto;
     background: #f4f4f4;
+  }
+  /* videos without known dimensions still reserve room before metadata
+     arrives, so the flow never jumps under the reader; a per-video inline
+     aspect-ratio (from real dimensions) overrides this default */
+  .wk-plate video {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
   }
 
   /* ---------- the itch widget keeps the page's grid ---------- */

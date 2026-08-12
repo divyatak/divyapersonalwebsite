@@ -22,12 +22,50 @@ const workLayoutEditor = () => ({
           res.end('POST only')
           return
         }
+        // HARDENING (this endpoint sits in front of Vite's own host/cors
+        // checks): only same-origin JSON requests from the editor may write.
+        // A foreign page's forged text/plain POST fails the content-type
+        // check; a JSON one is forced into a preflight that never passes.
+        const secFetch = req.headers['sec-fetch-site']
+        if (secFetch && secFetch !== 'same-origin') {
+          res.statusCode = 403
+          res.end('same-origin only')
+          return
+        }
+        if (!/^application\/json\b/.test(req.headers['content-type'] || '')) {
+          res.statusCode = 415
+          res.end('application/json only')
+          return
+        }
         let body = ''
-        req.on('data', (c) => { body += c })
+        let dead = false
+        req.on('data', (c) => {
+          body += c
+          if (body.length > 262144 && !dead) { // 256KB is far beyond any real layout
+            dead = true
+            res.statusCode = 413
+            res.end('too large')
+            req.destroy()
+          }
+        })
         req.on('end', () => {
+          if (dead) return
           try {
             const { slug, layout } = JSON.parse(body)
-            if (!slug || typeof slug !== 'string') throw new Error('missing slug')
+            if (typeof slug !== 'string' || !/^[a-z0-9-]{1,80}$/.test(slug)) {
+              throw new Error('bad slug')
+            }
+            if (layout !== null) {
+              if (!layout || !Array.isArray(layout.flow)) throw new Error('bad layout')
+              for (const b of layout.flow) {
+                const okPara = b && b.kind === 'para' && typeof b.body === 'string'
+                const okPlate = b && b.kind === 'plate' && b.media &&
+                  (b.media.type === 'image' || b.media.type === 'video') &&
+                  typeof b.media.src === 'string' && b.media.src.startsWith('/')
+                if (!okPara && !okPlate) throw new Error('bad block')
+                if (typeof b.pos !== 'string' || !/^[a-z-]{3,6}$/.test(b.pos)) throw new Error('bad pos')
+              }
+            }
             let all = {}
             try { all = JSON.parse(fs.readFileSync(layoutFile, 'utf8')) } catch {}
             if (layout === null) delete all[slug]
@@ -47,5 +85,12 @@ const workLayoutEditor = () => ({
 
 export default defineConfig({
   site: 'https://divyatak.art',
-  integrations: [sitemap(), workLayoutEditor()],
+  integrations: [
+    // redirect stubs and prototype leftovers have no business in the sitemap
+    sitemap({
+      filter: (page) =>
+        !page.includes('/prototype/') && !/\/works\/$/.test(page),
+    }),
+    workLayoutEditor(),
+  ],
 })
