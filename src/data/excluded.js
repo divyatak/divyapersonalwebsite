@@ -11,6 +11,7 @@ export const EXCLUDED = [
   'how-to-think',
   'flatline',
   'wonderful-worlds',
+  'the-titli-effect',
 ]
 
 export default EXCLUDED

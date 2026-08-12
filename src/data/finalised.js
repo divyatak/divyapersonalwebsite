@@ -28,6 +28,8 @@ export const FINALISED = [
   'mark',
   'misplaced',
   'proximity',
+  'boneyard',
+  'the-line-before',
 ]
 
 export default FINALISED

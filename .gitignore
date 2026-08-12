@@ -34,3 +34,6 @@ brave_*.jpg
 
 # raw screen recordings (430MB, source material only)
 /CLips/
+
+# Local Netlify folder
+.netlify
