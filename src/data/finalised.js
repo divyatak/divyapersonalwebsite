@@ -12,6 +12,11 @@ export const FINALISED = [
   'webcam-magic',
   'unseen-life',
   'unseen-tokyo',
+  'e-motion',
+  'unseen-emirates',
+  'unseen-istanbul',
+  'unseen-life-2024',
+  'mixed-meanings',
 ]
 
 export default FINALISED

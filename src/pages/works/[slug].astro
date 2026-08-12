@@ -28,6 +28,7 @@
 import Layout from '../../layouts/Layout.astro'
 import works from '../../data/generated-projects.json'
 import { extraWorks } from '../../data/extra-works.js'
+import { EXCLUDED } from '../../data/excluded.js'
 // hand-arranged layouts, written by the in-page editor (dev only). When a slug
 // has an entry here it wins over the automatic arrangement below.
 import savedLayouts from '../../data/work-layouts.json'
@@ -52,7 +53,9 @@ export function getStaticPaths() {
     url.includes('spotify') ? 'Listen on Spotify' : 'Open it'
 
   const fromPipeline = works.flatMap((group: any) =>
-    group.projects.map((p: any) => {
+    group.projects
+      .filter((p: any) => EXCLUDED.indexOf(p.slug) === -1)
+      .map((p: any) => {
       const year = yearOf(p, group.year)
       const firstImage = p.media.find((m: any) => m.type === 'image')
       const hero = p.cover || (firstImage ? firstImage.src : null)
