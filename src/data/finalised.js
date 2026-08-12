@@ -5,6 +5,13 @@
  * on this list carries a small amber mark on the landing folio, so the state
  * of the whole site is readable from the main grid at a glance.
  */
-export const FINALISED = ['bioluminescent-flow', 'metro-museum', 'everything-bazaar']
+export const FINALISED = [
+  'bioluminescent-flow',
+  'metro-museum',
+  'everything-bazaar',
+  'webcam-magic',
+  'unseen-life',
+  'unseen-tokyo',
+]
 
 export default FINALISED

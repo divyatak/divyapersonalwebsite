@@ -112,6 +112,9 @@ const additions = [
 const fromPipeline = generated.flatMap((group) =>
   group.projects.map((p) => {
     const year = yearOf(p, group);
+    // a pipeline work whose media includes real footage plays it on hover,
+    // exactly like the curated additions do (Mixed meanings has five clips)
+    const firstClip = (p.media || []).find((m) => m.type === 'video') || null;
     return {
       id: p.slug,
       title: p.title,
@@ -123,16 +126,17 @@ const fromPipeline = generated.flatMap((group) =>
       bucket: bucketFor(p.categories),
       img: p.cover,
       alt: `Cover image for ${p.title}`,
-      clip: null,
+      clip: firstClip ? firstClip.src : null,
       href: `/works/${p.slug}/`,
       with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
     };
   })
 );
 
-// newest first; the sort is stable, so the additions sit ahead of pipeline entries
-// from the same year.
-const works = [...additions, ...fromPipeline].sort((a, b) => b.year - a.year);
+// the additions hold the curated front of the folio in their OWN order — The
+// Line Before sits right after Webcam Magic at Divya's ask, its 2025 year
+// notwithstanding — and the pipeline works follow, newest first.
+const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
 
 /* ---------- LATELY: the three live channels ----------
    The slot points at where the updates actually happen — Substack, GitHub,
