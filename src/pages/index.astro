@@ -1080,8 +1080,12 @@ const latelyLead = lately[0];
      other silently preloads the next clip, so the cut lands without a gap.
      Every visit shuffles its own order, so the page never opens the same way
      twice and never plays in a learnable loop. */
-  var CLIP_KEYS = ['2a','7e','9m','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
+  var CLIP_KEYS = ['2a','7e','9m','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b','5a','6a','6c'];
   var CLIPS = CLIP_KEYS.map(function (k) { return '/clips/cut-' + k + '.mp4'; });
+  // the game clips live inside their project folders; the pool reaches in
+  ['AI quit','Boneyard','Mark','Misplaced','Proximity','Ruh and the glow'].forEach(function (g) {
+    CLIPS.push('/projects/2020/' + encodeURIComponent(g) + '/clip.mp4');
+  });
 
   function shuffle(a) {
     for (var i = a.length - 1; i > 0; i--) {
