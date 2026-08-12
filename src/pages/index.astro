@@ -71,6 +71,18 @@ const additions = [
     with: '',
   },
   {
+    id: 'e-motion',
+    title: '(e)motion',
+    year: 2026,
+    status: 'ongoing',
+    bucket: 'interactive pieces',
+    img: '/playground/e-motion.webp',
+    alt: 'A pink flower mid-bloom on a dark stage, from (e)motion',
+    clip: '/clips/cut-9a.mp4',
+    href: '/works/e-motion/',
+    with: '',
+  },
+  {
     id: 'bioluminescent-flow',
     title: 'Bioluminescent Flow',
     year: 2026,
@@ -105,18 +117,6 @@ const additions = [
     clip: null,
     href: '/works/the-line-before/',
     with: 'with Kahran Singh',
-  },
-  {
-    id: 'e-motion',
-    title: '(e)motion',
-    year: 2026,
-    status: 'ongoing',
-    bucket: 'interactive pieces',
-    img: '/playground/e-motion.webp',
-    alt: 'A pink flower mid-bloom on a dark stage, from (e)motion',
-    clip: '/clips/cut-9a.mp4',
-    href: '/works/e-motion/',
-    with: '',
   },
 ];
 
@@ -1255,10 +1255,11 @@ const latelyRest = lately.slice(1);
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
-  // 15 cuts of 5.2s each = 78.0s, composed offline with ffmpeg at a uniform
+  // 16 cuts of 5.2s each = 83.2s, composed offline with ffmpeg at a uniform
   // 1920x1080. The order below is informational — it is baked into the file.
-  var order = ['2a','7e','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
-  var MONTAGE_SECONDS = 78.0;
+  // 9m is the (e)motion bloom, spliced in as the third cut.
+  var order = ['2a','7e','9m','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
+  var MONTAGE_SECONDS = 83.2;
   var CUT = MONTAGE_SECONDS / order.length;   // 5.2s — the montage's one unit
 
   var vid = document.getElementById('vid');
@@ -1269,7 +1270,7 @@ const latelyRest = lately.slice(1);
   // so the seek is never seen. The seek is on a cut boundary, so it lands on a
   // first frame, not mid-shot.
   function enterMontage() {
-    try { vid.currentTime = 5.2 * Math.floor(Math.random() * 15); } catch (err) {}
+    try { vid.currentTime = CUT * Math.floor(Math.random() * order.length); } catch (err) {}
     vid.classList.add('on');
     vid.play().catch(function () {});
   }
