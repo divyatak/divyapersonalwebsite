@@ -43,10 +43,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 const pathname = Astro.url.pathname
 
 // On the landing the folio is on this page, so Works is an anchor. Everywhere
-// else it is a trip back to the landing's folio. The prototype copy of the
-// landing still counts as the landing.
-const onLanding =
-  pathname === `${base}/` || pathname.startsWith(`${base}/prototype/ongoing`)
+// else it is a trip back to the landing's folio. (The prototype copy is a
+// redirect now — the landing is the only landing.)
+const onLanding = pathname === `${base}/`
 
 const links = [
   { label: 'Works', href: onLanding ? '#works' : `${base}/#works` },
