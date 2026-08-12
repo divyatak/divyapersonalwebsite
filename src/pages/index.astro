@@ -5,8 +5,6 @@
 // Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
 
 import generated from '../data/generated-projects.json';
-// LATELY is entirely hand-written — Divya's lines, Divya's stamp, one file
-import latelyData from '../data/lately.json';
 // the sign-off list: works not on it carry a small amber mark in the folio
 import { FINALISED } from '../data/finalised.js';
 // works pulled from the site entirely
@@ -159,16 +157,6 @@ const fromPipeline = generated.flatMap((group) =>
 // notwithstanding — and the pipeline works follow, newest first.
 const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
 
-/* ---------- LATELY: hand-written, always ----------
-   Automation could only ever say "pushed to a repo"; the lines that feel like
-   news — "Fogging the east hall of the Metro Museum" — are Divya's to write.
-   Everything lives in src/data/lately.json: up to three lines, a link each,
-   an optional image on the first, and the stamp she updates when she edits.
-   A push publishes it. Nothing here goes stale silently: the stamp says
-   exactly how fresh the words are. */
-const lately = (latelyData.items || []).slice(0, 3);
-const latelyLead = lately[0] || null;
-const latelyStamp = latelyData.stamp || '';
 ---
 <html lang="en">
 <head>
@@ -352,12 +340,11 @@ const latelyStamp = latelyData.stamp || '';
   }
   /* THE LABEL LAYER — one line box for everything that labels rather than
      speaks, so the whole instrument layer stacks on the same baseline. */
-  .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue,
-  .woven-foot {
+  .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue {
     line-height: var(--lh-label);
   }
   /* light type over moving video blooms; hold the strokes thin */
-  .lately, .scroll-cue, .intro, .name {
+  .scroll-cue, .intro, .name {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -476,7 +463,8 @@ const latelyStamp = latelyData.stamp || '';
       rgba(0,0,0,0.84) 100%
     );
   }
-  /* the folio's three columns, borrowed whole: intro on 1–2, lately on 3 */
+  /* the folio's three columns, borrowed whole: intro on 1–2, column 3 is air
+     (the Lately slot lived there; it may return — src/data/lately.json waits) */
   .intro-cols {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -557,86 +545,6 @@ const latelyStamp = latelyData.stamp || '';
   }
   .intro a:hover { border-bottom-color: #fff; }
 
-  /* =====================================================================
-     LATELY — column 3. No rule, no label, no card box. Three different
-     STRUCTURES for one RUN of recent things (1, 2 or 3 of them), switched
-     from the tooling picker:
-
-       1 WOVEN    the updates in the intro's own speaking register — a short
-                  run of lines, the first with its artefact set inline like a
-                  word. Read as speech, not as a list.
-       2 ARTIFACT the newest thing is an object: a square, chromeless, with
-                  one word and a date hanging off its bottom edge on the
-                  column line, its source withheld until you hover it. What
-                  came before it follows as compact lines underneath, so the
-                  picture stays the only picture.
-       3 STAMP    a dated index. Two hairlines around the run and a thin one
-                  between entries — here the rule IS the idea, because an
-                  index entry is a thing you read between two lines.
-
-     THE SLOT IS THE CONSTANT; THE PATTERN AND THE COUNT ARE THE VARIABLES.
-     All three are column-3 blocks starting at the same anchor — the body's
-     first line (dock + gap + subtitle + its margin) — inside a box of FIXED
-     height, so they are three fillings of one hole. Nothing about the switch
-     is allowed to reach the layout: the height cannot change (fixed, not
-     min-), the width cannot change (min-width:0 on the track), and therefore
-     neither the intro, the name's dock, nor the vertical centring of the
-     whole screen can move.
-
-     THE HEIGHT IS 15×--r, RAISED ONCE FROM 14 for all three at the same
-     time when the slot went from one item to three. Every pattern is sized
-     so that its THREE-item worst case (each line wrapping to two) still
-     clears it, which is why the compact registers below are deliberately
-     tighter than the single-item versions they replace: the artefact's
-     square is 8×--r rather than 11, and woven's leading closed from 1.5×--r
-     to 1.25. The slot does not grow to fit the content; the content is cut
-     to fit the slot.
-     ===================================================================== */
-  .lately {
-    grid-column: 3;
-    min-width: 0;
-    margin-top: calc(
-      var(--t-dock) + var(--dock-gap) +
-      var(--t-sub) * 1.02 + var(--r) * 2.5
-    );
-    height: calc(var(--r) * 15);   /* fixed, not min-: the slot never breathes */
-  }
-  .lately-view { max-width: 100%; }
-  .lately ul { list-style: none; }
-
-  /* ---- 1 · WOVEN ---- */
-  /* the measure here is the COLUMN, not the reading measure — this is a block
-     in column 3 like the other two, it just happens to be made of sentence. */
-  .woven {
-    font-size: calc(var(--t-body) * 1.05);
-    line-height: calc(var(--r) * 1.25);
-    letter-spacing: -0.005em;
-    color: rgba(255,255,255,0.88);
-    max-width: 100%;
-  }
-  /* the lines run on with a breath between them, not a bullet or a rule: three
-     facts spoken one after the other are still speech */
-  .woven li + li { margin-top: calc(var(--r) * 0.5); }
-  .woven a { border-bottom: 1px solid rgba(255,255,255,0.4); }
-  .woven a:hover { border-bottom-color: #fff; }
-  /* the artefact sits IN the first sentence, sized to the line it lives on */
-  .woven .inline-thumb {
-    display: inline-block;
-    width: calc(var(--r) * 1.2);
-    height: calc(var(--r) * 1.2);
-    object-fit: cover;
-    vertical-align: -0.34em;
-    margin: 0 0.12em 0 0;
-  }
-  .woven-foot {
-    display: block;
-    margin-top: calc(var(--r) * 1.25);
-    font-size: var(--t-quiet);
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.32);
-  }
 
 
   @media (prefers-reduced-motion: reduce) {
@@ -855,9 +763,6 @@ const latelyStamp = latelyData.stamp || '';
     .scroll-cue { grid-column: 2; }
     .intro-cols { grid-template-columns: repeat(2, 1fr); }
     .intro { grid-column: 1 / -1; }
-    /* stacked under the intro now, so there is no third column to protect and
-       the slot can take the height its pattern needs */
-    .lately { grid-column: 1 / -1; margin-top: calc(var(--r) * 3.5); height: auto; }
     .works-head { grid-template-columns: repeat(2, 1fr); }
   }
 
@@ -936,29 +841,6 @@ const latelyStamp = latelyData.stamp || '';
             </p>
           </div>
 
-          <!-- LATELY — the woven pattern, chosen from three candidates: the
-               live channels (Substack, GitHub, Instagram) as a short run of
-               speech, the artefact inline in the first line so the block
-               reads as a sentence, not a feed. -->
-          <aside class="lately" aria-label="Lately">
-            <article class="lately-view">
-              <ul class="woven">
-                {lately.map((it, i) => (
-                  <li>
-                    {i === 0 && it.img && (
-                      <img class="inline-thumb" src={it.img} alt="" width="240" height="240" />
-                    )}
-                    <a
-                      href={it.href}
-                      target={isExt(it.href) ? '_blank' : undefined}
-                      rel={isExt(it.href) ? 'noopener' : undefined}
-                    >{it.short}</a>.
-                  </li>
-                ))}
-              </ul>
-              {latelyStamp && <span class="woven-foot">{latelyStamp}</span>}
-            </article>
-          </aside>
         </div>
       </div>
     </section>
