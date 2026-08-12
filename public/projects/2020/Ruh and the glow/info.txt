@@ -1,6 +1,8 @@
 title: Ruh and the glow
-description: A children's storybook that you piece together like a puzzle — follow Ruh through the forest as the pieces fall into place. Made with Charu Tak
+description: A children's storybook that you piece together like a puzzle — follow Ruh through the forest as the pieces fall into place. Made in Unity as a part of the 6 games in 6 months series.
 category: game
+tech: Unity
+media: clip.mp4
 media: https://www.youtube.com/watch?v=sdWQ7PwXZSE
 media: 8Qe0H.webp
 media: HcfHUs.webp

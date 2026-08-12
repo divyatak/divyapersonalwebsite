@@ -43,7 +43,7 @@ function findPhoto(dir) {
 
 function parseInfo(filePath) {
   const text = fs.readFileSync(filePath, 'utf-8').replace(/^\uFEFF/, '')
-  const result = { title: '', description: '', media: [], collaborators: [], categories: [], itch: '', link: '' }
+  const result = { title: '', description: '', media: [], collaborators: [], categories: [], itch: '', link: '', tech: '' }
 
   for (const line of text.split('\n')) {
     const trimmed = line.trim()
@@ -62,6 +62,7 @@ function parseInfo(filePath) {
     else if (key === 'category') result.categories.push(value.toLowerCase())
     else if (key === 'itch') result.itch = value
     else if (key === 'link') result.link = value
+    else if (key === 'tech') result.tech = value
     else console.warn(`Unknown key "${key}" in ${filePath}`)
   }
 
@@ -142,14 +143,18 @@ async function buildAll() {
 
         const rawMedia = []
         for (const m of info.media) {
-          if (isUrl(m)) {
-            rawMedia.push({ type: 'youtube', src: m })
+          // optional alt text after a pipe: `media: file.webp | what the image shows`
+          const [file, ...altParts] = m.split('|').map((s) => s.trim())
+          const alt = altParts.join(' | ')
+          if (isUrl(file)) {
+            rawMedia.push({ type: 'youtube', src: file })
             continue
           }
-          const ext = path.extname(m).toLowerCase()
+          const ext = path.extname(file).toLowerCase()
           const type = videoExts.has(ext) ? 'video' : 'image'
-          const src = `${encodedBase}/${encodeURIComponent(m)}`
+          const src = `${encodedBase}/${encodeURIComponent(file)}`
           const entry = { type, src }
+          if (alt) entry.alt = alt
 
           // Read dimensions for images
           if (type === 'image') {
@@ -177,10 +182,18 @@ async function buildAll() {
 
         const title = info.title || projDir
 
-        // Generate unique slug
+        // Generate unique slug. One level of year-suffixing only — a THIRD
+        // same-title work would collide, and silently reassigning a slug
+        // would repoint finalised.js marks, saved layouts and external links,
+        // so a collision is a loud warning, never a quiet rename.
         let slug = slugify(title)
         if (usedSlugs.has(slug)) {
           slug = `${slug}-${year}`
+        }
+        if (usedSlugs.has(slug)) {
+          console.warn(
+            `SLUG COLLISION: "${title}" (${year}) resolves to "${slug}" which is already taken — rename one of the projects.`
+          )
         }
         usedSlugs.add(slug)
 
@@ -221,8 +234,10 @@ async function buildAll() {
           media,
         }
         if (info.categories.length > 0) project.categories = info.categories
+        if (info.collaborators.length > 0) project.collaborators = info.collaborators
         if (info.itch) project.itch = info.itch
         if (info.link) project.link = info.link
+        if (info.tech) project.tech = info.tech
         projects.push(project)
       }
 

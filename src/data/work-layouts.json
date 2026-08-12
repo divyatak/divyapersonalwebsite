@@ -1,0 +1,1559 @@
+{
+  "bioluminescent-flow": {
+    "lead": "A field of glowing bioluminescent algae simulated on the GPU. Move your hand through it, tracked live by webcam, and the particles brighten and scatter, the light rippling around your fingers, like dragging your hand through real bioluminescent plankton in dark water.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-2a.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "Three.js with GPUComputationRenderer, so the whole simulation runs as a GPU particle system in compute shaders, with custom glow and rim shaders on top. Thousands of points respond in real time. The hand is read from the webcam by MediaPipe HandLandmarker.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "Inspired by my actual experience in 2021 of seeing bioluminescent algae for the for the first time off the coast of karnataka, this piece wants to capture that magical feeling. In playtests its been amply clear that people don't need instructions when the interaction feels natural and intuitive.",
+        "pos": "pw-l"
+      }
+    ]
+  },
+  "metro-museum": {
+    "lead": "A first-person walking piece set inside an endless Delhi Metro train that is also a museum. The exhibits are real lost things, taken from the Delhi Metro's public lost-and-found ledger: lunch boxes, single earbuds, hundreds of umbrellas, rings, bags, ID cards. The train's cars become galleries, the lost things become exhibits, and some of them speak. The player is a visitor in this space, walking and exploring.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7b.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "It runs in a browser: Three.js and Vite, with custom shaders and post-processing doing the emotional work of light and colour. The exhibits come out of a self-built Python pipeline, Selenium and BeautifulSoup and Pandas, that scrapes and cleans the public ledger into the dataset the game reads.  The project is being built in collaboration with Kahran Singh, with his narrative direction and my art direction and game design as the structural spines.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "Car by car the museum explores that which is lost, forgotten. Important enough to keep with you on a mundane everyday, unimportant enough that if lost, it is forgotten.The question underneath is that our objects shape us, so what happens to the self an object held when the object is lost? The piece tries to sit with the feeling of what gets left behind, and what stories does that tell us about the world we live in.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7c.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7d.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7e.mp4"
+        }
+      }
+    ]
+  },
+  "everything-bazaar": {
+    "lead": "What happens when instead of being sold a product, you are sold a feeling. Inspired by my experience of vending machines in tokyo this project asks that question. A row of five vending machines on a webpage. You walk the row, pick a feeling like loneliness or boredom, and a machine dispenses a procedurally generated product: a bottle, a can, a chip packet, a slim box, with a name, a brand identity, marketing copy, rendered in 3D.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-6b.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "Built in React and Three.js. The package shapes are procedural geometry and the label artwork is generated on an HTML5 canvas, so there are no pre-made models anywhere in it. The discipline is that the products have to be genuinely desirable. My experience as a brand designer for the last ~15 years + power of procedural system design is what this project relies on.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "The subject is desire, and how we live with it now that culture, community and ritual have been replaced by brands as the things that organise our wanting. We say who we are by what we buy, which is legitimate, and the honest question the piece holds is how else you would even express yourself. The whole transaction stays invisible because it is banal. The five brands are not pretending to care either. The wish is genuine: real craft, a real desire to help. Nobody in the chain is lying. Rather than moralising from outside of the system, this project forces a view at capitalism and what does it mean to be sold feelings.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-6d.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-6c.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/playground/bazaar-product.webp",
+          "alt": "A generated product in the Package Studio: a cream bottle with a cork cap, labelled Gathered"
+        }
+      }
+    ]
+  },
+  "webcam-magic": {
+    "lead": "A real-time piece that transforms a webcam feed through hand gestures. Seven visual modes: duotone ripple, shifted erase, thermal paint, halftone sculpt, ASCII smear, mosaic sharpen, static calm. Each one answers hand movement differently. Mode switching happens on a peace sign, and finger speed controls the effect radius, so faster movement creates larger disruptions.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1a.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "p5.js for the visuals and MediaPipe HandLandmarker for real-time hand tracking, with plain HTML, CSS and JavaScript around them. It needs a webcam and a secure context for camera access.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "This was first in what became a series of experiments with media pipe, to explore interactions beyond clicks. As a designer who has worked on human computer interaction for years, exploring more intuitive ways of interacting really brings something special and unique to the process.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1b.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1c.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1d.mp4"
+        }
+      }
+    ]
+  },
+  "unseen-life": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Photographs of ordinary life, drawn over with the things you imagine when you look a little longer, the seen and the unseen, layered together.",
+        "pos": "p-f"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2026/(un)seen%20Life/cover.webp",
+          "alt": "(un)seen Life, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2026/(un)seen%20Life/image6.webp",
+          "alt": "(un)seen Life, image 1 of 2",
+          "width": 2000,
+          "height": 2667
+        }
+      }
+    ]
+  },
+  "e-motion": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Puppet a video with your hand. Gather your fingers to a bud, then open like petals. An ongoing series of sketches that explore movement and emotion in connection to each other.\n\nMediaPipe HandLandmarker reads the hand live; how far the fingers spread scrubs a pre-rendered frame sequence, smoothed through a One Euro filter so the bloom follows the hand without jitter. The stage is phone-shaped, with the raw mirrored self-view kept in the corner.",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-9b.mp4"
+        }
+      }
+    ]
+  },
+  "unseen-emirates": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The Emirates through two lenses — what the camera caught, and what the hand added later. Drawings over photographs, imagination over memory",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/cover.webp",
+          "alt": "(un)seen Emirates, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image.webp",
+          "alt": "(un)seen Emirates, image 1 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image2.webp",
+          "alt": "(un)seen Emirates, image 2 of 7",
+          "width": 1200,
+          "height": 1600
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image4.webp",
+          "alt": "(un)seen Emirates, image 3 of 7",
+          "width": 1200,
+          "height": 1600
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image5.webp",
+          "alt": "(un)seen Emirates, image 4 of 7",
+          "width": 1200,
+          "height": 1600
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image7.webp",
+          "alt": "(un)seen Emirates, image 5 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image8.webp",
+          "alt": "(un)seen Emirates, image 6 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      }
+    ]
+  },
+  "mixed-meanings": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "What happens when you take a word and let it slip between languages — the meaning bends, the feeling shifts, something new appears. AI-generated video loops made with poet Kahran Singh. One poem interpreted in two different visuals. \n\nExhibited at the Canyon Gallery in Boulder, Colorado in 2025",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/Mixed%20meanings/still-1.webp",
+          "alt": "Mixed meanings, image 1 of 3",
+          "width": 1126,
+          "height": 1128
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/Mixed%20meanings/still-3.webp",
+          "alt": "Mixed meanings, image 3 of 3",
+          "width": 1200,
+          "height": 1200
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/1.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/2.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/3.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/4.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/5.mp4"
+        }
+      }
+    ]
+  },
+  "unseen-istanbul": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Istanbul remembered and reimagined — photographs from the city drawn over with the feelings and fictions that came after",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/cover.webp",
+          "alt": "(un)seen Istanbul, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/IMG_6242.webp",
+          "alt": "(un)seen Istanbul, image 1 of 7",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/IMG_6305.webp",
+          "alt": "(un)seen Istanbul, image 2 of 7",
+          "width": 1461,
+          "height": 1948
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/IMG_6368.webp",
+          "alt": "(un)seen Istanbul, image 4 of 7",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/image3.webp",
+          "alt": "(un)seen Istanbul, image 5 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/image9.webp",
+          "alt": "(un)seen Istanbul, image 6 of 7",
+          "width": 1920,
+          "height": 2560
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/BubbleSheesha.webp",
+          "alt": "(un)seen Istanbul, image 7 of 7",
+          "width": 1119,
+          "height": 1600
+        }
+      }
+    ]
+  },
+  "unseen-life-2024": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The quiet moments of daily life, photographed and then drawn into — adding the invisible things that were always there, just under the surface",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/cover.webp",
+          "alt": "(un)seen Life, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_5879.webp",
+          "alt": "(un)seen Life, image 1 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_5892.webp",
+          "alt": "(un)seen Life, image 2 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_5904.webp",
+          "alt": "(un)seen Life, image 3 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6058.webp",
+          "alt": "(un)seen Life, image 4 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6333.webp",
+          "alt": "(un)seen Life, image 5 of 9",
+          "width": 1333,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6378.webp",
+          "alt": "(un)seen Life, image 7 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6398.webp",
+          "alt": "(un)seen Life, image 8 of 9",
+          "width": 1333,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6438.webp",
+          "alt": "(un)seen Life, image 9 of 9",
+          "width": 1055,
+          "height": 1876
+        }
+      }
+    ]
+  },
+  "unseen-vietnam": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Vietnam in photographs, then in drawings laid on top — the real and the dreamed-up sitting together, neither one more true than the other",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/cover.webp",
+          "alt": "(un)seen Vietnam, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5828.webp",
+          "alt": "(un)seen Vietnam, image 1 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5831.webp",
+          "alt": "(un)seen Vietnam, image 2 of 9",
+          "width": 1474,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5832.webp",
+          "alt": "(un)seen Vietnam, image 3 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5834.webp",
+          "alt": "(un)seen Vietnam, image 4 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5836.webp",
+          "alt": "(un)seen Vietnam, image 5 of 9",
+          "width": 1470,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_6406.webp",
+          "alt": "(un)seen Vietnam, image 7 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_6413.webp",
+          "alt": "(un)seen Vietnam, image 8 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_6414.webp",
+          "alt": "(un)seen Vietnam, image 9 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      }
+    ]
+  },
+  "common": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Inspired by the height of covid, story of a common cold. \nPublished in the \"diseased\" edition of the INKLAB anthology in 2021, this comic captured the innocuous cold and its ability to stop life.",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%201.webp",
+          "alt": "Common, image 1 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/page%202.webp",
+          "alt": "Common, image 2 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%203.webp",
+          "alt": "Common, image 3 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%204.webp",
+          "alt": "Common, image 4 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%205.webp",
+          "alt": "Common, image 5 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%206.webp",
+          "alt": "Common, image 6 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%207.webp",
+          "alt": "Common, image 7 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%208.webp",
+          "alt": "Common, image 8 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      }
+    ]
+  },
+  "ai-quit": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The great harrowing escape from the capitalistic grasp of the toaster factory — you're a tiny robot, the guards are watching, and the exit is very far away. \nMade in unity as a part of 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/AI%20quit/clip.mp4"
+        }
+      }
+    ]
+  },
+  "clogs": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Comic blogs drawn and inked by hand — everyday musings, small observations, the kind of thoughts that pass through your head and usually disappear",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/cover.webp",
+          "alt": "Clogs, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%202.webp",
+          "alt": "Clogs, image 2 of 30",
+          "width": 1389,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%203.webp",
+          "alt": "Clogs, image 3 of 30",
+          "width": 1409,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%204.webp",
+          "alt": "Clogs, image 4 of 30",
+          "width": 1398,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%205.webp",
+          "alt": "Clogs, image 5 of 30",
+          "width": 1401,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%206.webp",
+          "alt": "Clogs, image 6 of 30",
+          "width": 1405,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%207.webp",
+          "alt": "Clogs, image 7 of 30",
+          "width": 1418,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%208.webp",
+          "alt": "Clogs, image 8 of 30",
+          "width": 1401,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%209.webp",
+          "alt": "Clogs, image 9 of 30",
+          "width": 1417,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2010.webp",
+          "alt": "Clogs, image 10 of 30",
+          "width": 1404,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2011.webp",
+          "alt": "Clogs, image 11 of 30",
+          "width": 1402,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2013.webp",
+          "alt": "Clogs, image 13 of 30",
+          "width": 1355,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2014.webp",
+          "alt": "Clogs, image 14 of 30",
+          "width": 940,
+          "height": 1321
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2015.webp",
+          "alt": "Clogs, image 15 of 30",
+          "width": 1413,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2016.webp",
+          "alt": "Clogs, image 16 of 30",
+          "width": 711,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2017.webp",
+          "alt": "Clogs, image 17 of 30",
+          "width": 651,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2018%20V.webp",
+          "alt": "Clogs, image 18 of 30",
+          "width": 1246,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2019%20V.webp",
+          "alt": "Clogs, image 19 of 30",
+          "width": 1255,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2020%20V.webp",
+          "alt": "Clogs, image 20 of 30",
+          "width": 1285,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2012.webp",
+          "alt": "Clogs, image 12 of 30",
+          "width": 505,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2021%20V.webp",
+          "alt": "Clogs, image 21 of 30",
+          "width": 1241,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2022%20V.webp",
+          "alt": "Clogs, image 22 of 30",
+          "width": 1269,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2023.webp",
+          "alt": "Clogs, image 23 of 30",
+          "width": 2000,
+          "height": 1428
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2024.webp",
+          "alt": "Clogs, image 24 of 30",
+          "width": 2000,
+          "height": 1418
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2025.webp",
+          "alt": "Clogs, image 25 of 30",
+          "width": 2000,
+          "height": 1432
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2026.webp",
+          "alt": "Clogs, image 26 of 30",
+          "width": 1326,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2027.webp",
+          "alt": "Clogs, image 27 of 30",
+          "width": 900,
+          "height": 1307
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2028.webp",
+          "alt": "Clogs, image 28 of 30",
+          "width": 1314,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/Clog%2029.webp",
+          "alt": "Clogs, image 29 of 30",
+          "width": 1328,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2014/Clogs/clog%2030%20fb.webp",
+          "alt": "Clogs, image 30 of 30",
+          "width": 1293,
+          "height": 2000
+        }
+      }
+    ]
+  },
+  "pi-of-life": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A comic series that turns life's messy truths into pie charts — what you actually think about in the shower, why you make art, the things nobody tells you about growing up",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/cover.webp",
+          "alt": "Pi of life, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi%20of%20life%204.webp",
+          "alt": "Pi of life, image 2 of 16",
+          "width": 2000,
+          "height": 1861
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi%20of%20life%205.webp",
+          "alt": "Pi of life, image 3 of 16",
+          "width": 2000,
+          "height": 1866
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi%20of%20life%206.webp",
+          "alt": "Pi of life, image 4 of 16",
+          "width": 2000,
+          "height": 1866
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi%20of%20life%207.webp",
+          "alt": "Pi of life, image 5 of 16",
+          "width": 2000,
+          "height": 1866
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-21.webp",
+          "alt": "Pi of life, image 6 of 16",
+          "width": 900,
+          "height": 663
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-22.webp",
+          "alt": "Pi of life, image 7 of 16",
+          "width": 940,
+          "height": 646
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-23.webp",
+          "alt": "Pi of life, image 8 of 16",
+          "width": 940,
+          "height": 698
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-24.webp",
+          "alt": "Pi of life, image 9 of 16",
+          "width": 940,
+          "height": 851
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-25.webp",
+          "alt": "Pi of life, image 10 of 16",
+          "width": 940,
+          "height": 751
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-25-5.webp",
+          "alt": "Pi of life, image 11 of 16",
+          "width": 940,
+          "height": 653
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-26.webp",
+          "alt": "Pi of life, image 12 of 16",
+          "width": 940,
+          "height": 794
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-27.webp",
+          "alt": "Pi of life, image 13 of 16",
+          "width": 940,
+          "height": 675
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-28.webp",
+          "alt": "Pi of life, image 14 of 16",
+          "width": 940,
+          "height": 794
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-29.webp",
+          "alt": "Pi of life, image 15 of 16",
+          "width": 940,
+          "height": 675
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2016/Pi%20of%20life/Pi-of-life-30.webp",
+          "alt": "Pi of life, image 16 of 16",
+          "width": 940,
+          "height": 751
+        }
+      }
+    ]
+  },
+  "ruh-and-the-glow": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A children's storybook that you piece together like a puzzle — follow Ruh through the forest as the pieces fall into place. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/8Qe0H.webp",
+          "alt": "Ruh and the glow, image 1 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/HcfHUs.webp",
+          "alt": "Ruh and the glow, image 2 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/xyPOxV.webp",
+          "alt": "Ruh and the glow, image 4 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "mark": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A bouncing ball, a mouse, and a series of increasingly unreasonable levels — collect the keys, dodge the enemies, question your life choices. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Mark/cover.webp",
+          "alt": "Mark, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Mark/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Mark/FzhEND.webp",
+          "alt": "Mark, image 3 of 6",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "misplaced": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "You're in a room, the door is locked, and the only way out is through your head — a text-based escape room puzzle. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Misplaced/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Misplaced/fZA9yG.webp",
+          "alt": "Misplaced, image 1 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Misplaced/ZD99BQ.webp",
+          "alt": "Misplaced, image 4 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "proximity": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A colour puzzle — place them in the right order, fill the board, feel unreasonably satisfied. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Proximity/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Proximity/Ewux55.webp",
+          "alt": "Proximity, image 1 of 5",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Proximity/Fs0dH.webp",
+          "alt": "Proximity, image 2 of 5",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Proximity/RwoSMd.webp",
+          "alt": "Proximity, image 5 of 5",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "boneyard": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Skulls everywhere, and you with a sword — hack, slash, survive as long as you can. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Boneyard/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Boneyard/2_a8xD.webp",
+          "alt": "Boneyard, image 1 of 3",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Boneyard/ri67IB.webp",
+          "alt": "Boneyard, image 2 of 3",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Boneyard/sjeBdO.webp",
+          "alt": "Boneyard, image 3 of 3",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "the-line-before": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The Line Before takes 230 fragments from Kahran's body of nearly 400 poems and lets visitors assemble new poems through a sequence of instinctive emotional choices. Four choices make a poem. \n\nThe completed poem becomes a generative flower whose colours, petals and structure reflect the emotional affinities of its fragments, and the flower drifts into a persistent garden made of every previous visitor's poem.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-5a.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-5b.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "A web build in React and Three.js: a 3D garden that each finished poem grows a flower into, with the poem itself overlaid on the scene. The scoring of the 230 fragments along the four axes was done with a large language model as a collaborator. Each interaction takes under a minute, and the garden keeps growing across visitors.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "It is the fullest expression of the Joyus collaboration: Kahran's poetry, my visual and interaction design, and an audience that completes the system. It asks a question about intelligence and authorship that feels urgent and honest. When a machine scores a fragment, a poet writes it, and you feel the resulting line in your chest, whose intelligence is that? The piece proposes that intelligence is emergent, arising through the interaction between poetic expression, computational interpretation, and human intuition.",
+        "pos": "pw-l"
+      }
+    ]
+  }
+}

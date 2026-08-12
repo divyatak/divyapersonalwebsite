@@ -1,5 +1,5 @@
 :root {
-  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  font-family: 'Sora', system-ui, -apple-system, sans-serif;
   line-height: 1.6;
   font-weight: 400;
   font-size: 16px;
@@ -73,11 +73,17 @@ body {
 }
 
 a {
-  color: #1a0dab;
+  color: #444;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 2px;
 }
 
 a:visited {
-  color: #681da8;
+  color: #444;
+}
+
+a:hover {
+  color: #222;
 }
 
 a:focus-visible {

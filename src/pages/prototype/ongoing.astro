@@ -1,0 +1,22 @@
+---
+// PROMOTED — this page became the landing page (src/pages/index.astro) and
+// then kept evolving there. Keeping a second copy in sync was the same drift
+// trap the site header once fell into, so this URL now simply forwards home,
+// hash included: /prototype/ongoing/#works lands on the folio.
+// The design reasoning that got here lives on in NOTES.md.
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>moved home — Divya Tak</title>
+  <script is:inline>
+    window.location.replace('/' + window.location.hash)
+  </script>
+  <meta http-equiv="refresh" content="0; url=/" />
+</head>
+<body>
+  <p>This prototype became the site. <a href="/">Continue to divyatak.art</a></p>
+</body>
+</html>
