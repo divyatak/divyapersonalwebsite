@@ -710,14 +710,14 @@ const latelyLead = lately[0];
     column-gap: var(--gutter);
     padding-bottom: calc(var(--r) * 4);
   }
-  /* the chapter word, set the same as the work pages' title text at Divya's
-     ask: caps, 600, centred, the same clamp — so "Works" here and the title on
-     any work page are one voice at one size. */
+  /* the chapter word, raised to the docked name's own rank at Divya's ask:
+     same size derivation (--t-dock), same weight, same caps — "Works" opens
+     its chapter the way DIVYA TAK sits above "Creative technologist". */
   .works-head h2 {
     grid-column: 1 / -1;
     text-align: center;
-    font-size: clamp(1.05rem, 2.7vw, 2.2rem);
-    font-weight: 600;
+    font-size: var(--t-dock);
+    font-weight: 700;
     line-height: 1.02;
     letter-spacing: -0.015em;
     text-transform: uppercase;
@@ -1481,8 +1481,15 @@ const latelyLead = lately[0];
         String(monday.getDate()).padStart(2, '0') + ' ' +
         MONTHS[monday.getMonth()] + ' ' + monday.getFullYear();
     }
+    // the function lives on Netlify; when the page runs where it doesn't
+    // exist (astro dev), fall back to asking the deployed site directly
     fetch('/api/lately')
-      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('no local function')); })
+      .catch(function () {
+        return fetch('https://divyatak-art.netlify.app/api/lately')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .catch(function () { return null; });
+      })
       .then(function (data) {
         if (!data) return;
         var s = document.querySelector('[data-lately="substack"]');
