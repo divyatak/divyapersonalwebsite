@@ -5,8 +5,8 @@
 // Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
 
 import generated from '../data/generated-projects.json';
-// Instagram has no public feed — its Lately line is edited by hand here
-import instagramLately from '../data/lately-instagram.json';
+// LATELY is entirely hand-written — Divya's lines, Divya's stamp, one file
+import latelyData from '../data/lately.json';
 // the sign-off list: works not on it carry a small amber mark in the folio
 import { FINALISED } from '../data/finalised.js';
 // works pulled from the site entirely
@@ -159,61 +159,16 @@ const fromPipeline = generated.flatMap((group) =>
 // notwithstanding — and the pipeline works follow, newest first.
 const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
 
-/* ---------- LATELY: the three live channels ----------
-   The slot points at where the updates actually happen — Substack, GitHub,
-   Instagram — instead of hand-copied items that go stale. Everything each of
-   the three patterns needs is here, so switching pattern is a change of
-   structure and never a change of content:
-     short   the one-line form every compact pattern uses
-     word    the noun the artifact pattern hangs off its picture
-     when    the short form · stamp the long one — both are "week of", computed
-             at build time, so a weekly rebuild keeps them honest by itself
-     whence  where the thing lives
-   The slot renders at most LATELY_MAX and is designed to sit still at 1, 2 or 3. */
-const LATELY_MAX = 3;
-
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const now = new Date();
-const monday = new Date(now);
-monday.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // back to this week's Monday
-const pad = (n) => String(n).padStart(2, '0');
-const week = `Week of ${pad(monday.getDate())} ${MONTHS[monday.getMonth()]} ${monday.getFullYear()}`;
-const weekStamp = `Week of ${monday.getFullYear()} · ${pad(monday.getMonth() + 1)} · ${pad(monday.getDate())}`;
-
-/* These are the FALLBACK lines — what the page says before (or without) the
-   live answer. On load the page asks /api/lately (a Netlify function that
-   reads the Substack feed and GitHub's API) and rewrites the first two lines
-   with the actual latest post and push. No rebuild is ever needed. */
-const lately = [
-  {
-    source: 'substack',
-    short: 'New writing on Substack',
-    whence: 'substack',
-    href: 'https://divyatak.substack.com',
-    img: '/clips/poster-7.jpg',
-    alt: 'A still from the Metro Museum build, the subject of recent writing',
-  },
-  {
-    source: 'github',
-    short: 'Experiments and code on GitHub',
-    whence: 'github',
-    href: 'https://github.com/divyatak',
-    img: '/playground/webcam-magic.webp',
-    alt: 'A face rendered as a pixel mirror, from Webcam Magic',
-  },
-  {
-    source: 'instagram',
-    short: instagramLately.short,
-    whence: 'instagram',
-    href: instagramLately.href,
-    img: instagramLately.img,
-    alt: 'From Instagram',
-  },
-]
-  .slice(0, LATELY_MAX)
-  .map((it) => ({ ...it, when: week, stamp: weekStamp }));
-
-const latelyLead = lately[0];
+/* ---------- LATELY: hand-written, always ----------
+   Automation could only ever say "pushed to a repo"; the lines that feel like
+   news — "Fogging the east hall of the Metro Museum" — are Divya's to write.
+   Everything lives in src/data/lately.json: up to three lines, a link each,
+   an optional image on the first, and the stamp she updates when she edits.
+   A push publishes it. Nothing here goes stale silently: the stamp says
+   exactly how fresh the words are. */
+const lately = (latelyData.items || []).slice(0, 3);
+const latelyLead = lately[0] || null;
+const latelyStamp = latelyData.stamp || '';
 ---
 <html lang="en">
 <head>
@@ -990,11 +945,10 @@ const latelyLead = lately[0];
               <ul class="woven">
                 {lately.map((it, i) => (
                   <li>
-                    {i === 0 && (
-                      <img class="inline-thumb" id="lately-thumb" src={it.img} alt="" width="240" height="240" />
+                    {i === 0 && it.img && (
+                      <img class="inline-thumb" src={it.img} alt="" width="240" height="240" />
                     )}
                     <a
-                      data-lately={it.source}
                       href={it.href}
                       target={isExt(it.href) ? '_blank' : undefined}
                       rel={isExt(it.href) ? 'noopener' : undefined}
@@ -1002,7 +956,7 @@ const latelyLead = lately[0];
                   </li>
                 ))}
               </ul>
-              <span class="woven-foot" id="lately-foot">{latelyLead.when}</span>
+              {latelyStamp && <span class="woven-foot">{latelyStamp}</span>}
             </article>
           </aside>
         </div>
@@ -1465,48 +1419,6 @@ const latelyLead = lately[0];
       a.addEventListener('click', function () { mark(el.dataset.id); });
     });
   });
-
-  /* ---------- LATELY, live: ask /api/lately and rewrite the first two lines ----------
-     The built page carries fallback lines, so this is pure enhancement: if the
-     function is missing (astro dev) or slow, the slot still reads fine. The
-     week-of foot is recomputed here too, so it stays honest without rebuilds. */
-  (function () {
-    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var d = new Date();
-    var monday = new Date(d);
-    monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-    var foot = document.getElementById('lately-foot');
-    if (foot) {
-      foot.textContent = 'Week of ' +
-        String(monday.getDate()).padStart(2, '0') + ' ' +
-        MONTHS[monday.getMonth()] + ' ' + monday.getFullYear();
-    }
-    // the function lives on Netlify; when the page runs where it doesn't
-    // exist (astro dev), fall back to asking the deployed site directly
-    fetch('/api/lately')
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('no local function')); })
-      .catch(function () {
-        return fetch('https://divyatak-art.netlify.app/api/lately')
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .catch(function () { return null; });
-      })
-      .then(function (data) {
-        if (!data) return;
-        var s = document.querySelector('[data-lately="substack"]');
-        if (s && data.substack && data.substack.title) {
-          s.textContent = '“' + data.substack.title + '”, new on Substack';
-          if (data.substack.link) s.href = data.substack.link;
-          var thumb = document.getElementById('lately-thumb');
-          if (thumb && data.substack.image) thumb.src = data.substack.image;
-        }
-        var g = document.querySelector('[data-lately="github"]');
-        if (g && data.github && data.github.repo) {
-          g.textContent = 'Pushed to ' + data.github.repo + ' on GitHub';
-          if (data.github.url) g.href = data.github.url;
-        }
-      })
-      .catch(function () {});
-  })();
 
   /* ---------- legacy hash URLs (#works/slug etc.) still land somewhere ----------
      BARE #works is NOT legacy: it is this page's own folio anchor (the header's

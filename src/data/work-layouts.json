@@ -1470,5 +1470,90 @@
         }
       }
     ]
+  },
+  "boneyard": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Skulls everywhere, and you with a sword — hack, slash, survive as long as you can. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Boneyard/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Boneyard/2_a8xD.webp",
+          "alt": "Boneyard, image 1 of 3",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Boneyard/ri67IB.webp",
+          "alt": "Boneyard, image 2 of 3",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Boneyard/sjeBdO.webp",
+          "alt": "Boneyard, image 3 of 3",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "the-line-before": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The Line Before takes 230 fragments from Kahran's body of nearly 400 poems and lets visitors assemble new poems through a sequence of instinctive emotional choices. Four choices make a poem. \n\nThe completed poem becomes a generative flower whose colours, petals and structure reflect the emotional affinities of its fragments, and the flower drifts into a persistent garden made of every previous visitor's poem.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-5a.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-5b.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "A web build in React and Three.js: a 3D garden that each finished poem grows a flower into, with the poem itself overlaid on the scene. The scoring of the 230 fragments along the four axes was done with a large language model as a collaborator. Each interaction takes under a minute, and the garden keeps growing across visitors.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "It is the fullest expression of the Joyus collaboration: Kahran's poetry, my visual and interaction design, and an audience that completes the system. It asks a question about intelligence and authorship that feels urgent and honest. When a machine scores a fragment, a poet writes it, and you feel the resulting line in your chest, whose intelligence is that? The piece proposes that intelligence is emergent, arising through the interaction between poetic expression, computational interpretation, and human intuition.",
+        "pos": "pw-l"
+      }
+    ]
   }
 }
