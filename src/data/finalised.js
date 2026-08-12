@@ -19,6 +19,11 @@ export const FINALISED = [
   'mixed-meanings',
   'unseen-vietnam',
   'common',
+  'ruh-and-the-glow',
+  'protest',
+  'questions',
+  'pi-of-life',
+  'clogs',
 ]
 
 export default FINALISED
