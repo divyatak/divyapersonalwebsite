@@ -219,8 +219,11 @@ export const extraWorks = [
     image: '/playground/the-line-before.webp',
     imageAlt: 'Generative flowers grown from poems, from The Line Before',
     orientation: 'landscape',
+    heroVideo: '/clips/cut-5a.mp4', // the garden in motion, from Divya's capture
     tech: 'React · Three.js',
-    media: [],
+    media: [
+      { type: 'video', src: '/clips/cut-5b.mp4' },
+    ],
     what:
       "The Line Before takes 230 fragments from Kahran's body of nearly 400 poems and lets visitors " +
       "assemble new poems through a sequence of instinctive emotional choices. Each fragment is scored " +

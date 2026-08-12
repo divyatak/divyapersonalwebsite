@@ -1294,5 +1294,181 @@
         }
       }
     ]
+  },
+  "ruh-and-the-glow": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A children's storybook that you piece together like a puzzle — follow Ruh through the forest as the pieces fall into place. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/8Qe0H.webp",
+          "alt": "Ruh and the glow, image 1 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/HcfHUs.webp",
+          "alt": "Ruh and the glow, image 2 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Ruh%20and%20the%20glow/xyPOxV.webp",
+          "alt": "Ruh and the glow, image 4 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "mark": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A bouncing ball, a mouse, and a series of increasingly unreasonable levels — collect the keys, dodge the enemies, question your life choices. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Mark/cover.webp",
+          "alt": "Mark, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Mark/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Mark/FzhEND.webp",
+          "alt": "Mark, image 3 of 6",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "misplaced": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "You're in a room, the door is locked, and the only way out is through your head — a text-based escape room puzzle. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Misplaced/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Misplaced/fZA9yG.webp",
+          "alt": "Misplaced, image 1 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Misplaced/ZD99BQ.webp",
+          "alt": "Misplaced, image 4 of 4",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
+  },
+  "proximity": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "A colour puzzle — place them in the right order, fill the board, feel unreasonably satisfied. Made in Unity as a part of the 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/Proximity/clip.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Proximity/Ewux55.webp",
+          "alt": "Proximity, image 1 of 5",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Proximity/Fs0dH.webp",
+          "alt": "Proximity, image 2 of 5",
+          "width": 1920,
+          "height": 1080
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2020/Proximity/RwoSMd.webp",
+          "alt": "Proximity, image 5 of 5",
+          "width": 1920,
+          "height": 1080
+        }
+      }
+    ]
   }
 }

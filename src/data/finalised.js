@@ -24,6 +24,10 @@ export const FINALISED = [
   'questions',
   'pi-of-life',
   'clogs',
+  'ai-quit',
+  'mark',
+  'misplaced',
+  'proximity',
 ]
 
 export default FINALISED
