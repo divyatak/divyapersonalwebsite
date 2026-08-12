@@ -182,6 +182,33 @@ export const extraWorks = [
       "CSS and JavaScript around them. It needs a webcam and a secure context for camera access.",
   },
   {
+    slug: 'e-motion',
+    title: '(e)motion',
+    year: 2026,
+    status: 'ongoing',
+    with: '',
+    url: 'https://divyatak.github.io/creative-visuals/emotion/',
+    linkLabel: 'Open it',
+    image: '/playground/e-motion.webp',
+    imageAlt: 'A pink flower mid-bloom on a dark phone-shaped stage, from (e)motion',
+    orientation: 'portrait',
+    heroVideo: '/clips/cut-9a.mp4', // bud to bloom, cropped to the phone stage
+    tech: 'MediaPipe · One Euro filter · HTML5 canvas',
+    media: [
+      { type: 'video', src: '/clips/cut-9b.mp4', width: 606, height: 1080 },
+    ],
+    // her own catalogue copy from creative-visuals, verbatim
+    what:
+      'Puppet a video with your hand. Gather your fingers to a bud, then open like petals — the ' +
+      'flower blooms exactly as far as you spread. Videos set to music, one gesture each.',
+    why: null,
+    how:
+      'A webcam and one hand. MediaPipe HandLandmarker reads the hand live; how far the fingers ' +
+      'spread scrubs a pre-rendered frame sequence, smoothed through a One Euro filter so the ' +
+      'bloom follows the hand without jitter. The stage is phone-shaped, with the raw mirrored ' +
+      'self-view kept in the corner.',
+  },
+  {
     slug: 'the-line-before',
     title: 'The Line Before',
     year: 2025,
