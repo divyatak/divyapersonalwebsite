@@ -521,11 +521,19 @@ const metaDescription = work.what
           })
         }
 
+        // innerText (on the live, laid-out element) keeps the line breaks the
+        // browser writes when Divya presses Enter — textContent flattened them,
+        // which is why saved layouts lost their paragraph structure. The tools
+        // are hidden for the read so they never leak into the text.
         function textOf(el) {
-          var clone = el.cloneNode(true)
-          var t = clone.querySelector('.wked-tools')
-          if (t) t.remove()
-          return clone.textContent.trim()
+          var tools = el.querySelector('.wked-tools')
+          if (tools) tools.style.display = 'none'
+          var text = el.innerText
+            .replace(/ /g, ' ')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim()
+          if (tools) tools.style.display = ''
+          return text
         }
 
         function serialize() {
@@ -729,10 +737,14 @@ const metaDescription = work.what
   }
 
   /* the column is the measure — no arbitrary width caps anywhere.
-     Every block spans one, two, or all three of the columns. */
+     Every block spans one, two, or all three of the columns.
+     pre-line honours the line breaks the editor saves, so one block can
+     hold several paragraphs: a blank line in the editor is a blank line
+     on the page. */
   .wk-prose {
     grid-column: 1 / 3;
     margin: 0;
+    white-space: pre-line;
   }
 
   /* the text half — ONE column, snug against its two-column media */
