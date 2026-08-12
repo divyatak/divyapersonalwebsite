@@ -5,10 +5,6 @@
 // Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
 
 import generated from '../data/generated-projects.json';
-// the sign-off list: works not on it carry a small amber mark in the folio
-import { FINALISED } from '../data/finalised.js';
-// works pulled from the site entirely
-import { EXCLUDED } from '../data/excluded.js';
 // ONE header for the whole site. This page used to carry its own .bar; the
 // Layout carried a second one; they drifted. Both render this now.
 import SiteHeader from '../components/SiteHeader.astro';
@@ -128,9 +124,7 @@ const additions = [
 
 /* ---------- everything the pipeline knows about ---------- */
 const fromPipeline = generated.flatMap((group) =>
-  group.projects
-    .filter((p) => EXCLUDED.indexOf(p.slug) === -1)
-    .map((p) => {
+  group.projects.map((p) => {
     const year = yearOf(p, group);
     // a pipeline work whose media includes real footage plays it on hover,
     // exactly like the curated additions do (Mixed meanings has five clips)
@@ -695,18 +689,6 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
   }
   .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
 
-  /* the working mark: this work's page is not signed off yet. An amber line
-     under the caption, impossible to miss; adding the slug to
-     src/data/finalised.js puts it out. */
-  .tbf-tag {
-    display: block;
-    margin-top: calc(var(--r) * 0.25);
-    font-size: var(--t-quiet);
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: #96701a; /* still amber, dark enough to actually read (≥4.5:1) */
-  }
 
   /* ---------- nine at a time — on the same centre axis as the captions ---------- */
   .more-wrap {
@@ -877,21 +859,13 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
            more; the live link out lives on the work page. ---- -->
       <div class="grid" id="grid">
         {works.map((w) => (
-          <article
-            class:list={['entry', { tbf: FINALISED.indexOf(w.id) === -1 }]}
-            data-id={w.id}
-            data-bucket={w.bucket}
-            data-status={w.status}
-          >
+          <article class="entry" data-id={w.id} data-bucket={w.bucket} data-status={w.status}>
             <a class="tile" href={w.href}>
               <span class="media">
                 <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
                 {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
               </span>
-              <h3>
-                {w.title}
-                {FINALISED.indexOf(w.id) === -1 && <span class="tbf-tag">to finalise</span>}
-              </h3>
+              <h3>{w.title}</h3>
             </a>
           </article>
         ))}
