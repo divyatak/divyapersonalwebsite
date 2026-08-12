@@ -734,6 +734,10 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
   }
   .foot a { color: #bbb; transition: color 0.25s ease; }
   .foot a:hover { color: #222; }
+  /* the channels, one quiet line under the email — the old page's links,
+     returned to the bottom where they belong */
+  .foot-social { margin-top: calc(var(--r) * 0.75); }
+  .foot-social span { color: #ddd; margin: 0 0.5em; }
 
   /* ================= the grid narrows; the type narrows with it =================
      --r never changes, so the rhythm is constant at every width; only the
@@ -880,6 +884,13 @@ const works = [...additions, ...fromPipeline.sort((a, b) => b.year - a.year)];
 
     <footer class="foot">
       <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
+      <p class="foot-social">
+        <a href="https://divyatak.substack.com" target="_blank" rel="noopener noreferrer">Substack</a>
+        <span aria-hidden="true">&middot;</span>
+        <a href="https://www.linkedin.com/in/divya-tak-56019522/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <span aria-hidden="true">&middot;</span>
+        <a href="https://www.instagram.com/divyatakart/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </p>
     </footer>
 
   </main>

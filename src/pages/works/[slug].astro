@@ -349,7 +349,7 @@ const metaDescription = work.what
       <div class="wk-out">
         <div class="wk-itch">
           <h2 class="wk-label wk-itch-label">Play it</h2>
-          <iframe src={work.itch} title={`${work.title} on itch.io`} loading="lazy" referrerpolicy="no-referrer"></iframe>
+          <iframe src={work.itch} title={`${work.title} on itch.io`} loading="lazy" referrerpolicy="origin"></iframe>
         </div>
       </div>
     )}
@@ -364,7 +364,7 @@ const metaDescription = work.what
                   src={youtubeEmbedUrl(m.src)}
                   title={`${work.title}, video ${i + 1}`}
                   loading="lazy"
-                  referrerpolicy="no-referrer"
+                  referrerpolicy="origin"
                   allow="autoplay; encrypted-media; picture-in-picture"
                   allowfullscreen
                 ></iframe>
