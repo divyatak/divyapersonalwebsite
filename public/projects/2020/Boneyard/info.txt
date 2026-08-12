@@ -1,6 +1,7 @@
 title: Boneyard
-description: Skulls everywhere, and you with a sword — hack, slash, survive as long as you can. Made with Charu Tak
+description: Skulls everywhere, and you with a sword — hack, slash, survive as long as you can. Made in Unity as a part of the 6 games in 6 months series.
 category: game
+tech: Unity
 media: https://www.youtube.com/watch?v=kq55Od_mA_8
 media: 2_a8xD.webp
 media: ri67IB.webp

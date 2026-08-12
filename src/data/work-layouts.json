@@ -192,5 +192,587 @@
         }
       }
     ]
+  },
+  "e-motion": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Puppet a video with your hand. Gather your fingers to a bud, then open like petals. An ongoing series of sketches that explore movement and emotion in connection to each other.\n\nMediaPipe HandLandmarker reads the hand live; how far the fingers spread scrubs a pre-rendered frame sequence, smoothed through a One Euro filter so the bloom follows the hand without jitter. The stage is phone-shaped, with the raw mirrored self-view kept in the corner.",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-9b.mp4"
+        }
+      }
+    ]
+  },
+  "unseen-emirates": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The Emirates through two lenses — what the camera caught, and what the hand added later. Drawings over photographs, imagination over memory",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/cover.webp",
+          "alt": "(un)seen Emirates, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image.webp",
+          "alt": "(un)seen Emirates, image 1 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image2.webp",
+          "alt": "(un)seen Emirates, image 2 of 7",
+          "width": 1200,
+          "height": 1600
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image4.webp",
+          "alt": "(un)seen Emirates, image 3 of 7",
+          "width": 1200,
+          "height": 1600
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image5.webp",
+          "alt": "(un)seen Emirates, image 4 of 7",
+          "width": 1200,
+          "height": 1600
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image7.webp",
+          "alt": "(un)seen Emirates, image 5 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/(un)seen%20Emirates/image8.webp",
+          "alt": "(un)seen Emirates, image 6 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      }
+    ]
+  },
+  "mixed-meanings": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "What happens when you take a word and let it slip between languages — the meaning bends, the feeling shifts, something new appears. AI-generated video loops made with poet Kahran Singh. One poem interpreted in two different visuals. \n\nExhibited at the Canyon Gallery in Boulder, Colorado in 2025",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/Mixed%20meanings/still-1.webp",
+          "alt": "Mixed meanings, image 1 of 3",
+          "width": 1126,
+          "height": 1128
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2025/Mixed%20meanings/still-3.webp",
+          "alt": "Mixed meanings, image 3 of 3",
+          "width": 1200,
+          "height": 1200
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/1.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/2.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/3.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/4.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2025/Mixed%20meanings/5.mp4"
+        }
+      }
+    ]
+  },
+  "unseen-istanbul": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Istanbul remembered and reimagined — photographs from the city drawn over with the feelings and fictions that came after",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/cover.webp",
+          "alt": "(un)seen Istanbul, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/IMG_6242.webp",
+          "alt": "(un)seen Istanbul, image 1 of 7",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/IMG_6305.webp",
+          "alt": "(un)seen Istanbul, image 2 of 7",
+          "width": 1461,
+          "height": 1948
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/IMG_6368.webp",
+          "alt": "(un)seen Istanbul, image 4 of 7",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/image3.webp",
+          "alt": "(un)seen Istanbul, image 5 of 7",
+          "width": 2000,
+          "height": 2667
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/image9.webp",
+          "alt": "(un)seen Istanbul, image 6 of 7",
+          "width": 1920,
+          "height": 2560
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Istanbul/BubbleSheesha.webp",
+          "alt": "(un)seen Istanbul, image 7 of 7",
+          "width": 1119,
+          "height": 1600
+        }
+      }
+    ]
+  },
+  "unseen-life-2024": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The quiet moments of daily life, photographed and then drawn into — adding the invisible things that were always there, just under the surface",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/cover.webp",
+          "alt": "(un)seen Life, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_5879.webp",
+          "alt": "(un)seen Life, image 1 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_5892.webp",
+          "alt": "(un)seen Life, image 2 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_5904.webp",
+          "alt": "(un)seen Life, image 3 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6058.webp",
+          "alt": "(un)seen Life, image 4 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6333.webp",
+          "alt": "(un)seen Life, image 5 of 9",
+          "width": 1333,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6378.webp",
+          "alt": "(un)seen Life, image 7 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6398.webp",
+          "alt": "(un)seen Life, image 8 of 9",
+          "width": 1333,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Life/IMG_6438.webp",
+          "alt": "(un)seen Life, image 9 of 9",
+          "width": 1055,
+          "height": 1876
+        }
+      }
+    ]
+  },
+  "unseen-vietnam": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Vietnam in photographs, then in drawings laid on top — the real and the dreamed-up sitting together, neither one more true than the other",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/cover.webp",
+          "alt": "(un)seen Vietnam, cover image"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5828.webp",
+          "alt": "(un)seen Vietnam, image 1 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5831.webp",
+          "alt": "(un)seen Vietnam, image 2 of 9",
+          "width": 1474,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5832.webp",
+          "alt": "(un)seen Vietnam, image 3 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5834.webp",
+          "alt": "(un)seen Vietnam, image 4 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_5836.webp",
+          "alt": "(un)seen Vietnam, image 5 of 9",
+          "width": 1470,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_6406.webp",
+          "alt": "(un)seen Vietnam, image 7 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_6413.webp",
+          "alt": "(un)seen Vietnam, image 8 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2024/(un)seen%20Vietnam/IMG_6414.webp",
+          "alt": "(un)seen Vietnam, image 9 of 9",
+          "width": 1500,
+          "height": 2000
+        }
+      }
+    ]
+  },
+  "common": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "Inspired by the height of covid, story of a common cold. \nPublished in the \"diseased\" edition of the INKLAB anthology in 2021, this comic captured the innocuous cold and its ability to stop life.",
+        "pos": "pw-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%201.webp",
+          "alt": "Common, image 1 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/page%202.webp",
+          "alt": "Common, image 2 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%203.webp",
+          "alt": "Common, image 3 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%204.webp",
+          "alt": "Common, image 4 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%205.webp",
+          "alt": "Common, image 5 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%206.webp",
+          "alt": "Common, image 6 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%207.webp",
+          "alt": "Common, image 7 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2021/Common/Page%208.webp",
+          "alt": "Common, image 8 of 8",
+          "width": 1250,
+          "height": 2000
+        }
+      }
+    ]
+  },
+  "ai-quit": {
+    "flow": [
+      {
+        "kind": "para",
+        "body": "The great harrowing escape from the capitalistic grasp of the toaster factory — you're a tiny robot, the guards are watching, and the exit is very far away. \nMade in unity as a part of 6 games in 6 months series.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/projects/2020/AI%20quit/clip.mp4"
+        }
+      }
+    ]
   }
 }

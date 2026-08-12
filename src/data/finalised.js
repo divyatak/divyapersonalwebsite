@@ -17,6 +17,8 @@ export const FINALISED = [
   'unseen-istanbul',
   'unseen-life-2024',
   'mixed-meanings',
+  'unseen-vietnam',
+  'common',
 ]
 
 export default FINALISED

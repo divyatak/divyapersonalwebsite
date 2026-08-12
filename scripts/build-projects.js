@@ -43,7 +43,7 @@ function findPhoto(dir) {
 
 function parseInfo(filePath) {
   const text = fs.readFileSync(filePath, 'utf-8').replace(/^\uFEFF/, '')
-  const result = { title: '', description: '', media: [], collaborators: [], categories: [], itch: '', link: '' }
+  const result = { title: '', description: '', media: [], collaborators: [], categories: [], itch: '', link: '', tech: '' }
 
   for (const line of text.split('\n')) {
     const trimmed = line.trim()
@@ -62,6 +62,7 @@ function parseInfo(filePath) {
     else if (key === 'category') result.categories.push(value.toLowerCase())
     else if (key === 'itch') result.itch = value
     else if (key === 'link') result.link = value
+    else if (key === 'tech') result.tech = value
     else console.warn(`Unknown key "${key}" in ${filePath}`)
   }
 
@@ -221,8 +222,10 @@ async function buildAll() {
           media,
         }
         if (info.categories.length > 0) project.categories = info.categories
+        if (info.collaborators.length > 0) project.collaborators = info.collaborators
         if (info.itch) project.itch = info.itch
         if (info.link) project.link = info.link
+        if (info.tech) project.tech = info.tech
         projects.push(project)
       }
 

@@ -1,6 +1,7 @@
 title: Misplaced
-description: You're in a room, the door is locked, and the only way out is through your head — a text-based escape room puzzle. Part of Game'd, six games in six months. Made with Charu Tak
+description: You're in a room, the door is locked, and the only way out is through your head — a text-based escape room puzzle. Made in Unity as a part of the 6 games in 6 months series.
 category: game
+tech: Unity
 media: clip.mp4
 media: https://www.youtube.com/watch?v=g56fjmsIIZg
 media: fZA9yG.webp

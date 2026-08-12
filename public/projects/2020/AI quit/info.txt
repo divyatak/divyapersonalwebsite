@@ -1,6 +1,7 @@
 title: AI quit
-description: The great harrowing escape from the capitalistic grasp of the toaster factory — you're a tiny robot, the guards are watching, and the exit is very far away. Made with Charu Tak, Varun Ramanna and Devanshu Tak
+description: The great harrowing escape from the capitalistic grasp of the toaster factory — you're a tiny robot, the guards are watching, and the exit is very far away. Made in Unity as a part of the 6 games in 6 months series.
 category: game
+tech: Unity
 media: clip.mp4
 media: https://www.youtube.com/watch?v=bZy-VKiIzUI
 media: 9i6eYA.webp

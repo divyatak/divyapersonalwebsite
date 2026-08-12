@@ -36,11 +36,14 @@ import savedLayouts from '../../data/work-layouts.json'
 // getStaticPaths is hoisted and evaluated on its own, so everything it needs
 // lives inside it.
 export function getStaticPaths() {
-  // Credits are stored in the data but only ever printed as Divya writes them.
-  const WITH_CHARU = new Set([
-    'ai-quit', 'boneyard', 'mark', 'misplaced', 'proximity', 'ruh-and-the-glow',
-    'the-titli-effect',
-  ])
+  // Credits come from each project's own collaborator lines, everyone named.
+  const withOf = (names: any) =>
+    names && names.length
+      ? 'with ' +
+        (names.length === 1
+          ? names[0]
+          : names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1])
+      : ''
   const CURRENT_YEAR = 2026
 
   // The pipeline groups everything pre-2020 into a label:"earlier" group whose
@@ -69,7 +72,7 @@ export function getStaticPaths() {
             // only the current year's (un)seen edition is still being added to
             status:
               p.slug.startsWith('unseen') && year === CURRENT_YEAR ? 'ongoing' : 'finished',
-            with: WITH_CHARU.has(p.slug) ? 'with Charu' : '',
+            with: withOf(p.collaborators),
             url: p.link || null,
             linkLabel: p.link ? labelFor(p.link) : null,
             itch: p.itch || null,
@@ -81,7 +84,7 @@ export function getStaticPaths() {
             what: p.description || null,
             why: null,
             how: null,
-            tech: null,
+            tech: p.tech || null,
             strip: p.media.filter((m: any) => m.src !== hero),
           },
         },
@@ -669,14 +672,18 @@ const metaDescription = work.what
     color: var(--quiet);
   }
 
-  /* the way back is just the arrow — the glyph runs a step larger than the
-     label register it sits in, or it reads as a stray mark */
+  /* the way back is just the arrow, pinned top-left in the edge gutter,
+     just ahead of the wordmark — leaving a page starts where entering
+     one does. z-index one over the bar so it stays clickable. */
   .wk-back {
-    display: inline-block;
-    font-size: 1.25rem;
+    position: fixed;
+    top: 0.95rem;
+    left: 0.45rem;
+    z-index: 11;
+    font-size: 1.1rem;
     letter-spacing: 0;
+    line-height: 1;
     text-decoration: none;
-    margin-bottom: calc(var(--r) * 2);
   }
   .wk-back:hover { color: var(--ink); }
 
@@ -859,6 +866,13 @@ const metaDescription = work.what
       justify-self: stretch;
     }
     .wk-flow { row-gap: calc(var(--r) * 2); }
+    /* the narrow header leaves no gutter for the pinned arrow — it returns
+       to the flow up top */
+    .wk-back {
+      position: static;
+      display: inline-block;
+      margin-bottom: calc(var(--r) * 1.5);
+    }
     .wk-flow { margin-top: calc(var(--r) * 3); }
     .wk-plate { margin-top: calc(var(--r) * 2.5); }
     .wk-plate + .wk-prose { margin-top: calc(var(--r) * 2.5); }

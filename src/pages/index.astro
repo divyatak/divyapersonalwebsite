@@ -31,11 +31,14 @@ const yearOf = (p, group) => {
 };
 
 // credits are kept in the data but are NOT shown in the folio any more —
-// they belong on the work detail pages.
-const WITH_CHARU = [
-  'ai-quit', 'boneyard', 'mark', 'misplaced', 'proximity', 'ruh-and-the-glow',
-  'the-titli-effect',
-];
+// they belong on the work detail pages, where everyone is named.
+const withOf = (names) =>
+  names && names.length
+    ? 'with ' +
+      (names.length === 1
+        ? names[0]
+        : names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1])
+    : '';
 
 const CURRENT_YEAR = 2026;
 
@@ -144,7 +147,7 @@ const fromPipeline = generated.flatMap((group) =>
       alt: `Cover image for ${p.title}`,
       clip: firstClip ? firstClip.src : null,
       href: `/works/${p.slug}/`,
-      with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
+      with: withOf(p.collaborators),
     };
   })
 );
@@ -205,7 +208,6 @@ const lately = [
   .map((it) => ({ ...it, when: week, stamp: weekStamp }));
 
 const latelyLead = lately[0];
-const latelyRest = lately.slice(1);
 ---
 <html lang="en">
 <head>
@@ -390,7 +392,7 @@ const latelyRest = lately.slice(1);
   /* THE LABEL LAYER — one line box for everything that labels rather than
      speaks, so the whole instrument layer stacks on the same baseline. */
   .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue,
-  .woven-foot, .artifact figcaption, .stamp {
+  .woven-foot {
     line-height: var(--lh-label);
   }
   /* light type over moving video blooms; hold the strokes thin */
@@ -507,9 +509,9 @@ const latelyRest = lately.slice(1);
     background: linear-gradient(
       to bottom,
       rgba(0,0,0,0) 0%,
-      rgba(0,0,0,0.66) 20%,
-      rgba(0,0,0,0.86) 55%,
-      rgba(0,0,0,0.95) 100%
+      rgba(0,0,0,0.52) 20%,
+      rgba(0,0,0,0.72) 55%,
+      rgba(0,0,0,0.84) 100%
     );
   }
   /* the folio's three columns, borrowed whole: intro on 1–2, lately on 3 */
@@ -638,7 +640,6 @@ const latelyRest = lately.slice(1);
     height: calc(var(--r) * 15);   /* fixed, not min-: the slot never breathes */
   }
   .lately-view { max-width: 100%; }
-  .lately-view[hidden] { display: none; }
   .lately ul { list-style: none; }
 
   /* ---- 1 · WOVEN ---- */
@@ -675,104 +676,11 @@ const latelyRest = lately.slice(1);
     color: rgba(255,255,255,0.32);
   }
 
-  /* ---- 2 · ARTIFACT ---- */
-  .artifact { max-width: calc(var(--r) * 8); }
-  .artifact img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-  }
-  .artifact figcaption {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    column-gap: var(--r);
-    margin-top: calc(var(--r) * 0.75);
-  }
-  .artifact .word {
-    font-size: var(--t-caption);
-    letter-spacing: 0.02em;
-    color: rgba(255,255,255,0.9);
-  }
-  .artifact .when {
-    font-size: var(--t-quiet);
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.32);
-  }
-  /* held in reserve — the row's height is always there, only the ink arrives */
-  .artifact .whence {
-    grid-column: 1 / -1;
-    font-size: var(--t-quiet);
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    opacity: 0;
-    transition: opacity 0.28s var(--ease);
-  }
-  .artifact:hover .whence,
-  .artifact:focus-within .whence { opacity: 1; }
-
-  /* what came BEFORE the object: one compact line each, no second picture */
-  .artifact-rest {
-    margin-top: var(--r);
-    font-size: var(--t-caption);
-    line-height: var(--lh-label);
-    color: rgba(255,255,255,0.62);
-  }
-  .artifact-rest li + li { margin-top: calc(var(--r) * 0.5); }
-  .artifact-rest a { border-bottom: 1px solid rgba(255,255,255,0.22); }
-  .artifact-rest a:hover { color: #fff; border-bottom-color: #fff; }
-  .artifact-rest[hidden] { display: none; }
-
-  /* ---- 3 · STAMP ---- */
-  .stamp {
-    border-top: 1px solid rgba(255,255,255,0.3);
-    border-bottom: 1px solid rgba(255,255,255,0.3);
-    padding: calc(var(--r) * 0.75) 0;
-  }
-  .stamp .imprint {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--r);
-    font-size: var(--t-quiet);
-    font-weight: 500;
-    letter-spacing: 0.1em;   /* "Lately" is a word, not an imprint of one */
-    color: rgba(255,255,255,0.45);
-  }
-  /* the entries: an index, so the thin rule between them is the point */
-  .stamp-list { margin-top: calc(var(--r) * 0.75); }
-  .stamp-list li + li {
-    border-top: 1px solid rgba(255,255,255,0.14);
-    margin-top: calc(var(--r) * 0.5);
-    padding-top: calc(var(--r) * 0.5);
-  }
-  .stamp .subject {
-    font-size: var(--t-body);
-    line-height: var(--lh-body);
-    letter-spacing: -0.01em;
-    color: #fff;
-  }
-  .stamp .subject a { border-bottom: 1px solid rgba(255,255,255,0.3); }
-  .stamp .subject a:hover { border-bottom-color: #fff; }
-  .stamp .whence {
-    display: block;
-    margin-top: calc(var(--r) * 0.25);
-    font-size: var(--t-quiet);
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.32);
-  }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .backdrop video { transition: none; }
-    .scroll-cue, .tile, .tile .media video,
-    .artifact .whence { transition: none !important; }
+    .scroll-cue, .tile, .tile .media video { transition: none !important; }
   }
 
   /* ---------- solid ground: the folio slides over the video ---------- */
@@ -898,15 +806,15 @@ const latelyRest = lately.slice(1);
      its row out of step with the row beneath. */
   /* the titles are set in caps at Divya's ask — a third deliberate caps site
      beside the wordmark and the quiet readouts. Caps want airier tracking
-     than the title case they replace, so 0.04em opens to 0.08em. Weight rose
-     two steps (400 → 600) and the size dropped 2px, also at her ask: smaller
-     but stronger, a stamp rather than a whisper. */
+     than the title case they replace, so 0.04em opens to 0.08em. Twice she
+     has pushed the same direction: heavier and smaller — 700 now, 4px under
+     the ruler. A stamp, not a whisper. */
   .entry h3 {
     margin-top: var(--r);
     min-height: calc(var(--r) * 1.5);
     text-align: center;
-    font-size: clamp(11px, calc(var(--col) / var(--n-caption) / var(--label-adv) - 2px), 16px);
-    font-weight: 600;
+    font-size: clamp(10px, calc(var(--col) / var(--n-caption) / var(--label-adv) - 4px), 14px);
+    font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #222;
@@ -931,11 +839,13 @@ const latelyRest = lately.slice(1);
     text-align: center;
     padding-bottom: calc(var(--r) * 6);
   }
+  /* caps, a step larger, and thin — an invitation, not a control */
   .more {
     font-family: inherit;
-    font-size: var(--t-micro);
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    font-size: var(--t-lens);
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: #bbb;
     background: none;
     border: none;
@@ -1019,44 +929,6 @@ const latelyRest = lately.slice(1);
     .lens-row.quiet { justify-content: flex-start; }
   }
 
-  /* =====================================================================
-     TOOLING ONLY — the lately pattern switcher. Not part of the design:
-     fixed bottom-left in a system monospace so it can never be mistaken
-     for it.
-     ===================================================================== */
-  .proto-tools {
-    position: fixed;
-    left: 0.75rem;
-    bottom: 0.75rem;
-    z-index: 99;
-    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
-    font-size: 11px;
-    line-height: 1;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-  .proto-tools .pill {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.7rem;
-    border-radius: 999px;
-    background: #111;
-    color: #fff;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.35);
-  }
-  .proto-tools .k { color: rgba(255,255,255,0.35); }
-  .proto-tools button {
-    font: inherit;
-    background: none;
-    border: none;
-    padding: 0;
-    color: rgba(255,255,255,0.55);
-    cursor: pointer;
-  }
-  .proto-tools button:hover { color: #fff; }
-  .proto-tools button[aria-pressed="true"] { color: #fff; font-weight: 700; }
-  .proto-tools .d { color: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
@@ -1098,15 +970,12 @@ const latelyRest = lately.slice(1);
             </p>
           </div>
 
-          <!-- LATELY — three structures over ONE list: the live channels
-               (Substack, GitHub, Instagram). Each pattern reads the same
-               `lately` array, so they all handle 1, 2 or 3 items without
-               the slot changing size. -->
+          <!-- LATELY — the woven pattern, chosen from three candidates: the
+               live channels (Substack, GitHub, Instagram) as a short run of
+               speech, the artefact inline in the first line so the block
+               reads as a sentence, not a feed. -->
           <aside class="lately" aria-label="Lately">
-
-            <!-- 1 · WOVEN: the run as speech — short lines, artefact inline in
-                 the first one so the block still reads as a sentence, not a feed -->
-            <article class="lately-view" data-view="1">
+            <article class="lately-view">
               <ul class="woven">
                 {lately.map((it, i) => (
                   <li>
@@ -1123,61 +992,6 @@ const latelyRest = lately.slice(1);
               </ul>
               <span class="woven-foot">{latelyLead.when}</span>
             </article>
-
-            <!-- 2 · ARTIFACT: the newest thing as an object, source withheld
-                 until hover; anything older follows as compact lines -->
-            <article class="lately-view" data-view="2" hidden>
-              <figure class="artifact" tabindex="0">
-                <img src={latelyLead.img} alt={latelyLead.alt} width="480" height="480" loading="lazy" />
-                <figcaption>
-                  <span class="word">
-                    <a
-                      href={latelyLead.href}
-                      target={isExt(latelyLead.href) ? '_blank' : undefined}
-                      rel={isExt(latelyLead.href) ? 'noopener' : undefined}
-                    >{latelyLead.word}</a>
-                  </span>
-                  <span class="when">{latelyLead.when}</span>
-                  <span class="whence">{latelyLead.whence}</span>
-                </figcaption>
-              </figure>
-              <ul class="artifact-rest" hidden={latelyRest.length === 0}>
-                {latelyRest.map((it) => (
-                  <li>
-                    <a
-                      href={it.href}
-                      target={isExt(it.href) ? '_blank' : undefined}
-                      rel={isExt(it.href) ? 'noopener' : undefined}
-                    >{it.short}</a>
-                  </li>
-                ))}
-              </ul>
-            </article>
-
-            <!-- 3 · STAMP: a dated index. Here the rules ARE the idea. -->
-            <article class="lately-view" data-view="3" hidden>
-              <div class="stamp">
-                <span class="imprint">
-                  <span>Lately</span>
-                  <span>{latelyLead.stamp}</span>
-                </span>
-                <ul class="stamp-list">
-                  {lately.map((it) => (
-                    <li>
-                      <p class="subject">
-                        <a
-                          href={it.href}
-                          target={isExt(it.href) ? '_blank' : undefined}
-                          rel={isExt(it.href) ? 'noopener' : undefined}
-                        >{it.short}</a>
-                      </p>
-                      <span class="whence">{it.whence}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </article>
-
           </aside>
         </div>
       </div>
@@ -1243,16 +1057,6 @@ const latelyRest = lately.slice(1);
     </footer>
 
   </main>
-
-  <!-- ============ tooling only — lately pattern switcher ============ -->
-  <div class="proto-tools" id="tools">
-    <div class="pill" id="pick-lately">
-      <span class="k">lately</span>
-      <button type="button" data-lately="1" aria-pressed="true">1</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-lately="2" aria-pressed="false">2</button><span class="d" aria-hidden="true">&middot;</span>
-      <button type="button" data-lately="3" aria-pressed="false">3</button>
-    </div>
-  </div>
 
 <script is:inline>
 (function () {
@@ -1616,30 +1420,6 @@ const latelyRest = lately.slice(1);
       a.addEventListener('click', function () { mark(el.dataset.id); });
     });
   });
-
-  /* ---------- tooling: which lately pattern is on show ---------- */
-  var views = [].slice.call(document.querySelectorAll('.lately-view'));
-  function setLately(key) {
-    var any = false;
-    views.forEach(function (v) {
-      var on = v.dataset.view === key;
-      v.hidden = !on;
-      if (on) any = true;
-    });
-    if (!any) return;
-    document.querySelectorAll('#pick-lately button').forEach(function (b) {
-      b.setAttribute('aria-pressed', b.dataset.lately === key ? 'true' : 'false');
-    });
-    try { sessionStorage.setItem('proto-lately', key); } catch (e) {}
-    measure(); // the slot anchors the morph, so re-read it
-  }
-  document.getElementById('tools').addEventListener('click', function (e) {
-    var b = e.target.closest('button');
-    if (b && b.dataset.lately) setLately(b.dataset.lately);
-  });
-  var savedLately = null;
-  try { savedLately = sessionStorage.getItem('proto-lately'); } catch (e) {}
-  setLately(savedLately || '1');
 
   /* ---------- legacy hash URLs (#works/slug etc.) still land somewhere ----------
      BARE #works is NOT legacy: it is this page's own folio anchor (the header's
