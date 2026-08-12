@@ -165,8 +165,21 @@
     ]
   },
   "unseen-life": {
-    "lead": "Photographs of ordinary life, drawn over with the things you imagine when you look a little longer — the seen and the unseen, layered together",
     "flow": [
+      {
+        "kind": "para",
+        "body": "Photographs of ordinary life, drawn over with the things you imagine when you look a little longer, the seen and the unseen, layered together.",
+        "pos": "p-f"
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2026/(un)seen%20Life/cover.webp",
+          "alt": "(un)seen Life, cover image"
+        }
+      },
       {
         "kind": "plate",
         "pos": "m-s",
