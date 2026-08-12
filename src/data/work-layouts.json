@@ -1,0 +1,183 @@
+{
+  "bioluminescent-flow": {
+    "lead": "A field of glowing bioluminescent algae simulated on the GPU. Move your hand through it, tracked live by webcam, and the particles brighten and scatter, the light rippling around your fingers, like dragging your hand through real bioluminescent plankton in dark water.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-2a.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "Three.js with GPUComputationRenderer, so the whole simulation runs as a GPU particle system in compute shaders, with custom glow and rim shaders on top. Thousands of points respond in real time. The hand is read from the webcam by MediaPipe HandLandmarker.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "Inspired by my actual experience in 2021 of seeing bioluminescent algae for the for the first time off the coast of karnataka, this piece wants to capture that magical feeling. In playtests its been amply clear that people don't need instructions when the interaction feels natural and intuitive.",
+        "pos": "pw-l"
+      }
+    ]
+  },
+  "metro-museum": {
+    "lead": "A first-person walking piece set inside an endless Delhi Metro train that is also a museum. The exhibits are real lost things, taken from the Delhi Metro's public lost-and-found ledger: lunch boxes, single earbuds, hundreds of umbrellas, rings, bags, ID cards. The train's cars become galleries, the lost things become exhibits, and some of them speak. The player is a visitor in this space, walking and exploring.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7b.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "It runs in a browser: Three.js and Vite, with custom shaders and post-processing doing the emotional work of light and colour. The exhibits come out of a self-built Python pipeline, Selenium and BeautifulSoup and Pandas, that scrapes and cleans the public ledger into the dataset the game reads.  The project is being built in collaboration with Kahran Singh, with his narrative direction and my art direction and game design as the structural spines.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "Car by car the museum explores that which is lost, forgotten. Important enough to keep with you on a mundane everyday, unimportant enough that if lost, it is forgotten.The question underneath is that our objects shape us, so what happens to the self an object held when the object is lost? The piece tries to sit with the feeling of what gets left behind, and what stories does that tell us about the world we live in.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7c.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7d.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-7e.mp4"
+        }
+      }
+    ]
+  },
+  "everything-bazaar": {
+    "lead": "What happens when instead of being sold a product, you are sold a feeling. Inspired by my experience of vending machines in tokyo this project asks that question. A row of five vending machines on a webpage. You walk the row, pick a feeling like loneliness or boredom, and a machine dispenses a procedurally generated product: a bottle, a can, a chip packet, a slim box, with a name, a brand identity, marketing copy, rendered in 3D.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-6b.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "Built in React and Three.js. The package shapes are procedural geometry and the label artwork is generated on an HTML5 canvas, so there are no pre-made models anywhere in it. The discipline is that the products have to be genuinely desirable. My experience as a brand designer for the last ~15 years + power of procedural system design is what this project relies on.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "The subject is desire, and how we live with it now that culture, community and ritual have been replaced by brands as the things that organise our wanting. We say who we are by what we buy, which is legitimate, and the honest question the piece holds is how else you would even express yourself. The whole transaction stays invisible because it is banal. The five brands are not pretending to care either. The wish is genuine: real craft, a real desire to help. Nobody in the chain is lying. Rather than moralising from outside of the system, this project forces a view at capitalism and what does it mean to be sold feelings.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-6d.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-6c.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/playground/bazaar-product.webp",
+          "alt": "A generated product in the Package Studio: a cream bottle with a cork cap, labelled Gathered"
+        }
+      }
+    ]
+  },
+  "webcam-magic": {
+    "lead": "A real-time piece that transforms a webcam feed through hand gestures. Seven visual modes: duotone ripple, shifted erase, thermal paint, halftone sculpt, ASCII smear, mosaic sharpen, static calm. Each one answers hand movement differently. Mode switching happens on a peace sign, and finger speed controls the effect radius, so faster movement creates larger disruptions.",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1a.mp4"
+        }
+      },
+      {
+        "kind": "para",
+        "body": "p5.js for the visuals and MediaPipe HandLandmarker for real-time hand tracking, with plain HTML, CSS and JavaScript around them. It needs a webcam and a secure context for camera access.",
+        "pos": "ph-r"
+      },
+      {
+        "kind": "para",
+        "body": "This was first in what became a series of experiments with media pipe, to explore interactions beyond clicks. As a designer who has worked on human computer interaction for years, exploring more intuitive ways of interacting really brings something special and unique to the process.",
+        "pos": "ph-l"
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1b.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1c.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/cut-1d.mp4"
+        }
+      }
+    ]
+  },
+  "unseen-life": {
+    "lead": "Photographs of ordinary life, drawn over with the things you imagine when you look a little longer — the seen and the unseen, layered together",
+    "flow": [
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/projects/2026/(un)seen%20Life/image6.webp",
+          "alt": "(un)seen Life, image 1 of 2",
+          "width": 2000,
+          "height": 2667
+        }
+      }
+    ]
+  }
+}

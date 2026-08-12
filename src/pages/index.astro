@@ -1,58 +1,1640 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import HeroPixelDisplace from '../components/HeroPixelDisplace.astro'
-import works from '../data/generated-projects.json'
+// THE LANDING PAGE — promoted from the prototype ("ongoing", type system C, grid-locked).
+// Dark act = two snap screens over the fixed video. White act = the folio, free scroll.
+// One name element travels from screen 1 into the slot on screen 2. One nav bar for the whole page.
+// Works are read from the build pipeline (generated-projects.json) plus five entries that live outside it.
 
-// Collect high-res interior images from (un)seen projects only
-const MIN_DIM = 800
-const base = import.meta.env.BASE_URL.replace(/\/$/, '')
-const heroImages = works
-  .flatMap(y => y.projects)
-  .filter(p => p.title.toLowerCase().includes('unseen') || p.title.includes('(un)seen'))
-  .flatMap(p => p.media
-    .filter(m => m.type === 'image' && m.width && m.height && Math.min(m.width, m.height) >= MIN_DIM)
-    .map(m => ({ src: m.src }))
-  )
+import generated from '../data/generated-projects.json';
+// the sign-off list: works not on it carry a small amber mark in the folio
+import { FINALISED } from '../data/finalised.js';
+// ONE header for the whole site. This page used to carry its own .bar; the
+// Layout carried a second one; they drifted. Both render this now.
+import SiteHeader from '../components/SiteHeader.astro';
+
+const isExt = (h) => typeof h === 'string' && h.indexOf('http') === 0;
+
+/* ---------- buckets: derived from the pipeline's categories ---------- */
+const ON_PAPER = ['comic', 'zine', 'illustration', 'photocomics'];
+const bucketFor = (cats = []) => {
+  if (cats.indexOf('game') !== -1) return 'games';
+  if (cats.some((c) => ON_PAPER.indexOf(c) !== -1)) return 'comics';
+  return 'none'; // e.g. Mixed meanings (ai / conceptual) — visible under "all" only
+};
+
+// the pipeline groups by year, and buckets everything pre-2020 into a label:"earlier"
+// group whose year is 0, so the real year comes off the cover path.
+const yearOf = (p, group) => {
+  const m = /\/projects\/(\d{4})\//.exec(p.cover || '');
+  return m ? Number(m[1]) : group.year;
+};
+
+// credits are kept in the data but are NOT shown in the folio any more —
+// they belong on the work detail pages.
+const WITH_CHARU = [
+  'ai-quit', 'boneyard', 'mark', 'misplaced', 'proximity', 'ruh-and-the-glow',
+  'the-titli-effect',
+];
+
+const CURRENT_YEAR = 2026;
+
+/* ---------- the five that are not in the pipeline ----------
+   They have real work pages now (src/data/extra-works.js feeds /works/[slug]),
+   so like every other tile they point at their OWN page. THE FOLIO NEVER LEAVES
+   THE SITE: the live "Play it / Open it" link belongs on the work page, which
+   is the thing that can introduce the work before handing you off. */
+
+// STATUS is two-valued now: something is either still moving or it is closed.
+// "in progress" and "ongoing" said the same thing, so there is one word for it.
+const additions = [
+  {
+    id: 'metro-museum',
+    title: 'Metro Museum of the Forgotten',
+    year: 2026,
+    status: 'ongoing',
+    bucket: 'games',
+    img: '/clips/poster-7.jpg',
+    alt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
+    clip: '/clips/cut-7a.mp4',
+    href: '/works/metro-museum/',
+    with: 'with Kahran Singh',
+  },
+  {
+    id: 'everything-bazaar',
+    title: 'Everything Bazaar',
+    year: 2026,
+    status: 'ongoing',
+    bucket: 'games',
+    img: '/clips/poster-6.jpg',
+    alt: 'A dark shop screen with a product box, from Everything Bazaar',
+    clip: '/clips/cut-6a.mp4',
+    href: '/works/everything-bazaar/',
+    with: '',
+  },
+  {
+    id: 'bioluminescent-flow',
+    title: 'Bioluminescent Flow',
+    year: 2026,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/bioluminescent-flow.webp',
+    alt: 'Glowing particle trails on a dark field, from Bioluminescent Flow',
+    clip: '/clips/cut-2a.mp4',
+    href: '/works/bioluminescent-flow/',
+    with: '',
+  },
+  {
+    id: 'webcam-magic',
+    title: 'Webcam Magic',
+    year: 2026,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/webcam-magic.webp',
+    alt: 'A face rendered as a pixel mirror, from Webcam Magic',
+    clip: '/clips/cut-1a.mp4',
+    href: '/works/webcam-magic/',
+    with: '',
+  },
+  {
+    id: 'the-line-before',
+    title: 'The Line Before',
+    year: 2025,
+    status: 'finished',
+    bucket: 'interactive pieces',
+    img: '/playground/the-line-before.webp',
+    alt: 'A scene from The Line Before',
+    clip: null,
+    href: '/works/the-line-before/',
+    with: 'with Kahran Singh',
+  },
+];
+
+/* ---------- everything the pipeline knows about ---------- */
+const fromPipeline = generated.flatMap((group) =>
+  group.projects.map((p) => {
+    const year = yearOf(p, group);
+    return {
+      id: p.slug,
+      title: p.title,
+      year,
+      // only the current year's (un)seen edition is still being added to;
+      // every earlier edition is closed, like everything else in the pipeline
+      status:
+        p.slug.indexOf('unseen') === 0 && year === CURRENT_YEAR ? 'ongoing' : 'finished',
+      bucket: bucketFor(p.categories),
+      img: p.cover,
+      alt: `Cover image for ${p.title}`,
+      clip: null,
+      href: `/works/${p.slug}/`,
+      with: WITH_CHARU.indexOf(p.slug) !== -1 ? 'with Charu' : '',
+    };
+  })
+);
+
+// newest first; the sort is stable, so the additions sit ahead of pipeline entries
+// from the same year.
+const works = [...additions, ...fromPipeline].sort((a, b) => b.year - a.year);
+
+/* ---------- LATELY: the three live channels ----------
+   The slot points at where the updates actually happen — Substack, GitHub,
+   Instagram — instead of hand-copied items that go stale. Everything each of
+   the three patterns needs is here, so switching pattern is a change of
+   structure and never a change of content:
+     short   the one-line form every compact pattern uses
+     word    the noun the artifact pattern hangs off its picture
+     when    the short form · stamp the long one — both are "week of", computed
+             at build time, so a weekly rebuild keeps them honest by itself
+     whence  where the thing lives
+   The slot renders at most LATELY_MAX and is designed to sit still at 1, 2 or 3. */
+const LATELY_MAX = 3;
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const now = new Date();
+const monday = new Date(now);
+monday.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // back to this week's Monday
+const pad = (n) => String(n).padStart(2, '0');
+const week = `Week of ${pad(monday.getDate())} ${MONTHS[monday.getMonth()]} ${monday.getFullYear()}`;
+const weekStamp = `Week of ${monday.getFullYear()} · ${pad(monday.getMonth() + 1)} · ${pad(monday.getDate())}`;
+
+const lately = [
+  {
+    short: 'New writing on Substack',
+    word: 'Substack',
+    whence: 'substack',
+    href: 'https://divyatak.substack.com',
+    img: '/clips/poster-7.jpg',
+    alt: 'A still from the Metro Museum build, the subject of recent writing',
+  },
+  {
+    short: 'Experiments and code on GitHub',
+    word: 'GitHub',
+    whence: 'github',
+    href: 'https://github.com/divyatak',
+    img: '/playground/webcam-magic.webp',
+    alt: 'A face rendered as a pixel mirror, from Webcam Magic',
+  },
+  {
+    short: 'Work in motion on Instagram',
+    word: 'Instagram',
+    whence: 'instagram',
+    href: 'https://www.instagram.com/divyatakart/',
+    img: '/playground/lenticular.webp',
+    alt: 'A lenticular print test',
+  },
+]
+  .slice(0, LATELY_MAX)
+  .map((it) => ({ ...it, when: week, stamp: weekStamp }));
+
+const latelyLead = lately[0];
+const latelyRest = lately.slice(1);
 ---
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Divya Tak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- One family, four weights. Sora carries the voice AND the label layer. -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  /* =====================================================================
+     TYPE SYSTEM — GRID-LOCKED, ONE FAMILY. Nothing on this page has a size
+     or a space that isn't derived from the columns, the ruler, or the
+     rhythm unit. There are no round numbers left.
 
-<Layout>
-  <section aria-label="Introduction" class="home-section">
-    <h1 class="sr-only">Divya — Artist Portfolio</h1>
-    <div class="home-hero">
-      <HeroPixelDisplace images={heroImages} />
-    </div>
-    <div class="home-text animate-in" style="--enter-delay: 0.4s">
-      <p class="divya-intro">
-        Hi! Hello! I'm Divya.<br />
-        I am a cross domain creative human. I love making many things with many people.
-      </p>
-      <p class="divya-intro-details">
-        I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener noreferrer">Joyus</a> with my friend <a href="https://kahransingh.com" target="_blank" rel="noopener noreferrer">Kahran</a>.<br />
-        I lead product design for Klydo.<br />
-        I make games with my sister <a href="https://charutak.xyz" target="_blank" rel="noopener noreferrer">Charu</a>.<br />
-        I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener noreferrer">Varun Ramanna</a> on VFX projects.
-      </p>
-      <p class="divya-intro divya-intro-coda">
-        You are at the home of some of my creations.
-      </p>
-    </div>
-  </section>
-</Layout>
+     ---------------------------------------------------------------------
+     1. THE SEED.  --r = 1.5rem = 24px.
+     It is the folio's column gap, the vertical rhythm unit, and exactly one
+     line of body text. Every vertical space is a multiple or a simple
+     fraction of it.
 
-<script is:inline define:vars={{ base }}>
-  // Redirect old hash-based URLs to proper routes
-  const hash = window.location.hash.replace('#', '')
-  if (hash) {
-    const parts = hash.split('/')
-    const section = parts[0]
-    if (section === 'works' && parts[1]) {
-      window.location.replace(base + '/works/' + parts[1] + '/')
-    } else if (section === 'works') {
-      window.location.replace(base + '/works/')
-    } else if (section === 'friends') {
-      window.location.replace(base + '/friends/')
-    } else if (section === 'about') {
-      window.location.replace(base + '/about/')
+     2. THE COLUMNS.  Three, edge to edge, gutter --r, outer edge 1.25×--r.
+     The dark act has no measurements of its own — it borrows these, so the
+     name, the intro, the lately slot, the nav, the chapter word and the
+     lenses all start on one of three vertical lines.
+
+     3. TWO AXES. Everything above the tiles hangs off the columns' LEFT
+     lines. From the tiles down the folio turns to their CENTRE lines: the
+     captions are centred under their covers, and the more control and the
+     email follow the same axis to the bottom.
+
+     4. DISPLAY TYPE IS MEASURED IN COLUMNS. Four strings are sized so their
+     ink spans an exact run of the grid:
+         the name at rest   = 3 columns      the subtitle = 1½ columns
+         the name docked    = 1 column       "Works"      = 1½ columns
+     The name's journey is a division of the grid, not a shrink to an
+     arbitrary size, and it pivots on column 1's left line, which it never
+     leaves.
+
+     THE HALF COLUMN IS NOT A FUDGE. --span-1h runs from column 1's left line
+     to column 2's CENTRE line — the folio's other axis, the one the captions
+     and the more control already stand on. Both the subtitle and the chapter
+     word used to run past it (the subtitle to column 2's right, "works" to
+     column 3's right) and both were shouting: the subtitle over the docked
+     name, the chapter word over the hero. Pulling them back to the same
+     centre line drops the subtitle ~24% and the chapter word ~50%, which
+     puts "Works" cap-height just under the hero name's — one clear step
+     each, and they now close on a line the page already uses.
+
+     THE NAME IS SET IN CAPS, and caps cost width: "DIVYA TAK" runs 5.339em
+     against the lowercase 4.346em, so filling the same three columns makes
+     the type ~19% smaller. That is the honest consequence of the case
+     change, not a bug. Caps also don't want the lowercase's tight tracking,
+     so the name runs at -0.015em where lowercase ran at -0.035em.
+
+     5. THE RULER — N CHARACTERS TO A COLUMN. Previously this leaned on a
+     monospace's fixed advance. With one proportional family the idea
+     survives but the basis changes: the ruler is now calibrated against
+     SORA'S AVERAGE ADVANCE (a–z at 400 = 0.5774em, measured at runtime), so
+     "N characters to a column" means N average characters. Same formula,
+     honest basis: size = col ÷ N ÷ advance.
+
+         N = 50   captions       content, read as words
+         N = 58   lenses         controls
+         N = 62   nav + wordmark wayfinding
+         N = 70   micro labels   more · scroll cue · card marks
+         N = 76   dates, quiet   the smallest readouts
+
+     6. KEEPING THE LABELS INSTRUMENTAL WITHOUT A MONOSPACE. Losing the mono
+     removes the thing that made a label look like a label, so three other
+     axes do that work instead — and deliberately, not by accident:
+         CASE      SENTENCE/TITLE CASE IS THE DEFAULT NOW. Nothing on this
+                   page is lowercased by CSS any more: names, titles, chapter
+                   and control words are set the way they are written. Caps
+                   survive in exactly two places, both of them deliberate —
+                   the wordmark ("DIVYA TAK", the name is a mark), and the
+                   smallest readouts (dates, provenance, the foot), where
+                   tracked caps at --t-quiet/--t-micro read as an imprint
+                   rather than as words. Things a person reads as WORDS — nav,
+                   lenses, "Lately", "More", captions — are Title Case, and
+                   their tracking closes to the bottom of the label range,
+                   because Title Case does not want caps' airiness.
+         TRACKING  the label layer runs 0.06em → 0.22em, opening as it
+                   shrinks; the voice layer runs -0.035em → 0. Nothing in the
+                   middle. That gap is what separates the two registers.
+         WEIGHT    labels sit at 500 against body copy's 400.
+     One consequence: in a proportional face a weight change CHANGES WIDTH,
+     so the active lens no longer thickens — it would nudge the whole row off
+     its line. Colour and the underline carry that state now.
+
+     7. THE RHYTHM. Body: one line = --r, so paragraphs stack on the 24px
+     module. Label: one line = 0.75×--r, so four label lines equal three body
+     lines. Each tile reserves a caption band of exactly 1.5×--r — two label
+     lines — so a title that wraps can never knock its row out of alignment.
+     Row gap is 2.5×--r against a column gap of 1×--r: the rows carry
+     captions inside them, so the break between rows has to beat the gap
+     between a picture and its own caption, or the caption starts to look
+     like it belongs to the row below.
+     ===================================================================== */
+
+  :root {
+    /* ---------- the seed ---------- */
+    --r: 1.5rem;
+
+    /* ---------- the grid ---------- */
+    --gutter: var(--r);
+    --edge: calc(var(--r) * 1.25);
+    --span-all: calc(100vw - 2 * var(--edge));
+    --col: calc((var(--span-all) - 2 * var(--gutter)) / 3);
+    --span-2: calc(2 * var(--col) + var(--gutter));
+    /* column 1's left line → column 2's CENTRE line: the display run that the
+       subtitle and the chapter word are measured against */
+    --span-1h: calc(1.5 * var(--col) + var(--gutter));
+    --dock-w: var(--col);              /* the name shrinks to exactly one column */
+    --dock-gap: calc(var(--r) * 1.5);
+
+    --sans: 'Sora', system-ui, sans-serif;
+
+    /* ---------- measured at runtime; these are the offline defaults ----------
+       ink run of each column-measured string, and its first glyph's left
+       sidebearing (which becomes a negative indent, so the INK hangs on the
+       line rather than the invisible box) */
+    --run-name: 5.339;   --ti-name: 0.082;   /* "DIVYA TAK" 700 @ -0.015em */
+    --run-works: 2.906;  --ti-works: 0.020;  /* "Works"     400 @ -0.040em */
+    --run-sub: 15.480;   --ti-sub: 0.052;    /* the subtitle 500 @ -0.020em */
+    --label-adv: 0.5774;                     /* a–z average at 400 */
+
+    /* ---------- display, measured in columns ---------- */
+    /* the name at rest runs 80% of the full span: pulled back a fifth from the
+       full three-column run at Divya's ask. It still hangs on column 1's line. */
+    --t-name:  calc(var(--span-all) * 0.8 / var(--run-name));
+    --t-dock:  calc(var(--dock-w) / var(--run-name));
+    --t-works: calc(var(--span-1h) / var(--run-works));
+    --t-sub:   calc(var(--span-1h) / var(--run-sub));
+
+    /* ---------- the ruler: N average characters to a column ---------- */
+    --n-caption: 50;
+    --n-lens: 58;
+    --n-nav: 62;
+    --n-micro: 70;
+    --n-quiet: 76;
+    --t-caption: clamp(13px,   calc(var(--col) / var(--n-caption) / var(--label-adv)), 18px);
+    --t-lens:    clamp(11.5px, calc(var(--col) / var(--n-lens)    / var(--label-adv)), 16px);
+    --t-nav:     clamp(11px,   calc(var(--col) / var(--n-nav)     / var(--label-adv)), 15px);
+    --t-micro:   clamp(10px,   calc(var(--col) / var(--n-micro)   / var(--label-adv)), 13px);
+    --t-quiet:   clamp(9.5px,  calc(var(--col) / var(--n-quiet)   / var(--label-adv)), 12px);
+
+    /* ---------- reading ----------
+       Sized against the column it sits in, leading locked to the module, and
+       capped at a real measure — 26em is ~51 characters at every breakpoint. */
+    --t-body: clamp(14px, calc(var(--col) / 28), 16px);
+    /* the intro is the one place the page is actually SPOKEN, so it reads one
+       step above the page's body size — same derivation, a wider character:
+       28 to a column becomes 24, which is 16px → 18px at full width. Its
+       leading opens to 1.25×--r so the bigger face still lands on the module. */
+    --t-read: clamp(15px, calc(var(--col) / 24), 18px);
+    --lh-read: calc(var(--r) * 1.25);
+    --measure: 26em;
+    --lh-body: var(--r);                 /* one body line   = one rhythm unit  */
+    --lh-label: calc(var(--r) * 0.75);   /* four label lines = three body lines */
+
+    /* ---------- motion ---------- */
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+    /* the dark act snaps; the white folio has no snap points, so it scrolls free */
+    scroll-snap-type: y proximity;
+  }
+  body {
+    font-family: var(--sans);
+    color: #222;
+    background: #111;
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+  /* THE LABEL LAYER — one line box for everything that labels rather than
+     speaks, so the whole instrument layer stacks on the same baseline. */
+  .lens, .lens-row .sep, .entry h3, .more, .empty, .foot, .scroll-cue,
+  .woven-foot, .artifact figcaption, .stamp {
+    line-height: var(--lh-label);
+  }
+  /* light type over moving video blooms; hold the strokes thin */
+  .lately, .scroll-cue, .intro, .name {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+  /* ---------- the video layer: fixed, behind everything, never scrolls away ---------- */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: #111 url('/clips/poster-2.jpg') center / cover no-repeat;
+  }
+  .backdrop video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* the montage is uniform 1920x1080; cover keeps it honest anyway */
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+  .backdrop video.on { opacity: 1; }
+  .backdrop .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.14) 42%, rgba(0,0,0,0.34) 100%);
+  }
+
+  /* ---------- the nav bar is NOT here any more ----------
+     It is src/components/SiteHeader.astro — the one bar the whole site uses.
+     This page renders it in overlay mode and toggles the class `ink` on it as
+     the white ground slides under; the component owns every other rule,
+     including the wordmark's silence while the big name is still on screen 1.
+     Nothing on this page may style it: that is exactly how the two bars drifted
+     apart the first time. */
+
+  /* ---------- the one name: a full row of caps that divides down to one column ----------
+     The box is 100vw − 2×edge, which is what makes the morph script's centring
+     maths ((innerWidth − width) / 2) land on --edge — column 1's line — so the
+     name's left edge is nailed to that line for the whole flight and only the
+     scale changes. Everything here is em-based, so it survives the scale. */
+  .name {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2; /* above the stage, under the white ground */
+    width: calc(100vw - 2 * var(--edge));
+    white-space: nowrap;
+    transform-origin: 0 0;
+    font-weight: 700;
+    font-size: var(--t-name);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    text-indent: calc(var(--ti-name) * -1em);
+    color: #fff;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+  }
+  .name.ready { opacity: 1; }
+
+  /* ---------- the stage: everything that sits over the video ---------- */
+  .stage { position: relative; z-index: 1; }
+  .stage a { color: #fff; }
+
+  /* the dark act has no measurements of its own — it borrows the folio's */
+  .shell {
+    max-width: none;
+    margin: 0;
+    padding: 0 var(--edge);
+  }
+  .shell.narrow { max-width: none; }
+
+  /* ---------- screen 1 ---------- */
+  .opening {
+    position: relative;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    align-content: end;
+    padding: 0 var(--edge) calc(var(--r) * 3);
+  }
+  /* the cue is not centred: it marks column 3's line, the last one the name reaches */
+  .scroll-cue {
+    grid-column: 3;
+    justify-self: start;
+    color: rgba(255,255,255,0.7);
+    font-size: var(--t-micro);
+    transition: opacity 0.3s ease;
+  }
+  .scroll-cue:hover { color: #fff; }
+  body.docked .scroll-cue { opacity: 0; pointer-events: none; }
+
+  /* ---------- screen 2: the docked name + the intro ---------- */
+  .overlay {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: calc(var(--r) * 7) 0 calc(var(--r) * 6);
+    scroll-snap-align: start;
+    /* a measured, nowrap line's trailing sidebearing is a few px of empty space
+       past the last grid line; clip it so it never becomes document scroll. */
+    overflow-x: clip;
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,0.66) 20%,
+      rgba(0,0,0,0.86) 55%,
+      rgba(0,0,0,0.95) 100%
+    );
+  }
+  /* the folio's three columns, borrowed whole: intro on 1–2, lately on 3 */
+  .intro-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    align-items: start;
+    max-width: none;
+  }
+  /* NO TRACK MAY BE WIDENED BY ITS CONTENTS. A 1fr track is minmax(auto, 1fr),
+     so anything with a stubborn min-content width — the nowrap subtitle, a
+     lately pattern with a long unbroken run — would steal width from the other
+     two and move the whole block. This is what kept the lately slot changing
+     shape between patterns. */
+  .intro-cols > * { min-width: 0; }
+  .intro {
+    grid-column: 1 / span 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--gutter);
+    align-content: start;
+    max-width: none;
+    color: rgba(255,255,255,0.76);
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+  }
+  /* a nowrap measured line would otherwise force its own track wider than the
+     column it is measured against — min-content must not win here */
+  .intro > * { min-width: 0; }
+  .intro p { margin-bottom: 0; }
+  /* the spoken paragraphs: one step up from the page's body size */
+  .intro > p:nth-of-type(3),
+  .intro > p:nth-of-type(4) {
+    max-width: var(--measure);
+    font-size: var(--t-read);
+    line-height: var(--lh-read);
+  }
+
+  /* name docks on column 1 · subtitle spans 1–2 · BOTH body paragraphs stack in
+     column 1, so the reading is one continuous column and column 2 becomes the
+     air that the subtitle's width needs */
+  @media (min-width: 701px) {
+    .intro > .name-slot        { grid-column: 1;      grid-row: 1; }
+    .intro > .subtitle         { grid-column: 1 / -1; grid-row: 2; }
+    .intro > p:nth-of-type(3)  { grid-column: 1;      grid-row: 3; }
+    .intro > p:nth-of-type(4)  { grid-column: 1;      grid-row: 4; }
+  }
+  .intro > p:nth-of-type(3) { margin-bottom: calc(var(--r) * 1.25); }
+
+  /* the slot the big name lands in — invisible, it only holds the position.
+     TYPOGRAPHICALLY IDENTICAL to .name in every respect except size, which is
+     the one thing the morph script is allowed to read as a difference. */
+  .name-slot {
+    font-size: var(--t-dock);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    text-indent: calc(var(--ti-name) * -1em);
+    text-transform: uppercase;
+    white-space: nowrap;
+    visibility: hidden;
+    margin-bottom: var(--dock-gap);
+  }
+
+  /* the claim, set to fill columns 1–2 exactly — one rank under the docked name */
+  .intro .subtitle {
+    font-size: var(--t-sub);
+    font-weight: 500;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-indent: calc(var(--ti-sub) * -1em);
+    white-space: nowrap;
+    color: #fff;
+    margin-bottom: calc(var(--r) * 2.5);
+  }
+
+  .intro a {
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.35);
+  }
+  .intro a:hover { border-bottom-color: #fff; }
+
+  /* =====================================================================
+     LATELY — column 3. No rule, no label, no card box. Three different
+     STRUCTURES for one RUN of recent things (1, 2 or 3 of them), switched
+     from the tooling picker:
+
+       1 WOVEN    the updates in the intro's own speaking register — a short
+                  run of lines, the first with its artefact set inline like a
+                  word. Read as speech, not as a list.
+       2 ARTIFACT the newest thing is an object: a square, chromeless, with
+                  one word and a date hanging off its bottom edge on the
+                  column line, its source withheld until you hover it. What
+                  came before it follows as compact lines underneath, so the
+                  picture stays the only picture.
+       3 STAMP    a dated index. Two hairlines around the run and a thin one
+                  between entries — here the rule IS the idea, because an
+                  index entry is a thing you read between two lines.
+
+     THE SLOT IS THE CONSTANT; THE PATTERN AND THE COUNT ARE THE VARIABLES.
+     All three are column-3 blocks starting at the same anchor — the body's
+     first line (dock + gap + subtitle + its margin) — inside a box of FIXED
+     height, so they are three fillings of one hole. Nothing about the switch
+     is allowed to reach the layout: the height cannot change (fixed, not
+     min-), the width cannot change (min-width:0 on the track), and therefore
+     neither the intro, the name's dock, nor the vertical centring of the
+     whole screen can move.
+
+     THE HEIGHT IS 15×--r, RAISED ONCE FROM 14 for all three at the same
+     time when the slot went from one item to three. Every pattern is sized
+     so that its THREE-item worst case (each line wrapping to two) still
+     clears it, which is why the compact registers below are deliberately
+     tighter than the single-item versions they replace: the artefact's
+     square is 8×--r rather than 11, and woven's leading closed from 1.5×--r
+     to 1.25. The slot does not grow to fit the content; the content is cut
+     to fit the slot.
+     ===================================================================== */
+  .lately {
+    grid-column: 3;
+    min-width: 0;
+    margin-top: calc(
+      var(--t-dock) + var(--dock-gap) +
+      var(--t-sub) * 1.02 + var(--r) * 2.5
+    );
+    height: calc(var(--r) * 15);   /* fixed, not min-: the slot never breathes */
+  }
+  .lately-view { max-width: 100%; }
+  .lately-view[hidden] { display: none; }
+  .lately ul { list-style: none; }
+
+  /* ---- 1 · WOVEN ---- */
+  /* the measure here is the COLUMN, not the reading measure — this is a block
+     in column 3 like the other two, it just happens to be made of sentence. */
+  .woven {
+    font-size: calc(var(--t-body) * 1.05);
+    line-height: calc(var(--r) * 1.25);
+    letter-spacing: -0.005em;
+    color: rgba(255,255,255,0.88);
+    max-width: 100%;
+  }
+  /* the lines run on with a breath between them, not a bullet or a rule: three
+     facts spoken one after the other are still speech */
+  .woven li + li { margin-top: calc(var(--r) * 0.5); }
+  .woven a { border-bottom: 1px solid rgba(255,255,255,0.4); }
+  .woven a:hover { border-bottom-color: #fff; }
+  /* the artefact sits IN the first sentence, sized to the line it lives on */
+  .woven .inline-thumb {
+    display: inline-block;
+    width: calc(var(--r) * 1.2);
+    height: calc(var(--r) * 1.2);
+    object-fit: cover;
+    vertical-align: -0.34em;
+    margin: 0 0.12em 0 0;
+  }
+  .woven-foot {
+    display: block;
+    margin-top: calc(var(--r) * 1.25);
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+  }
+
+  /* ---- 2 · ARTIFACT ---- */
+  .artifact { max-width: calc(var(--r) * 8); }
+  .artifact img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+  .artifact figcaption {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    column-gap: var(--r);
+    margin-top: calc(var(--r) * 0.75);
+  }
+  .artifact .word {
+    font-size: var(--t-caption);
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.9);
+  }
+  .artifact .when {
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+  }
+  /* held in reserve — the row's height is always there, only the ink arrives */
+  .artifact .whence {
+    grid-column: 1 / -1;
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    opacity: 0;
+    transition: opacity 0.28s var(--ease);
+  }
+  .artifact:hover .whence,
+  .artifact:focus-within .whence { opacity: 1; }
+
+  /* what came BEFORE the object: one compact line each, no second picture */
+  .artifact-rest {
+    margin-top: var(--r);
+    font-size: var(--t-caption);
+    line-height: var(--lh-label);
+    color: rgba(255,255,255,0.62);
+  }
+  .artifact-rest li + li { margin-top: calc(var(--r) * 0.5); }
+  .artifact-rest a { border-bottom: 1px solid rgba(255,255,255,0.22); }
+  .artifact-rest a:hover { color: #fff; border-bottom-color: #fff; }
+  .artifact-rest[hidden] { display: none; }
+
+  /* ---- 3 · STAMP ---- */
+  .stamp {
+    border-top: 1px solid rgba(255,255,255,0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding: calc(var(--r) * 0.75) 0;
+  }
+  .stamp .imprint {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--r);
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.1em;   /* "Lately" is a word, not an imprint of one */
+    color: rgba(255,255,255,0.45);
+  }
+  /* the entries: an index, so the thin rule between them is the point */
+  .stamp-list { margin-top: calc(var(--r) * 0.75); }
+  .stamp-list li + li {
+    border-top: 1px solid rgba(255,255,255,0.14);
+    margin-top: calc(var(--r) * 0.5);
+    padding-top: calc(var(--r) * 0.5);
+  }
+  .stamp .subject {
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+  .stamp .subject a { border-bottom: 1px solid rgba(255,255,255,0.3); }
+  .stamp .subject a:hover { border-bottom-color: #fff; }
+  .stamp .whence {
+    display: block;
+    margin-top: calc(var(--r) * 0.25);
+    font-size: var(--t-quiet);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .backdrop video { transition: none; }
+    .scroll-cue, .tile, .tile .media video,
+    .artifact .whence { transition: none !important; }
+  }
+
+  /* ---------- solid ground: the folio slides over the video ---------- */
+  .ground {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+  }
+
+  .works {
+    padding: calc(var(--r) * 5) var(--edge) 0;
+    scroll-margin-top: calc(var(--r) * 2.25); /* the bar is three label lines tall */
+    /* guard: a measured run's trailing sidebearing can sit a few px past the last
+       grid line. clip, not scroll — and it never reaches the ink. */
+    overflow-x: clip;
+  }
+  .works-head {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gutter);
+    padding-bottom: calc(var(--r) * 4);
+  }
+  /* the chapter word, set the same as the work pages' title text at Divya's
+     ask: caps, 600, centred, the same clamp — so "Works" here and the title on
+     any work page are one voice at one size. */
+  .works-head h2 {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: clamp(1.05rem, 2.7vw, 2.2rem);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #222;
+  }
+
+  /* ---------- lenses: buckets open on column 1's line, status closes on
+       column 3's right. One size for both rows — the quiet row stays quiet on
+       colour alone. ---------- */
+  .lenses {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(var(--r) * 0.75) var(--r);
+    margin-top: calc(var(--r) * 2.5);
+  }
+  .lens-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: calc(var(--r) / 3);
+  }
+  .lens-row.quiet { justify-content: flex-end; }
+  .lens {
+    font-family: inherit;
+    font-size: var(--t-lens);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: #999;
+    background: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 0 0 calc(var(--r) / 6);
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .lens:hover { color: #222; }
+  /* NO weight change on the active state: in a proportional face that would
+     widen the word and shove the rest of the row off its line. Colour and the
+     rule carry it. */
+  .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
+  .lens-row.quiet .lens { color: #bbb; }
+  .lens-row.quiet .lens:hover { color: #636363; }
+  .lens-row.quiet .lens[aria-pressed="true"] { color: #222; border-bottom-color: #222; }
+  .lens-row .sep { color: #ddd; font-size: var(--t-quiet); }
+
+  /* ---------- the grid ----------
+     column gap 1×--r (that IS the grid's gutter); row gap 2.5×--r, because each
+     row carries its captions inside it and the row break must beat the gap
+     between a picture and its own caption. */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    column-gap: var(--gutter);
+    row-gap: calc(var(--r) * 2.5);
+    padding-bottom: calc(var(--r) * 3);
+  }
+  .entry[hidden] { display: none; }
+
+  .tile { display: block; transition: transform 0.35s var(--ease); }
+  .entry:hover .tile, .entry:focus-within .tile {
+    transform: translateY(calc(var(--r) / -6));
+    transition-duration: 0.2s;
+  }
+  .tile .media {
+    display: block;
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #f4f4f4;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.10);
+  }
+  .tile .media img,
+  .tile .media video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* nothing stretches, ever */
+  }
+  .tile .media video {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .tile .media video.on { opacity: 1; transition-duration: 0.2s; }
+
+  /* CAPTION UNDER THE COVER, centred on the column's centre line. The band is
+     reserved at 1.5×--r — two label lines — so a title that wraps cannot knock
+     its row out of step with the row beneath. */
+  /* the titles are set in caps at Divya's ask — a third deliberate caps site
+     beside the wordmark and the quiet readouts. Caps want airier tracking
+     than the title case they replace, so 0.04em opens to 0.08em. Weight rose
+     two steps (400 → 600) and the size dropped 2px, also at her ask: smaller
+     but stronger, a stamp rather than a whisper. */
+  .entry h3 {
+    margin-top: var(--r);
+    min-height: calc(var(--r) * 1.5);
+    text-align: center;
+    font-size: clamp(11px, calc(var(--col) / var(--n-caption) / var(--label-adv) - 2px), 16px);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #222;
+  }
+  .entry.seen h3::after { content: ' \00b7'; color: #ccc; }
+
+  /* the working mark: this work's page is not signed off yet. An amber line
+     under the caption, impossible to miss; adding the slug to
+     src/data/finalised.js puts it out. */
+  .tbf-tag {
+    display: block;
+    margin-top: calc(var(--r) * 0.25);
+    font-size: var(--t-quiet);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #c9973b;
+  }
+
+  /* ---------- nine at a time — on the same centre axis as the captions ---------- */
+  .more-wrap {
+    text-align: center;
+    padding-bottom: calc(var(--r) * 6);
+  }
+  .more {
+    font-family: inherit;
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #bbb;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 0 0 calc(var(--r) / 6);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .more:hover { color: #222; border-bottom-color: #222; }
+  .more[hidden] { display: none; }
+
+  .empty {
+    text-align: center;
+    font-size: var(--t-lens);
+    letter-spacing: 0.06em;
+    color: #999;
+    padding: calc(var(--r) * 2) 0;
+  }
+  .empty[hidden] { display: none; }
+
+  /* ---------- foot: one line, the quiet end of the centre axis ---------- */
+  .foot {
+    text-align: center;
+    padding: 0 var(--edge) calc(var(--r) * 6);
+    font-size: var(--t-nav);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #bbb;
+  }
+  .foot a { color: #bbb; transition: color 0.25s ease; }
+  .foot a:hover { color: #222; }
+
+  /* ================= the grid narrows; the type narrows with it =================
+     --r never changes, so the rhythm is constant at every width; only the
+     columns (and therefore the ruler that reads them) redraw. */
+  @media (max-width: 1100px) {
+    :root {
+      --col: calc((var(--span-all) - var(--gutter)) / 2);
+      --span-2: var(--span-all);   /* the subtitle now fills the whole measure */
+      --dock-w: var(--col);        /* still exactly one column */
+    }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .opening { grid-template-columns: repeat(2, 1fr); }
+    .scroll-cue { grid-column: 2; }
+    .intro-cols { grid-template-columns: repeat(2, 1fr); }
+    .intro { grid-column: 1 / -1; }
+    /* stacked under the intro now, so there is no third column to protect and
+       the slot can take the height its pattern needs */
+    .lately { grid-column: 1 / -1; margin-top: calc(var(--r) * 3.5); height: auto; }
+    .works-head { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 900px) {
+    :root { --edge: calc(var(--r) * 0.75); }
+    html { scroll-snap-type: none; }
+    .overlay { padding: calc(var(--r) * 5) 0 calc(var(--r) * 4); }
+    .works { padding-top: calc(var(--r) * 3.5); }
+    .works-head { padding-bottom: calc(var(--r) * 3); }
+  }
+
+  @media (max-width: 700px) {
+    :root {
+      --col: var(--span-all);
+      --span-2: var(--span-all);
+      /* one column IS the width, so the half-column run collapses onto it —
+         otherwise the subtitle and the chapter word would be measured against
+         one and a half screens */
+      --span-1h: var(--span-all);
+      /* one column is now the whole width, so the dock is set as a fraction of it
+         — otherwise the name would have nowhere to shrink to */
+      --dock-w: calc(var(--span-all) * 0.46);
+    }
+    .grid { grid-template-columns: 1fr; row-gap: calc(var(--r) * 2); }
+    .opening { grid-template-columns: 1fr; }
+    .scroll-cue { grid-column: 1; }
+    .intro-cols, .intro { grid-template-columns: 1fr; }
+    .intro > p { grid-column: 1; }
+    .works-head { grid-template-columns: 1fr; }
+    .lenses { justify-content: flex-start; }
+    .lens-row.quiet { justify-content: flex-start; }
+  }
+
+  /* =====================================================================
+     TOOLING ONLY — the lately pattern switcher. Not part of the design:
+     fixed bottom-left in a system monospace so it can never be mistaken
+     for it.
+     ===================================================================== */
+  .proto-tools {
+    position: fixed;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 99;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .proto-tools .pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+  }
+  .proto-tools .k { color: rgba(255,255,255,0.35); }
+  .proto-tools button {
+    font: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+  }
+  .proto-tools button:hover { color: #fff; }
+  .proto-tools button[aria-pressed="true"] { color: #fff; font-weight: 700; }
+  .proto-tools .d { color: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+
+  <!-- ============ the video, fixed behind everything ============ -->
+  <div class="backdrop" aria-hidden="true">
+    <video id="vid" muted playsinline loop preload="auto" poster="/clips/poster-2.jpg" src="/clips/montage.mp4"></video>
+    <div class="scrim"></div>
+  </div>
+
+  <!-- ============ THE site header — white over the video, ink over the folio.
+       Same component the Layout uses; this page only flips its `ink` class. ============ -->
+  <SiteHeader variant="overlay" />
+
+  <!-- ============ the name: one element, it becomes the docked title ============ -->
+  <h1 class="name" id="name">DIVYA TAK</h1>
+
+  <div class="stage">
+
+    <!-- ============ screen 1 ============ -->
+    <div class="opening" id="top">
+      <a class="scroll-cue" href="#intro" aria-label="scroll down to the introduction">&#8595;</a>
+    </div>
+
+    <!-- ============ screen 2: docked name + intro ============ -->
+    <section class="overlay" id="intro">
+      <div class="shell narrow">
+        <div class="intro-cols">
+          <div class="intro">
+            <!-- the slot the fixed name lands in; it holds space and nothing else -->
+            <p class="name-slot" id="name-slot" aria-hidden="true">DIVYA TAK</p>
+            <p class="subtitle">Creative technologist and artist</p>
+            <p>I am a cross domain creative. I love to make interactive things that are playful and intimate. I love to collaborate with my friends.</p>
+            <p>
+              I run a storytelling studio called <a href="https://joyus.studio" target="_blank" rel="noopener">Joyus</a>
+              with my friend <a href="https://kahransingh.com" target="_blank" rel="noopener">Kahran</a>.
+              I make games with <a href="https://charutak.xyz" target="_blank" rel="noopener">Charu</a>.
+              I often collaborate with <a href="https://varuns.work" target="_blank" rel="noopener">Varun Ramanna</a> on VFX projects.
+            </p>
+          </div>
+
+          <!-- LATELY — three structures over ONE list: the live channels
+               (Substack, GitHub, Instagram). Each pattern reads the same
+               `lately` array, so they all handle 1, 2 or 3 items without
+               the slot changing size. -->
+          <aside class="lately" aria-label="Lately">
+
+            <!-- 1 · WOVEN: the run as speech — short lines, artefact inline in
+                 the first one so the block still reads as a sentence, not a feed -->
+            <article class="lately-view" data-view="1">
+              <ul class="woven">
+                {lately.map((it, i) => (
+                  <li>
+                    {i === 0 && (
+                      <img class="inline-thumb" src={it.img} alt="" width="240" height="240" />
+                    )}
+                    <a
+                      href={it.href}
+                      target={isExt(it.href) ? '_blank' : undefined}
+                      rel={isExt(it.href) ? 'noopener' : undefined}
+                    >{it.short}</a>.
+                  </li>
+                ))}
+              </ul>
+              <span class="woven-foot">{latelyLead.when}</span>
+            </article>
+
+            <!-- 2 · ARTIFACT: the newest thing as an object, source withheld
+                 until hover; anything older follows as compact lines -->
+            <article class="lately-view" data-view="2" hidden>
+              <figure class="artifact" tabindex="0">
+                <img src={latelyLead.img} alt={latelyLead.alt} width="480" height="480" loading="lazy" />
+                <figcaption>
+                  <span class="word">
+                    <a
+                      href={latelyLead.href}
+                      target={isExt(latelyLead.href) ? '_blank' : undefined}
+                      rel={isExt(latelyLead.href) ? 'noopener' : undefined}
+                    >{latelyLead.word}</a>
+                  </span>
+                  <span class="when">{latelyLead.when}</span>
+                  <span class="whence">{latelyLead.whence}</span>
+                </figcaption>
+              </figure>
+              <ul class="artifact-rest" hidden={latelyRest.length === 0}>
+                {latelyRest.map((it) => (
+                  <li>
+                    <a
+                      href={it.href}
+                      target={isExt(it.href) ? '_blank' : undefined}
+                      rel={isExt(it.href) ? 'noopener' : undefined}
+                    >{it.short}</a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <!-- 3 · STAMP: a dated index. Here the rules ARE the idea. -->
+            <article class="lately-view" data-view="3" hidden>
+              <div class="stamp">
+                <span class="imprint">
+                  <span>Lately</span>
+                  <span>{latelyLead.stamp}</span>
+                </span>
+                <ul class="stamp-list">
+                  {lately.map((it) => (
+                    <li>
+                      <p class="subject">
+                        <a
+                          href={it.href}
+                          target={isExt(it.href) ? '_blank' : undefined}
+                          rel={isExt(it.href) ? 'noopener' : undefined}
+                        >{it.short}</a>
+                      </p>
+                      <span class="whence">{it.whence}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ the folio: white ground slides over the video ============ -->
+  <main class="ground" id="ground">
+
+    <section class="works" id="works" aria-label="Works">
+      <div class="works-head">
+        <h2>Works</h2>
+
+        <div class="lenses">
+          <div class="lens-row" role="group" aria-label="Filter by kind">
+            <button class="lens" data-bucket="all" aria-pressed="true">All</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="games" aria-pressed="false">Games</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="interactive pieces" aria-pressed="false">Interactive pieces</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-bucket="comics" aria-pressed="false">Comics</button>
+          </div>
+          <div class="lens-row quiet" role="group" aria-label="Filter by status">
+            <button class="lens" data-status="latest" aria-pressed="true">Latest</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="ongoing" aria-pressed="false">Ongoing</button><span class="sep" aria-hidden="true">&middot;</span>
+            <button class="lens" data-status="finished" aria-pressed="false">Finished</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- the grid: image + caption, nothing else.
+           EVERY tile goes to that work's OWN page. No tile leaves the site any
+           more; the live link out lives on the work page. ---- -->
+      <div class="grid" id="grid">
+        {works.map((w) => (
+          <article
+            class:list={['entry', { tbf: FINALISED.indexOf(w.id) === -1 }]}
+            data-id={w.id}
+            data-bucket={w.bucket}
+            data-status={w.status}
+          >
+            <a class="tile" href={w.href}>
+              <span class="media">
+                <img src={w.img} alt={w.alt} loading="lazy" width="800" height="500" />
+                {w.clip && <video class="clip" muted loop playsinline preload="none" data-src={w.clip}></video>}
+              </span>
+              <h3>
+                {w.title}
+                {FINALISED.indexOf(w.id) === -1 && <span class="tbf-tag">to finalise</span>}
+              </h3>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <p class="empty" id="empty" hidden>Nothing under this lens yet.</p>
+
+      <div class="more-wrap">
+        <button class="more" id="more" type="button" hidden>More</button>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <a href="mailto:hello@divyatak.art">hello@divyatak.art</a>
+    </footer>
+
+  </main>
+
+  <!-- ============ tooling only — lately pattern switcher ============ -->
+  <div class="proto-tools" id="tools">
+    <div class="pill" id="pick-lately">
+      <span class="k">lately</span>
+      <button type="button" data-lately="1" aria-pressed="true">1</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-lately="2" aria-pressed="false">2</button><span class="d" aria-hidden="true">&middot;</span>
+      <button type="button" data-lately="3" aria-pressed="false">3</button>
+    </div>
+  </div>
+
+<script is:inline>
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
+  // 15 cuts of 5.2s each = 78.0s, composed offline with ffmpeg at a uniform
+  // 1920x1080. The order below is informational — it is baked into the file.
+  var order = ['2a','7e','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
+  var MONTAGE_SECONDS = 78.0;
+  var CUT = MONTAGE_SECONDS / order.length;   // 5.2s — the montage's one unit
+
+  var vid = document.getElementById('vid');
+
+  // A LOOP THAT ALWAYS OPENS ON THE SAME FRAME becomes the page's face, and
+  // even 78s is short enough that a returning visitor would learn it. So each
+  // load enters the loop on a different cut: seek first, THEN reveal and play,
+  // so the seek is never seen. The seek is on a cut boundary, so it lands on a
+  // first frame, not mid-shot.
+  function enterMontage() {
+    try { vid.currentTime = 5.2 * Math.floor(Math.random() * 15); } catch (err) {}
+    vid.classList.add('on');
+    vid.play().catch(function () {});
+  }
+
+  // Under reduced motion nothing plays and nothing is offered: the poster still
+  // shows, via the backdrop's CSS background and the untouched poster attribute.
+  if (!prefersReduced) {
+    // readyState >= HAVE_METADATA means duration and seeking are already usable
+    if (vid.readyState >= 1) {
+      enterMontage();
+    } else {
+      vid.addEventListener('loadedmetadata', enterMontage, { once: true });
     }
   }
+
+  /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
+     Start = centred in the viewport at full size. End = the invisible .name-slot.
+     Because the name's box is exactly the grid's full span, "centred" resolves to
+     column 1's left line, and the slot sits on that same line — the horizontal term
+     cancels out and the name only ever changes size. */
+  var nameEl = document.getElementById('name');
+  var slotEl = document.getElementById('name-slot');
+  var overlayEl = document.getElementById('intro');
+  var groundEl = document.getElementById('ground');
+  // the shared SiteHeader, rendered in overlay mode. This page's only claim on
+  // it is the `ink` class it flips as the white ground arrives underneath.
+  var barEl = document.getElementById('site-header');
+
+  var M = { x0: 0, y0: 0, x1: 0, yDoc: 0, s1: 0.2, end: 1 };
+  var docked = null;
+  var inked = null;
+
+  function measure() {
+    nameEl.style.transform = 'none';
+    var nr = nameEl.getBoundingClientRect();       // left:0 / top:0, so this is its natural size
+    var sr = slotEl.getBoundingClientRect();
+    var nf = parseFloat(getComputedStyle(nameEl).fontSize) || 1;
+    var sf = parseFloat(getComputedStyle(slotEl).fontSize) || 1;
+
+    M.x0 = (window.innerWidth - nr.width) / 2;
+    M.y0 = (window.innerHeight - nr.height) / 2;
+    M.x1 = sr.left + (window.pageXOffset || 0);
+    M.yDoc = sr.top + (window.pageYOffset || 0);   // the slot's position in the document
+    M.s1 = sf / nf;                                // both use line-height 1, so top-left aligns
+    M.end = Math.max(1, overlayEl.getBoundingClientRect().top + (window.pageYOffset || 0));
+    paint();
+    nameEl.classList.add('ready');
+  }
+
+  function paint() {
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var p = y / M.end;
+    if (p < 0) p = 0;
+    if (p > 1) p = 1;
+    if (prefersReduced) p = p > 0.35 ? 1 : 0; // jump between states, never tween
+
+    var tx = M.x0 + (M.x1 - M.x0) * p;
+    var yEnd = M.yDoc - y;                    // where the slot is on screen right now
+    var ty = M.y0 + (yEnd - M.y0) * p;        // past p=1 this tracks the slot, so it scrolls away
+    var s = 1 + (M.s1 - 1) * p;
+    nameEl.style.transform =
+      'translate3d(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px,0) scale(' + s.toFixed(4) + ')';
+
+    var d = p > 0.5;
+    if (d !== docked) { docked = d; document.body.classList.toggle('docked', d); }
+
+    // the bar turns to ink once the white ground has slid under it
+    var ink = groundEl.getBoundingClientRect().top <= barEl.offsetHeight;
+    if (ink !== inked) { inked = ink; barEl.classList.toggle('ink', ink); }
+  }
+
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () { ticking = false; paint(); });
+  }, { passive: true });
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(measure, 120);
+  });
+
+  /* ==================================================================
+     TYPE CALIBRATION. The display sizes are (column span ÷ the string's
+     ink run) and the optical indent is that string's first-glyph
+     sidebearing — both are properties of the face, and the ruler divides
+     by the face's average advance. Rather than trust numbers typed into a
+     stylesheet, the page measures Sora itself: canvas TextMetrics reports
+     real ink bounds after real shaping, kerning included. The values in
+     :root are the offline defaults; the canvas has the last word.
+     ================================================================== */
+  var FAM = '"Sora"';
+  var PROBE = 200;   // measure big, divide down: keeps rounding out of the em value
+  var cx = document.createElement('canvas').getContext('2d');
+
+  // NOTE: text and tracking must match the stylesheet. The name is uppercased
+  // in CSS, so it is the UPPERCASE string that has to be measured.
+  var MEASURED = [
+    { v: 'name',  weight: 700, text: 'DIVYA TAK',                       ls: -0.015 },
+    { v: 'works', weight: 400, text: 'Works',                           ls: -0.040 },
+    { v: 'sub',   weight: 500, text: 'Creative technologist and artist', ls: -0.020 }
+  ];
+
+  function inkOf(weight, text, ls) {
+    cx.font = weight + ' ' + PROBE + 'px ' + FAM;
+    var m = cx.measureText(text);
+    if (!m || typeof m.actualBoundingBoxRight !== 'number') return null;
+    var lsb = -m.actualBoundingBoxLeft / PROBE;
+    var ink = (m.actualBoundingBoxRight + m.actualBoundingBoxLeft) / PROBE;
+    // CSS puts the tracking between glyphs; the ink run spans n-1 of those gaps
+    return { run: ink + (text.length - 1) * ls, lsb: lsb };
+  }
+
+  // the ruler's basis: one average lowercase character
+  function avgAdv() {
+    cx.font = '400 ' + PROBE + 'px ' + FAM;
+    var w = cx.measureText('abcdefghijklmnopqrstuvwxyz').width;
+    return w ? w / 26 / PROBE : null;
+  }
+
+  function calibrate() {
+    var root = document.documentElement;
+    for (var i = 0; i < MEASURED.length; i++) {
+      var s = MEASURED[i];
+      var m = inkOf(s.weight, s.text, s.ls);
+      if (!m || !(m.run > 0)) continue; // keep the stylesheet default
+      root.style.setProperty('--run-' + s.v, m.run.toFixed(4));
+      root.style.setProperty('--ti-' + s.v, m.lsb.toFixed(4));
+    }
+    var a = avgAdv();
+    if (a > 0) root.style.setProperty('--label-adv', a.toFixed(4));
+    measure();
+  }
+
+  measure();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(calibrate);
+  } else {
+    calibrate();
+  }
+  window.addEventListener('load', measure);
+
+  /* ---------- wheel assist: the dark act's two screens snap decisively ----------
+     CSS scroll-snap stays as the fallback; this just makes one gesture land. */
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  if (!prefersReduced && !coarse) {
+    var lockUntil = 0;
+    var THRESHOLD = 8;
+    window.addEventListener('wheel', function (e) {
+      if (e.ctrlKey) return;                       // pinch zoom
+      var y = window.pageYOffset || 0;
+      var end = M.end;
+      if (y > end + 4) return;                     // in the folio: hands off
+      var now = Date.now();
+      if (now < lockUntil) { e.preventDefault(); return; } // swallow the tail of a gesture
+      if (e.deltaY > THRESHOLD && y < end - 4) {
+        e.preventDefault();
+        lockUntil = now + 700;
+        window.scrollTo({ top: end, behavior: 'smooth' });
+      } else if (e.deltaY < -THRESHOLD && y > 4) {
+        e.preventDefault();
+        lockUntil = now + 700;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, { passive: false });
+  }
+
+  /* ---------- folio: lenses (bucket, status) + nine at a time ---------- */
+  var bucketBtns = document.querySelectorAll('.lens[data-bucket]');
+  var statusBtns = document.querySelectorAll('.lens[data-status]');
+  var items = [].slice.call(document.querySelectorAll('.entry'));
+  var emptyEl = document.getElementById('empty');
+  var moreBtn = document.getElementById('more');
+  var bucket = 'all';
+  var status = 'latest';
+
+  var PAGE = 9;
+  var shown = PAGE;
+
+  /* ---------- the sort animation ----------
+     A filter change is a rearrangement, not a repaint, so it is animated as
+     one: the tiles that are leaving fade first and only then does the layout
+     commit, so nothing ever jumps under the cursor. Survivors are moved with
+     FLIP — read where they were, let the browser reflow, then start them from
+     the old position and let them travel to the new one, which is a transform
+     and therefore free. Newcomers arrive last, a beat behind the movement, so
+     the eye follows the rearrangement before it is asked to read anything new. */
+  var OUT = 130, MOVE = 320, IN = 240;
+  var EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+  var canAnimate = !prefersReduced && typeof document.body.animate === 'function';
+  var busy = false;
+
+  // work out the target state WITHOUT committing it, so the leavers can be
+  // animated before the layout moves
+  function target(keepPage) {
+    var page = keepPage ? shown : PAGE;
+    var matched = 0, vis = [];
+    items.forEach(function (el) {
+      var bOk = bucket === 'all' || el.dataset.bucket === bucket;
+      var sOk = status === 'latest' || el.dataset.status === status;
+      if (bOk && sOk) {
+        matched++;
+        if (matched <= page) vis.push(el);
+      }
+    });
+    return { vis: vis, matched: matched, page: page };
+  }
+
+  function commit(t) {
+    shown = t.page;
+    for (var i = 0; i < items.length; i++) {
+      items[i].hidden = t.vis.indexOf(items[i]) === -1;
+    }
+    emptyEl.hidden = t.matched > 0;
+    moreBtn.hidden = t.matched <= t.page; // no counts, it just goes quiet when done
+  }
+
+  function apply(keepPage, animate) {
+    var t = target(keepPage);
+    if (!animate || !canAnimate || busy) { commit(t); return; }
+
+    var before = [];
+    items.forEach(function (el) {
+      if (!el.hidden) before.push({ el: el, rect: el.getBoundingClientRect() });
+    });
+    var leaving = before.filter(function (b) { return t.vis.indexOf(b.el) === -1; });
+
+    busy = true;
+    function land() {
+      commit(t);
+      items.forEach(function (el) {
+        if (el.hidden) return;
+        var was = null;
+        for (var i = 0; i < before.length; i++) {
+          if (before[i].el === el) { was = before[i].rect; break; }
+        }
+        if (was) {
+          var now = el.getBoundingClientRect();
+          var dx = was.left - now.left, dy = was.top - now.top;
+          if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+            el.animate(
+              [{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }],
+              { duration: MOVE, easing: EASE }
+            );
+          }
+        } else {
+          el.animate(
+            [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+            { duration: IN, delay: 90, easing: EASE, fill: 'backwards' }
+          );
+        }
+      });
+      setTimeout(function () { busy = false; }, MOVE);
+    }
+
+    if (leaving.length) {
+      leaving.forEach(function (b) {
+        b.el.animate(
+          [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px) scale(0.985)' }],
+          { duration: OUT, easing: 'ease-in' }
+        );
+      });
+      setTimeout(land, OUT);
+    } else {
+      land();
+    }
+  }
+
+  bucketBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      bucket = b.dataset.bucket;
+      bucketBtns.forEach(function (o) {
+        o.setAttribute('aria-pressed', o.dataset.bucket === bucket ? 'true' : 'false');
+      });
+      apply(false, true);
+    });
+  });
+
+  statusBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      status = b.dataset.status;
+      statusBtns.forEach(function (o) {
+        o.setAttribute('aria-pressed', o.dataset.status === status ? 'true' : 'false');
+      });
+      apply(false, true);
+    });
+  });
+
+  moreBtn.addEventListener('click', function () {
+    shown += PAGE;
+    apply(true, true);
+  });
+
+  apply(false, false);
+
+  /* ---------- hover footage: only where a real clip exists ---------- */
+  if (!prefersReduced) {
+    document.querySelectorAll('.tile .clip').forEach(function (v) {
+      var tile = v.closest('.tile');
+      function enter() {
+        if (!v.src) v.src = v.dataset.src;
+        v.classList.add('on');
+        v.play().catch(function () {});
+      }
+      function leave() {
+        v.classList.remove('on');
+        v.pause();
+        try { v.currentTime = 0; } catch (err) {}
+      }
+      tile.addEventListener('mouseenter', enter);
+      tile.addEventListener('focusin', enter);
+      tile.addEventListener('mouseleave', leave);
+      tile.addEventListener('focusout', leave);
+    });
+  }
+
+  /* ---------- residue (session marks, never counted) ---------- */
+  var KEY = 'proto-ongoing-seen';
+  var seen;
+  try {
+    seen = JSON.parse(sessionStorage.getItem(KEY) || '[]');
+  } catch (err) {
+    seen = [];
+  }
+  function mark(id) {
+    if (seen.indexOf(id) === -1) {
+      seen.push(id);
+      try { sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (err) {}
+    }
+    document.querySelectorAll('[data-id="' + id + '"]').forEach(function (el) {
+      el.classList.add('seen');
+    });
+  }
+  seen.forEach(mark);
+  items.forEach(function (el) {
+    el.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { mark(el.dataset.id); });
+    });
+  });
+
+  /* ---------- tooling: which lately pattern is on show ---------- */
+  var views = [].slice.call(document.querySelectorAll('.lately-view'));
+  function setLately(key) {
+    var any = false;
+    views.forEach(function (v) {
+      var on = v.dataset.view === key;
+      v.hidden = !on;
+      if (on) any = true;
+    });
+    if (!any) return;
+    document.querySelectorAll('#pick-lately button').forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.lately === key ? 'true' : 'false');
+    });
+    try { sessionStorage.setItem('proto-lately', key); } catch (e) {}
+    measure(); // the slot anchors the morph, so re-read it
+  }
+  document.getElementById('tools').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b && b.dataset.lately) setLately(b.dataset.lately);
+  });
+  var savedLately = null;
+  try { savedLately = sessionStorage.getItem('proto-lately'); } catch (e) {}
+  setLately(savedLately || '1');
+
+  /* ---------- legacy hash URLs (#works/slug etc.) still land somewhere ----------
+     BARE #works is NOT legacy: it is this page's own folio anchor (the header's
+     Works link on every subpage points here), so it must scroll, not redirect. */
+  var hash = window.location.hash.replace('#', '');
+  if (hash) {
+    var parts = hash.split('/');
+    if (parts[0] === 'works' && parts[1]) {
+      window.location.replace('/works/' + parts[1] + '/');
+    } else if (parts[0] === 'friends') {
+      window.location.replace('/friends/');
+    } else if (parts[0] === 'about') {
+      window.location.replace('/about/');
+    }
+  }
+})();
 </script>
+</body>
+</html>

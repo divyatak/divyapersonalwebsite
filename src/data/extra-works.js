@@ -14,12 +14,17 @@
  *   with        string   a real credit, or '' when it was solo
  *   url         string   a LIVE destination, or null when there isn't one yet
  *   linkLabel   string   what the link out says ('Play it', 'Open it')
- *   image       string   the hero, served from public/
+ *   image       string   the hero, served from public/ (also the tile + og image)
  *   imageAlt    string
+ *   heroVideo   string   optional clip that REPLACES the static hero on the work
+ *                        page — the image then only serves the tile and og:image
  *   orientation string   'landscape' | 'portrait' — the hero's ratio
  *   what        string   what the thing is
- *   why         string   why it exists            (null => "to be written")
- *   how         string   how it is actually built (null => "to be written")
+ *   why         string   why it exists            (null => simply not printed)
+ *   how         string   how it is actually built (null => simply not printed)
+ *   tech        string   the stack, printed on the fact line ('A · B · C'), or null
+ *   media       array    footage for the page: [{ type: 'video', src }] — real
+ *                        captures only, interleaved with the prose on /works/[slug]
  *
  * CONTENT RULE: what/why/how are assembled from Divya's own written source
  * material only (project dossiers, the GDD, the pitch docs). Nothing here is
@@ -32,12 +37,20 @@ export const extraWorks = [
     title: 'Metro Museum of the Forgotten',
     year: 2026,
     status: 'ongoing',
-    with: '',
+    with: 'with Kahran Singh',
     url: null,
     linkLabel: null,
     image: '/clips/poster-7.jpg',
     imageAlt: 'A 3D museum interior with mannequin figures at sunset, from the Metro Museum build',
     orientation: 'landscape',
+    heroVideo: '/clips/cut-7a.mp4', // nothing static on this page — the museum moves
+    tech: 'Three.js · Vite · Python',
+    media: [
+      { type: 'video', src: '/clips/cut-7b.mp4' },
+      { type: 'video', src: '/clips/cut-7c.mp4' },
+      { type: 'video', src: '/clips/cut-7d.mp4' },
+      { type: 'video', src: '/clips/cut-7e.mp4' },
+    ],
     what:
       "A first-person walking piece set inside an endless Delhi Metro train that is also a museum. " +
       "The exhibits are real lost things, taken from the Delhi Metro's public lost-and-found ledger: " +
@@ -72,6 +85,21 @@ export const extraWorks = [
     image: '/clips/poster-6.jpg',
     imageAlt: 'A dark shop screen with a product box, from Everything Bazaar',
     orientation: 'landscape',
+    // all bazaar footage is Divya's own captures (CLips/), cut to the 5.2s unit:
+    // 6a Old Friend box in the machine world · 6b RAIN·29 in the Package Studio ·
+    // 6c the pink bottle in the studio · 6d RIVER!! dispensed in the dark row
+    heroVideo: '/clips/cut-6a.mp4',
+    tech: 'React · Three.js',
+    media: [
+      { type: 'video', src: '/clips/cut-6b.mp4' },
+      { type: 'image', src: '/playground/bazaar-loneliness.webp', alt: 'The Loneliness vending machine, five bottles lit inside it' },
+      { type: 'image', src: '/playground/bazaar-selection.webp', alt: 'The slot selection screen of the Meaninglessness machine' },
+      { type: 'video', src: '/clips/cut-6c.mp4' },
+      { type: 'image', src: '/playground/bazaar-product.webp', alt: 'A generated product in the Package Studio: a cream bottle with a cork cap, labelled Gathered' },
+      { type: 'video', src: '/clips/cut-6d.mp4' },
+      { type: 'image', src: '/playground/bazaar-boredom.webp', alt: 'The Boredom vending machine in the dark row' },
+    ],
+
     what:
       "A row of five vending machines on a webpage. You walk the row, pick a feeling like loneliness or " +
       "boredom, and a machine dispenses a procedurally generated product: a bottle, a can, a chip packet, " +
@@ -103,8 +131,13 @@ export const extraWorks = [
     url: 'https://divyatak.github.io/creative-visuals/particles/',
     linkLabel: 'Open it',
     image: '/playground/bioluminescent-flow.webp',
-    imageAlt: 'Glowing particle trails on a dark field, from Bioluminescent Flow',
+    imageAlt: 'Two hands moving through a glowing particle field, from Bioluminescent Flow',
     orientation: 'landscape',
+    heroVideo: '/clips/cut-2b.mp4', // the page itself carries no stills
+    tech: 'Three.js · GPU compute shaders · MediaPipe',
+    media: [
+      { type: 'video', src: '/clips/cut-2a.mp4' },
+    ],
     what:
       "A field of glowing bioluminescent algae simulated on the GPU. Move your hand through it, tracked " +
       "live by webcam, and the particles brighten and scatter, the light rippling around your fingers, " +
@@ -129,6 +162,13 @@ export const extraWorks = [
     image: '/playground/webcam-magic.webp',
     imageAlt: 'A face rendered as a pixel mirror, from Webcam Magic',
     orientation: 'landscape',
+    tech: 'p5.js · MediaPipe',
+    media: [
+      { type: 'video', src: '/clips/cut-1a.mp4' },
+      { type: 'video', src: '/clips/cut-1b.mp4' },
+      { type: 'video', src: '/clips/cut-1c.mp4' },
+      { type: 'video', src: '/clips/cut-1d.mp4' },
+    ],
     what:
       "A real-time piece that transforms a webcam feed through hand gestures. Seven visual modes: duotone " +
       "ripple, shifted erase, thermal paint, halftone sculpt, ASCII smear, mosaic sharpen, static calm. " +
@@ -152,6 +192,8 @@ export const extraWorks = [
     image: '/playground/the-line-before.webp',
     imageAlt: 'Generative flowers grown from poems, from The Line Before',
     orientation: 'landscape',
+    tech: 'React · Three.js',
+    media: [],
     what:
       "The Line Before takes 230 fragments from Kahran's body of nearly 400 poems and lets visitors " +
       "assemble new poems through a sequence of instinctive emotional choices. Each fragment is scored " +

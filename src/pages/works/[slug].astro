@@ -14,21 +14,23 @@
  * is actually built, the third why it exists — and the reader is never told
  * which is which. The order ends on the soul on purpose.
  *
- * Pictures do the work the labels used to do. A couple of images from the media
- * strip are lifted into the gaps BETWEEN the paragraphs, so the reading is
- * paced by the work itself rather than by typography; everything left over
- * follows at the bottom as the calm strip. A work with no images beyond its
- * hero simply reads as three paragraphs with air between them.
+ * Pictures do the work the labels used to do. Images AND videos from the media
+ * strip are lifted into the gaps between the paragraphs — and after the last
+ * one — so the reading is paced by the work itself rather than by typography;
+ * whatever the prose doesn't take follows at the bottom as the calm strip.
+ * Videos in the prose are ambient: muted loops that play only while on screen,
+ * asking nothing. Only YouTube embeds and the itch widget wait at the end,
+ * because those genuinely ask to be started.
  *
- * Reserved writing. Why and How are only ever printed when there is real
- * written source material behind them. Where there isn't, a single muted line
- * stands in the paragraph's place — so the page shows where the words will go
- * without inventing them, and without announcing an empty section. When BOTH
- * are unwritten there is one muted line, not two.
+ * Unwritten sections are simply not printed. No placeholder, no muted line:
+ * the writing arrives when Divya writes it.
  */
 import Layout from '../../layouts/Layout.astro'
 import works from '../../data/generated-projects.json'
 import { extraWorks } from '../../data/extra-works.js'
+// hand-arranged layouts, written by the in-page editor (dev only). When a slug
+// has an entry here it wins over the automatic arrangement below.
+import savedLayouts from '../../data/work-layouts.json'
 
 // getStaticPaths is hoisted and evaluated on its own, so everything it needs
 // lives inside it.
@@ -69,12 +71,14 @@ export function getStaticPaths() {
             linkLabel: p.link ? labelFor(p.link) : null,
             itch: p.itch || null,
             hero,
+            heroVideo: null,
             heroAlt: hero ? `${p.title}, cover image` : '',
             orientation: p.coverOrientation === 'portrait' ? 'portrait' : 'landscape',
             // the pipeline's own info.txt description is the What, verbatim
             what: p.description || null,
             why: null,
             how: null,
+            tech: null,
             strip: p.media.filter((m: any) => m.src !== hero),
           },
         },
@@ -95,12 +99,14 @@ export function getStaticPaths() {
         linkLabel: w.url ? w.linkLabel || 'Open it' : null,
         itch: null,
         hero: w.image,
+        heroVideo: w.heroVideo || null,
         heroAlt: w.imageAlt,
         orientation: w.orientation || 'landscape',
         what: w.what || null,
         why: w.why || null,
         how: w.how || null,
-        strip: [],
+        tech: w.tech || null,
+        strip: w.media || [],
       },
     },
   }))
@@ -116,68 +122,164 @@ function youtubeEmbedUrl(url: string) {
   return match ? `https://www.youtube.com/embed/${match[1]}` : url
 }
 
-// The fact line: only the facts that are real. Status is printed only while a
-// work is still moving — a year already says "finished" for everything else.
+// The fact line: only the facts that are real. Tech rides next to the year,
+// where it exists. Status is printed only while a work is still moving — a
+// year already says "finished" for everything else.
 const facts = [
   String(work.year),
+  work.tech,
   work.with,
   work.status === 'ongoing' ? 'Ongoing' : '',
 ].filter(Boolean)
 
-const RESERVED = '— to be written —'
-
-/* ---------- the three paragraphs, in the order what → how → why ----------
-   Nothing is labelled, so a missing section cannot announce itself: it becomes
-   one muted line standing in the same place the writing will eventually go.
-   Two missing sections would be two identical muted lines saying the same
-   nothing twice, so they collapse into one. */
+/* ---------- the paragraphs, in the order what → how → why ----------
+   Nothing is labelled, and an unwritten section is simply absent — no
+   placeholder stands in for writing that hasn't happened. */
 const paragraphs: any[] = []
-if (work.what) paragraphs.push({ reserved: false, body: work.what })
+if (work.what) paragraphs.push({ body: work.what })
+if (work.how) paragraphs.push({ body: work.how })
+if (work.why) paragraphs.push({ body: work.why })
 
-if (!work.how && !work.why) {
-  paragraphs.push({ reserved: true, body: RESERVED })
-} else {
-  paragraphs.push(
-    work.how ? { reserved: false, body: work.how } : { reserved: true, body: RESERVED }
-  )
-  paragraphs.push(
-    work.why ? { reserved: false, body: work.why } : { reserved: true, body: RESERVED }
-  )
-}
-
-/* ---------- the pictures that go between them ----------
-   Only still images are lifted into the prose: a video or an embed asks to be
-   started, and nothing in the middle of a paragraph should ask for anything.
-   Those wait in the strip.
-
-   One image to a gap normally; two when the work has enough pictures that a
-   single one would read as an accident. Whatever is left stays in the tail, so
-   a work with thirty images still gives the prose only four. */
-const stripImages = work.strip.filter((m: any) => m.type === 'image')
+/* ---------- the page opens on the title, then text with the hero at its
+   side, then everything else as one scattered flow ----------
+   The first paragraph is the LEAD: it sits beside the hero rather than under
+   it. Whatever prose remains is threaded through the media, and every block —
+   paragraph or plate — takes a different position on the grid, cycling left /
+   right / centre so the page reads as a scatter rather than a left-hung
+   column. Once the prose runs out the media keeps flowing in the same
+   scattered register. Only YouTube embeds wait at the end, because those
+   genuinely ask to be started. */
+const flowMedia = work.strip.filter((m: any) => m.type === 'image' || m.type === 'video')
+const stripImages = flowMedia.filter((m: any) => m.type === 'image')
 const imageCount = stripImages.length
 const altFor = (m: any) =>
-  m.alt || `${work.title}, image ${stripImages.indexOf(m) + 1} of ${imageCount}`
+  m.alt ||
+  (stripImages.indexOf(m) >= 0
+    ? `${work.title}, image ${stripImages.indexOf(m) + 1} of ${imageCount}`
+    : work.title)
 
-const gaps = Math.max(0, paragraphs.length - 1)
-const perGap = imageCount >= 5 ? 2 : 1
+/* ---------- couplets: each beat is ONE ROW, text on one side and media on
+   the other — two halves of the same whole. The sides alternate beat to beat,
+   which is where the page's movement comes from now; nothing wanders off on
+   its own. A paragraph with no media left keeps its half-row and lets the
+   other half stay air. Leftover media after the prose runs out continues in
+   the same rhythm as paired rows (a wide half and a narrow half), and a last
+   odd piece takes the full width as a closing breath. */
+// a vertical piece never takes the wide half: portrait media holds ONE
+// column and its partner text widens to two, so the 1+2 row law holds
+// either way round
+const isPortrait = (md: any) => !!(md.width && md.height && md.height > md.width)
 
-const betweens: any[][] = []
-let taken = 0
-for (let g = 0; g < gaps; g++) {
-  const slice = stripImages.slice(taken, taken + perGap)
-  betweens.push(slice)
-  taken += slice.length
+/* ---------- the opening couplet is ORDINARY flow ----------
+   The first words and the hero are just the first two blocks — movable and
+   re-columnable in the editor like everything else. Nothing on the page is a
+   special category. */
+const flow: any[] = []
+const lead = paragraphs[0] || null
+const rest = paragraphs.slice(1)
+const heroTall = work.orientation === 'portrait'
+const heroMedia = work.heroVideo
+  ? { type: 'video', src: work.heroVideo }
+  : work.hero
+    ? { type: 'image', src: work.hero, alt: work.heroAlt }
+    : null
+if (lead && heroMedia) {
+  flow.push({ kind: 'para', body: lead.body, pos: heroTall ? 'pw-l' : 'ph-l' })
+  flow.push({ kind: 'plate', media: heroMedia, pos: heroTall ? 'm-s' : 'mh-r' })
+} else if (lead) {
+  flow.push({ kind: 'para', body: lead.body, pos: 'pw-l' })
+} else if (heroMedia) {
+  flow.push({ kind: 'plate', media: heroMedia, pos: heroTall ? 'm-s' : 'mh-l' })
 }
 
-// one flat run of blocks, so the whole article is a single grid
-const flow: any[] = []
-paragraphs.forEach((p, i) => {
-  flow.push({ kind: 'para', ...p })
-  ;(betweens[i] || []).forEach((m: any) => flow.push({ kind: 'plate', media: m }))
+let m = 0
+// side 0 opens with media-left — the lead couplet above ran text-left, so the
+// alternation carries straight through
+let side = 0
+rest.forEach((p: any) => {
+  const md = flowMedia[m]
+  if (md) {
+    m++
+    const tall = isPortrait(md)
+    if (side % 2 === 0) {
+      flow.push({ kind: 'plate', media: md, pos: tall ? 'm-s' : 'mh-l' })
+      flow.push({ kind: 'para', body: p.body, pos: tall ? 'pw-r' : 'ph-r' })
+    } else {
+      flow.push({ kind: 'para', body: p.body, pos: tall ? 'pw-l' : 'ph-l' })
+      flow.push({ kind: 'plate', media: md, pos: tall ? 'm-s' : 'mh-r' })
+    }
+  } else {
+    // a paragraph with no media partner takes TWO columns, never one — a lone
+    // column of text reads as a stranded caption
+    flow.push({ kind: 'para', body: p.body, pos: side % 2 === 0 ? 'pw-r' : 'pw-l' })
+  }
+  side++
 })
+const leftover = flowMedia.slice(m)
+for (let i = 0; i < leftover.length; i += 2) {
+  const pair = leftover.slice(i, i + 2)
+  if (pair.length === 2) {
+    const p0 = isPortrait(pair[0])
+    const p1 = isPortrait(pair[1])
+    let pos0: string
+    let pos1: string
+    if (p0 && p1) {
+      pos0 = 'm-s'
+      pos1 = 'm-s' // two verticals side by side, the third column stays air
+    } else if (p0) {
+      pos0 = 'm-s'
+      pos1 = 'mh-r'
+    } else if (p1) {
+      pos0 = 'mh-l'
+      pos1 = 'm-s'
+    } else if (side % 2 === 0) {
+      pos0 = 'mh-l'
+      pos1 = 'm-s'
+    } else {
+      pos0 = 'm-s'
+      pos1 = 'mh-r'
+    }
+    flow.push({ kind: 'plate', media: pair[0], pos: pos0 })
+    flow.push({ kind: 'plate', media: pair[1], pos: pos1 })
+  } else {
+    // a last odd piece: two columns if it lies, one if it stands
+    flow.push({
+      kind: 'plate',
+      media: pair[0],
+      pos: isPortrait(pair[0]) ? 'm-s' : side % 2 === 0 ? 'mh-l' : 'mh-r',
+    })
+  }
+  side++
+}
 
-const lifted = new Set(betweens.flat().map((m: any) => m.src))
-const tail = work.strip.filter((m: any) => !lifted.has(m.src))
+// only the embeds wait at the end now
+const tail = work.strip.filter((m: any) => m.type === 'youtube')
+
+/* ---------- hand-arranged overrides from the editor ----------
+   The editor serializes exactly what the template renders — one ordered list
+   of positioned blocks — so applying a saved layout is a straight
+   substitution, never a merge.
+
+   MIGRATION: saves made before the lead was folded into the flow carry the
+   lead text in a separate `lead` field, and never contain the hero. Those
+   leads are Divya's own writing — they are folded back in front of the flow
+   here, never dropped. The next editor save rewrites the entry in the new
+   shape and this path stops firing for that work. */
+const saved: any = (savedLayouts as any)[work.slug] || null
+let flowFinal: any[] = flow
+if (saved && Array.isArray(saved.flow)) {
+  if (typeof saved.lead === 'string' && saved.lead) {
+    const leadBlocks: any[] = [
+      { kind: 'para', body: saved.lead, pos: heroTall ? 'pw-l' : 'ph-l' },
+    ]
+    if (heroMedia) {
+      leadBlocks.push({ kind: 'plate', media: heroMedia, pos: heroTall ? 'm-s' : 'mh-r' })
+    }
+    flowFinal = [...leadBlocks, ...saved.flow]
+  } else {
+    flowFinal = saved.flow
+  }
+}
 const metaDescription = work.what
   ? work.what.length > 155 ? `${work.what.slice(0, 152).trimEnd()}...` : work.what
   : `${work.title} by Divya`
@@ -190,27 +292,39 @@ const metaDescription = work.what
 >
   <article class="wk" aria-label={`Work: ${work.title}`}>
 
-    <a class="wk-back" href={`${base}/works/`}>Back to works</a>
-
-    {work.hero && (
-      <figure class:list={['wk-hero', work.orientation]}>
-        <img src={`${base}${work.hero}`} alt={work.heroAlt} decoding="async" />
-      </figure>
-    )}
+    <a class="wk-back" href={`${base}/works/`} aria-label="Back to works">&#8592;</a>
 
     <header class="wk-head">
       <h1 class="wk-title">{work.title}</h1>
       {facts.length > 0 && (
         <p class="wk-facts">{facts.join('  ·  ')}</p>
       )}
+      {work.url && (
+        <p class="wk-try">
+          <a href={work.url} target="_blank" rel="noopener noreferrer">
+            {work.linkLabel} &#8599;
+          </a>
+        </p>
+      )}
     </header>
 
     <div class="wk-flow">
-      {flow.map((b: any) =>
+      {flowFinal.map((b: any) =>
         b.kind === 'para' ? (
-          <p class:list={['wk-prose', { reserved: b.reserved }]}>{b.body}</p>
+          <p class:list={['wk-prose', b.pos]}>{b.body}</p>
+        ) : b.media.type === 'video' ? (
+          <figure class:list={['wk-plate', b.pos]}>
+            <video
+              src={`${base}${b.media.src}`}
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-label={`${work.title}, video`}
+            ></video>
+          </figure>
         ) : (
-          <figure class="wk-plate">
+          <figure class:list={['wk-plate', b.pos]}>
             <img
               src={`${base}${b.media.src}`}
               alt={altFor(b.media)}
@@ -223,14 +337,6 @@ const metaDescription = work.what
         )
       )}
     </div>
-
-    {work.url && (
-      <div class="wk-out">
-        <a href={work.url} target="_blank" rel="noopener noreferrer">
-          {work.linkLabel}
-        </a>
-      </div>
-    )}
 
     {work.itch && (
       <div class="wk-out">
@@ -278,7 +384,218 @@ const metaDescription = work.what
     )}
 
   </article>
+
+  {import.meta.env.DEV && (
+    <div class="wked" id="wked" data-slug={work.slug}>
+      <button id="wked-toggle" type="button">edit layout</button>
+      <span id="wked-bar" hidden>
+        <button id="wked-save" type="button">save</button>
+        <button id="wked-reset" type="button">reset to auto</button>
+        <span id="wked-msg"></span>
+      </span>
+    </div>
+  )}
+
+  {import.meta.env.DEV && (
+    <script is:inline>
+      /* ================= THE WORK-PAGE EDITOR — DEV ONLY =================
+         Never ships: the whole island is behind import.meta.env.DEV.
+         "edit layout" turns the page itself into the editor:
+           · paragraphs (lead included) become directly editable text
+           · every flow block grows ↑ ↓ (reorder), ⇔ (cycle its grid
+             position), ✕ (remove)
+           · SAVE serializes the arrangement and POSTs it to the dev
+             server, which writes src/data/work-layouts.json — the page
+             then reloads showing exactly what was saved
+           · RESET TO AUTO deletes the entry and the automatic layout
+             returns
+         ==================================================================== */
+      ;(function () {
+        var root = document.getElementById('wked')
+        if (!root) return
+        var slug = root.dataset.slug
+        var flowEl = document.querySelector('.wk-flow')
+        var toggle = document.getElementById('wked-toggle')
+        var bar = document.getElementById('wked-bar')
+        var msg = document.getElementById('wked-msg')
+        // every block cycles through widths of 1, 2 or 3 columns (and a side
+        // where the width leaves room for one)
+        var PP = ['ph-l', 'ph-r', 'pw-l', 'pw-r', 'p-f']
+        var PM = ['m-s', 'mh-l', 'mh-r', 'm-f']
+        var LABEL = {
+          'ph-l': '1·L', 'ph-r': '1·R', 'pw-l': '2·L', 'pw-r': '2·R', 'p-f': '3',
+          'm-s': '1', 'mh-l': '2·L', 'mh-r': '2·R', 'm-f': '3',
+        }
+        var on = false
+
+        var css = document.createElement('style')
+        css.textContent = [
+          '.wked{position:fixed;right:.75rem;bottom:.75rem;z-index:99;display:flex;gap:.4rem;align-items:center;',
+          'font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1}',
+          '.wked button{font:inherit;border:none;border-radius:999px;padding:.45rem .8rem;cursor:pointer;',
+          'background:#111;color:#fff;box-shadow:0 1px 6px rgba(0,0,0,.35)}',
+          '.wked button:hover{background:#333}',
+          '#wked-msg{color:#636363}',
+          'body.wked-on .wk-flow>*{outline:1px dashed #ccc;outline-offset:6px;position:relative}',
+          'body.wked-on [contenteditable]{outline-color:#8bb}',
+          '.wked-tools{position:absolute;top:-1.5rem;left:0;display:flex;gap:2px;z-index:20}',
+          '.wked-tools button{font-family:ui-monospace,Menlo,monospace;font-size:10px;line-height:1;border:none;',
+          'background:#111;color:#fff;padding:3px 7px;cursor:pointer}',
+          '.wked-tools button:hover{background:#444}',
+        ].join('')
+        document.head.appendChild(css)
+
+        function blocks() {
+          return [].slice.call(flowEl ? flowEl.children : [])
+        }
+
+        function posOf(el) {
+          var ring = el.classList.contains('wk-prose') ? PP : PM
+          return ring.filter(function (c) { return el.classList.contains(c) })[0] || ring[0]
+        }
+
+        function ensureTools(el) {
+          if (el.querySelector('.wked-tools')) return
+          var t = document.createElement('span')
+          t.className = 'wked-tools'
+          t.setAttribute('contenteditable', 'false')
+          t.innerHTML =
+            '<button type="button" data-act="up" title="move up">&#8593;</button>' +
+            '<button type="button" data-act="down" title="move down">&#8595;</button>' +
+            '<button type="button" data-act="pos" title="cycle width and side: 1, 2 or 3 columns">' +
+            LABEL[posOf(el)] +
+            '</button>' +
+            '<button type="button" data-act="del" title="remove">&#10005;</button>'
+          el.appendChild(t)
+        }
+
+        function stripTools(el) {
+          var t = el.querySelector('.wked-tools')
+          if (t) t.remove()
+        }
+
+        function enter() {
+          on = true
+          bar.hidden = false
+          toggle.textContent = 'editing…'
+          document.body.classList.add('wked-on')
+          blocks().forEach(ensureTools)
+          blocks().forEach(function (el) {
+            if (el.classList.contains('wk-prose')) el.setAttribute('contenteditable', 'true')
+          })
+        }
+
+        function leave() {
+          on = false
+          bar.hidden = true
+          toggle.textContent = 'edit layout'
+          document.body.classList.remove('wked-on')
+          blocks().forEach(stripTools)
+          blocks().forEach(function (el) { el.removeAttribute('contenteditable') })
+        }
+
+        toggle.addEventListener('click', function () { on ? leave() : enter() })
+
+        // the per-block tools
+        if (flowEl) {
+          flowEl.addEventListener('click', function (e) {
+            var b = e.target.closest('.wked-tools button')
+            if (!b) return
+            e.preventDefault()
+            var el = b.closest('.wk-flow > *') || b.parentElement.parentElement
+            var act = b.dataset.act
+            if (act === 'up' && el.previousElementSibling) {
+              flowEl.insertBefore(el, el.previousElementSibling)
+            } else if (act === 'down' && el.nextElementSibling) {
+              flowEl.insertBefore(el.nextElementSibling, el)
+            } else if (act === 'del') {
+              el.remove()
+            } else if (act === 'pos') {
+              var ring = el.classList.contains('wk-prose') ? PP : PM
+              var i = ring.findIndex(function (c) { return el.classList.contains(c) })
+              var next = ring[(i + 1) % ring.length]
+              el.classList.remove(ring[Math.max(i, 0)])
+              el.classList.add(next)
+              b.textContent = LABEL[next]
+            }
+          })
+        }
+
+        function textOf(el) {
+          var clone = el.cloneNode(true)
+          var t = clone.querySelector('.wked-tools')
+          if (t) t.remove()
+          return clone.textContent.trim()
+        }
+
+        function serialize() {
+          var fl = blocks().map(function (el) {
+            if (el.classList.contains('wk-prose')) {
+              return { kind: 'para', body: textOf(el), pos: posOf(el) }
+            }
+            var media = el.querySelector('video, img')
+            var isVid = media && media.tagName === 'VIDEO'
+            var out = { kind: 'plate', pos: posOf(el), media: { type: isVid ? 'video' : 'image', src: media ? media.getAttribute('src') : '' } }
+            if (!isVid && media) {
+              if (media.getAttribute('alt')) out.media.alt = media.getAttribute('alt')
+              if (media.getAttribute('width')) out.media.width = Number(media.getAttribute('width'))
+              if (media.getAttribute('height')) out.media.height = Number(media.getAttribute('height'))
+            }
+            return out
+          })
+          return { flow: fl }
+        }
+
+        function post(layout, note) {
+          msg.textContent = '…'
+          fetch('/__work-layout', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ slug: slug, layout: layout }),
+          })
+            .then(function (r) {
+              if (!r.ok) throw new Error('save failed: ' + r.status)
+              msg.textContent = note + ' — reloading'
+              setTimeout(function () { window.location.reload() }, 600)
+            })
+            .catch(function (e) { msg.textContent = String(e) })
+        }
+
+        document.getElementById('wked-save').addEventListener('click', function () {
+          post(serialize(), 'saved')
+        })
+        document.getElementById('wked-reset').addEventListener('click', function () {
+          post(null, 'reset')
+        })
+      })()
+    </script>
+  )}
 </Layout>
+
+<script is:inline>
+  // The ambient loops in the prose play only while they are on screen, and
+  // never under reduced motion — there they sit still and offer controls,
+  // like the strip's videos always have.
+  (function () {
+    var vids = document.querySelectorAll('.wk-flow video')
+    if (!vids.length) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      vids.forEach(function (v) { v.setAttribute('controls', '') })
+      return
+    }
+    if (!('IntersectionObserver' in window)) {
+      vids.forEach(function (v) { v.play().catch(function () {}) })
+      return
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) e.target.play().catch(function () {})
+        else e.target.pause()
+      })
+    }, { rootMargin: '120px' })
+    vids.forEach(function (v) { io.observe(v) })
+  })()
+</script>
 
 <style>
   /* =====================================================================
@@ -313,8 +630,9 @@ const metaDescription = work.what
 
     font-family: 'Sora', system-ui, sans-serif;
     color: var(--ink);
-    font-size: clamp(15px, 0.5vw + 0.7rem, 17px);
-    line-height: var(--r);
+    /* raised a step at Divya's ask — the essays read, they don't whisper */
+    font-size: clamp(16px, 0.5vw + 0.8rem, 19px);
+    line-height: calc(var(--r) * 1.15);
     letter-spacing: -0.005em;
     padding-bottom: calc(var(--r) * 5);
   }
@@ -340,104 +658,112 @@ const metaDescription = work.what
     color: var(--quiet);
   }
 
+  /* the way back is just the arrow — the glyph runs a step larger than the
+     label register it sits in, or it reads as a stray mark */
   .wk-back {
     display: inline-block;
+    font-size: 1.25rem;
+    letter-spacing: 0;
     text-decoration: none;
     margin-bottom: calc(var(--r) * 2);
   }
   .wk-back:hover { color: var(--ink); }
 
-  /* ---------- hero: no frame, no caption, nothing but the picture ---------- */
-  .wk-hero {
-    margin: 0 0 calc(var(--r) * 2.5);
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 76vh;
-    overflow: hidden;
-    background: #f4f4f4;
-  }
-  /* a portrait cover keeps its shape and takes two columns, not three */
-  .wk-hero.portrait {
-    width: calc((100% - 2 * var(--gutter)) / 3 * 2 + var(--gutter));
-    aspect-ratio: 4 / 5;
-    max-height: 82vh;
-  }
-  .wk-hero img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* ---------- title + the quiet fact line ---------- */
+  /* ---------- the page opens on the title, centred, at half its old size ----------
+     Set in caps at Divya's ask. Caps refuse the lowercase's tight tracking,
+     so -0.035em relaxes to -0.015em — the same concession the landing name
+     makes. */
   .wk-title {
     grid-column: 1 / -1;
     margin: 0;
-    font-size: clamp(2.1rem, 5.4vw, 4.4rem);
+    text-align: center;
+    font-size: clamp(1.05rem, 2.7vw, 2.2rem);
     font-weight: 600;
     line-height: 1.02;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
     color: var(--ink);
-    /* the ink hangs on column 1's line rather than the glyph box */
-    text-indent: -0.03em;
   }
   .wk-facts {
     grid-column: 1 / -1;
     margin: var(--r) 0 0;
+    text-align: center;
     font-weight: 400;
   }
 
-  /* ---------- the prose, and the pictures set into it ----------
-     Three paragraphs and nothing telling you what they are. Paragraph to
-     paragraph is two rhythm units of air; a picture between them takes three,
-     because a picture has to be finished before the next sentence starts. */
-  .wk-flow { margin-top: calc(var(--r) * 4); }
-
-  .wk-prose {
+  /* the way IN, right at the top: if the thing can be tried, trying comes
+     before reading */
+  .wk-try {
     grid-column: 1 / -1;
+    margin: calc(var(--r) * 1.25) 0 0;
+    text-align: center;
+  }
+  .wk-try a {
+    font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 0.15em;
+  }
+  .wk-try a:hover { color: #636363; border-bottom-color: #636363; }
+
+
+  /* ---------- the flow: couplets ----------
+     Each row is one beat — text on one half, media on the other, centred on
+     each other so they read as a lockup, never as neighbours who happened to
+     stop nearby. The sides alternate row to row; the row gap is the only
+     vertical space, so every beat is the same breath apart. */
+  .wk-flow {
+    margin-top: calc(var(--r) * 3);
+    row-gap: calc(var(--r) * 3);
+    align-items: center;
+  }
+
+  /* the first words on the page speak one step above the body, wherever the
+     editor puts them — the lead is a voice, not a section */
+  .wk-flow > p:first-of-type {
+    font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+    line-height: calc(var(--r) * 1.35);
+  }
+
+  /* the column is the measure — no arbitrary width caps anywhere.
+     Every block spans one, two, or all three of the columns. */
+  .wk-prose {
+    grid-column: 1 / 3;
     margin: 0;
-    max-width: 34em;
-  }
-  .wk-prose + .wk-prose { margin-top: calc(var(--r) * 2); }
-
-  /* held in reserve: this is where the writing will go, said once and quietly */
-  .wk-prose.reserved {
-    color: var(--faint);
-    letter-spacing: 0.04em;
   }
 
-  /* a picture lifted out of the strip and set between two paragraphs.
-     Two columns of three, its own natural ratio, no frame and no caption. */
+  /* the text half — ONE column, snug against its two-column media */
+  .wk-flow .wk-prose.ph-l { grid-column: 1; }
+  .wk-flow .wk-prose.ph-r { grid-column: 3; }
+  /* solo text — TWO columns */
+  .wk-flow .wk-prose.pw-l { grid-column: 1 / 3; }
+  .wk-flow .wk-prose.pw-r { grid-column: 2 / 4; }
+  /* the full measure, when the editor asks for it */
+  .wk-flow .wk-prose.p-f { grid-column: 1 / -1; }
+
+  /* the media half: its own natural ratio, no frame and no caption. A video
+     here is chromeless: it behaves exactly like a picture that moves. */
   .wk-plate {
     grid-column: 1 / 3;
-    margin: calc(var(--r) * 3) 0 0;
+    margin: 0;
   }
-  /* a pair of pictures is one beat, so they sit closer to each other than
-     either of them sits to the writing */
-  .wk-plate + .wk-plate { margin-top: calc(var(--r) * 1.5); }
-  .wk-plate + .wk-prose { margin-top: calc(var(--r) * 3); }
-  .wk-plate img {
+  .wk-flow .wk-plate.mh-l { grid-column: 1 / 3; }  /* the wide half, left  */
+  .wk-flow .wk-plate.mh-r { grid-column: 2 / 4; }  /* the wide half, right */
+  .wk-flow .wk-plate.m-s { grid-column: auto / span 1; } /* the narrow half */
+  .wk-flow .wk-plate.m-f { grid-column: 1 / -1; }  /* full-bleed, editor's call */
+  .wk-plate img,
+  .wk-plate video {
     display: block;
     width: 100%;
     height: auto;
     background: #f4f4f4;
   }
 
-  /* ---------- the way out: one plain, prominent link ---------- */
+  /* ---------- the itch widget keeps the page's grid ---------- */
   .wk-out { margin-top: calc(var(--r) * 4); }
-  .wk-out > a {
-    grid-column: 1 / -1;
-    justify-self: start;
-    font-size: clamp(1.05rem, 1.6vw, 1.4rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    color: var(--ink);
-    text-decoration: none;
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 0.18em;
-  }
-  .wk-out > a:hover { color: #636363; border-bottom-color: #636363; }
 
   /* the six 2020 games have no page URL of their own, only an itch widget,
      so the widget itself is the way out */
@@ -502,7 +828,22 @@ const metaDescription = work.what
     .wk-strip-inner {
       grid-column: 1;
     }
-    .wk-hero.portrait { width: 100%; }
+    /* the couplets fold back into one column — text above its media, still
+       adjacent, still one beat. The position classes outrank the plain stack
+       rule, so they are named here explicitly. */
+    .wk-flow .wk-prose.ph-l,
+    .wk-flow .wk-prose.ph-r,
+    .wk-flow .wk-prose.pw-l,
+    .wk-flow .wk-prose.pw-r,
+    .wk-flow .wk-prose.p-f,
+    .wk-flow .wk-plate.mh-l,
+    .wk-flow .wk-plate.mh-r,
+    .wk-flow .wk-plate.m-s,
+    .wk-flow .wk-plate.m-f {
+      grid-column: 1;
+      justify-self: stretch;
+    }
+    .wk-flow { row-gap: calc(var(--r) * 2); }
     .wk-flow { margin-top: calc(var(--r) * 3); }
     .wk-plate { margin-top: calc(var(--r) * 2.5); }
     .wk-plate + .wk-prose { margin-top: calc(var(--r) * 2.5); }

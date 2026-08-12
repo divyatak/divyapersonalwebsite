@@ -24,6 +24,7 @@ const logos = [
   { src: '/logos/ai-enthusiasts-circle.webp', alt: 'AI Enthusiasts Circle' },
   { src: '/logos/ajaibghar.webp', alt: 'Ajaibghar / Lab59' },
 ]
+
 ---
 
 <Layout title="About — Divya" description="Divya Tak is a multidisciplinary creative whose work spans film, games, comics, interactive systems, and generative media.">
@@ -248,7 +249,10 @@ const logos = [
   }
   .contact a:hover { border-bottom-color: var(--ink); }
 
-  /* ---------- the logo strip, calmed: greyscale, small, on the rhythm ---------- */
+  /* ---------- the logo strip: small, on the rhythm, and IN COLOUR ----------
+     They were greyscaled once to keep the page quiet; Divya wants the colour
+     back — these marks are the one place the page borrows other people's ink,
+     and they may as well arrive as themselves. */
   .logos {
     list-style: none;
     display: flex;
@@ -262,11 +266,7 @@ const logos = [
     width: auto;
     max-width: calc(var(--r) * 6);
     object-fit: contain;
-    filter: grayscale(1);
-    opacity: 0.45;
-    transition: opacity var(--hover-on, 0.2s) ease;
   }
-  .logos img:hover { opacity: 0.8; }
 
   /* ---------- the index: THING | where · year, one line each ----------
      The year used to open every row, which spent the widest, leftmost thing on
@@ -375,7 +375,6 @@ const logos = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .page a,
-    .logos img { transition: none; }
+    .page a { transition: none; }
   }
 </style>

@@ -43,14 +43,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 const pathname = Astro.url.pathname
 
 // On the landing the folio is on this page, so Works is an anchor. Everywhere
-// else it is a trip back to the landing's folio.
-const onLanding = pathname.startsWith(`${base}/prototype/ongoing`)
+// else it is a trip back to the landing's folio. The prototype copy of the
+// landing still counts as the landing.
+const onLanding =
+  pathname === `${base}/` || pathname.startsWith(`${base}/prototype/ongoing`)
 
 const links = [
-  { label: 'Works', href: onLanding ? '#works' : `${base}/prototype/ongoing/#works` },
+  { label: 'Works', href: onLanding ? '#works' : `${base}/#works` },
   { label: 'Friends', href: `${base}/friends/` },
   { label: 'About', href: `${base}/about/` },
-  { label: 'Contact', href: 'mailto:hello@divyatak.art' },
+  // Contact carries a small floating hint on hover, so the surprise of a
+  // mailto: link is disarmed before the click.
+  { label: 'Contact', href: 'mailto:hello@divyatak.art', tip: 'email to hello@divyatak.art' },
 ]
 
 // Minimal by design: an anchor into another page's section is never "active",
@@ -65,7 +69,7 @@ const isActive = (href: string) =>
   class:list={['site-header', variant === 'overlay' ? 'v-overlay' : 'v-ink']}
   aria-label="Main navigation"
 >
-  <a class="wordmark" href={`${base}/prototype/ongoing/`}>DIVYA TAK</a>
+  <a class="wordmark" href={`${base}/`}>DIVYA TAK</a>
   <nav class="links" aria-label="Site">
     {links.map((l) => (
       <a
@@ -73,7 +77,7 @@ const isActive = (href: string) =>
         class:list={['nav-link', { active: isActive(l.href) }]}
         aria-current={isActive(l.href) ? 'page' : undefined}
       >
-        {l.label}
+        {l.label}{l.tip && <span class="tip" aria-hidden="true">{l.tip}</span>}
       </a>
     ))}
   </nav>
@@ -158,6 +162,37 @@ const isActive = (href: string) =>
     outline-offset: 3px;
   }
 
+  /* ---------- the floating hint: a small dark pill under the link ----------
+     Same on both grounds — a dark pill reads on white and on the video alike.
+     aria-hidden, because the mailto: href already says what a screen reader
+     needs to know. */
+  .nav-link { position: relative; }
+  .tip {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    white-space: nowrap;
+    background: #111;
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    line-height: 1;
+    padding: 0.4rem 0.65rem;
+    border-radius: 999px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: translateY(-0.15rem);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .nav-link:hover .tip,
+  .nav-link:focus-visible .tip {
+    opacity: 1;
+    transform: none;
+  }
+
   /* ---------- overlay: the landing's dark act. Same geometry; only anchor and ink differ ---------- */
   .v-overlay {
     position: fixed;
@@ -222,6 +257,7 @@ const isActive = (href: string) =>
   @media (prefers-reduced-motion: reduce) {
     .site-header,
     .wordmark,
-    .nav-link { transition: none; }
+    .nav-link,
+    .tip { transition: none; }
   }
 </style>
