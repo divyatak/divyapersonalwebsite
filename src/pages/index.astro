@@ -933,9 +933,13 @@ const latelyLead = lately[0];
 </head>
 <body>
 
-  <!-- ============ the video, fixed behind everything ============ -->
+  <!-- ============ the video, fixed behind everything ============
+       Two stacked players over one clip pool: one plays, the other preloads
+       the next clip, and they trade places on every cut. No composed montage
+       file any more — the clips ship at original quality and load one ahead. -->
   <div class="backdrop" aria-hidden="true">
-    <video id="vid" muted playsinline loop preload="auto" poster="/clips/poster-2.jpg" src="/clips/montage.mp4"></video>
+    <video id="vid" muted playsinline preload="auto" poster="/clips/poster-2.jpg"></video>
+    <video id="vid2" muted playsinline preload="auto"></video>
     <div class="scrim"></div>
   </div>
 
@@ -1062,36 +1066,65 @@ const latelyLead = lately[0];
 (function () {
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- montage: one pre-composed file (/clips/montage.mp4) ---------- */
-  // 16 cuts of 5.2s each = 83.2s, composed offline with ffmpeg at a uniform
-  // 1920x1080. The order below is informational — it is baked into the file.
-  // 9m is the (e)motion bloom, spliced in as the third cut.
-  var order = ['2a','7e','9m','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
-  var MONTAGE_SECONDS = 83.2;
-  var CUT = MONTAGE_SECONDS / order.length;   // 5.2s — the montage's one unit
+  /* ---------- montage: the clip pool, played in random order ----------
+     No composed file: each 5.2s cut is its own original-quality mp4, and the
+     montage is assembled live. Two players alternate — while one plays, the
+     other silently preloads the next clip, so the cut lands without a gap.
+     Every visit shuffles its own order, so the page never opens the same way
+     twice and never plays in a learnable loop. */
+  var CLIP_KEYS = ['2a','7e','9m','1c','4a','8a','7d','1a','3a','7c','4b','8b','2b','7a','1d','7b'];
+  var CLIPS = CLIP_KEYS.map(function (k) { return '/clips/cut-' + k + '.mp4'; });
 
-  var vid = document.getElementById('vid');
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
 
-  // A LOOP THAT ALWAYS OPENS ON THE SAME FRAME becomes the page's face, and
-  // even 78s is short enough that a returning visitor would learn it. So each
-  // load enters the loop on a different cut: seek first, THEN reveal and play,
-  // so the seek is never seen. The seek is on a cut boundary, so it lands on a
-  // first frame, not mid-shot.
-  function enterMontage() {
-    try { vid.currentTime = CUT * Math.floor(Math.random() * order.length); } catch (err) {}
-    vid.classList.add('on');
-    vid.play().catch(function () {});
+  var playlist = shuffle(CLIPS.slice());
+  var players = [document.getElementById('vid'), document.getElementById('vid2')];
+  var vid = players[0]; // the bar/name morph code below reads this one; both stay in sync visually
+  var clipIdx = 0;
+  var active = 0;
+
+  function clipAt(i) { return playlist[i % playlist.length]; }
+
+  function preloadNext() {
+    var idle = players[1 - active];
+    idle.src = clipAt(clipIdx + 1);
+    idle.load();
+  }
+
+  function swap() {
+    var next = players[1 - active];
+    clipIdx++;
+    next.classList.add('on');
+    next.play().catch(function () {});
+    players[active].classList.remove('on');
+    active = 1 - active;
+    preloadNext();
+  }
+
+  function startMontage() {
+    var v = players[active];
+    v.src = clipAt(clipIdx);
+    var reveal = function () {
+      v.classList.add('on');
+      v.play().catch(function () {});
+      preloadNext();
+    };
+    if (v.readyState >= 3) reveal();
+    else v.addEventListener('canplay', reveal, { once: true });
+    v.load();
   }
 
   // Under reduced motion nothing plays and nothing is offered: the poster still
   // shows, via the backdrop's CSS background and the untouched poster attribute.
   if (!prefersReduced) {
-    // readyState >= HAVE_METADATA means duration and seeking are already usable
-    if (vid.readyState >= 1) {
-      enterMontage();
-    } else {
-      vid.addEventListener('loadedmetadata', enterMontage, { once: true });
-    }
+    players.forEach(function (p) { p.addEventListener('ended', swap); });
+    startMontage();
   }
 
   /* ---------- the name: ONE element travelling from screen 1 into its slot ----------
