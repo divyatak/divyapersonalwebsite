@@ -21,6 +21,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # The creative-coding sketches live in their own repo and publish
+      # themselves at divyatak.github.io/creative-visuals. They are pulled in
+      # at build time so they also answer at divyatak.art/creativevisuals,
+      # rather than keeping a second copy of them in this repository that
+      # would quietly fall behind. Checked out before the build, so nothing
+      # can disturb dist/ afterwards.
+      - name: Fetch the creative-visuals sketches
+        uses: actions/checkout@v4
+        with:
+          repository: divyatak/creative-visuals
+          ref: main
+          path: .creative-visuals
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -31,6 +44,13 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Mount the sketches at /creativevisuals
+        run: |
+          rm -rf .creative-visuals/.git .creative-visuals/.github
+          mkdir -p dist/creativevisuals
+          cp -a .creative-visuals/. dist/creativevisuals/
+          echo "mounted:" && ls dist/creativevisuals
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
