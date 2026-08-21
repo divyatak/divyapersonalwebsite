@@ -52,6 +52,7 @@ export function getStaticPaths() {
     const m = /\/projects\/(\d{4})\//.exec(p.cover || '')
     return m ? Number(m[1]) : groupYear
   }
+  // a link that stays on this site should not wear the outward arrow
   const labelFor = (url: string) =>
     url.includes('spotify') ? 'Listen on Spotify' : 'Open it'
 
@@ -305,8 +306,12 @@ const metaDescription = work.what
       )}
       {work.url && (
         <p class="wk-try">
-          <a href={work.url} target="_blank" rel="noopener noreferrer">
-            {work.linkLabel} &#8599;
+          <a
+            href={work.url}
+            target={/^https?:\/\//.test(work.url) ? '_blank' : undefined}
+            rel={/^https?:\/\//.test(work.url) ? 'noopener noreferrer' : undefined}
+          >
+            {work.linkLabel}{/^https?:\/\//.test(work.url) ? ' \u2197' : ''}
           </a>
         </p>
       )}
