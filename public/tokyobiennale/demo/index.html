@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ueno Underground · graybox</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap">
+<style>
+:root { --ink: #1d1c1a; --paper: #f4f2ee; --mute: #8d8a85 }
+* { box-sizing: border-box }
+html, body { margin: 0; height: 100%; background: #1d1c1a; color: var(--paper); font: 14px/1.45 Montserrat, system-ui, sans-serif; overflow: hidden; -webkit-user-select: none; user-select: none }
+canvas#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none }
+.hud { position: fixed; pointer-events: none }
+#sub { bottom: 56px; left: 50%; transform: translateX(-50%); max-width: min(760px, 92vw); text-align: center; opacity: 0; transition: opacity .6s }
+#sub.on { opacity: 1 }
+#sub b { display: inline-block; font-weight: 600; font-size: 15px; letter-spacing: .02em; background: rgba(244,242,238,.94); color: var(--ink); padding: 4px 12px; margin-bottom: 8px }
+#sub span { display: block; font-size: 17px; line-height: 1.4; background: rgba(0,0,0,.66); padding: 6px 12px; min-height: 1.4em }
+#map { left: 14px; bottom: 14px; width: 176px; height: 176px; background: rgba(20,19,18,.72); border: 1px solid rgba(255,255,255,.12) }
+#level { left: 14px; bottom: 196px; font-size: 12px; letter-spacing: .08em; color: var(--mute) }
+#count { right: 14px; bottom: 14px; font-size: 12px; color: var(--mute); text-align: right }
+#touch { position: fixed; inset: 0; display: none; z-index: 2 }
+#touch .pad { position: absolute; bottom: 24px; width: 120px; height: 120px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.05) }
+#touch .pad.l { left: 24px } #touch .pad.r { right: 24px }
+#touch .knob { position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; background: rgba(255,255,255,.28) }
+@media (pointer: coarse) { #touch { display: block } #map { bottom: auto; top: 14px; width: 120px; height: 120px } #level { bottom: auto; top: 138px } #credit { bottom: auto; top: 14px } #sub { bottom: 160px } }
+#intro { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(20,19,18,.74); z-index: 8; cursor: pointer }
+#intro[hidden] { display: none }
+#intro .card { width: min(480px, calc(100vw - 32px)); padding: 30px 28px 26px; background: var(--paper); color: var(--ink); cursor: default; text-align: center }
+#intro .eyebrow { margin: 0 0 10px; font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #7a766f }
+#intro h1 { margin: 0 0 12px; font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -.02em }
+#intro .lede { margin: 0 auto 24px; max-width: 36ch; font-size: 14.5px; line-height: 1.55; color: #45423e }
+#intro .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 24px }
+#intro .control { padding: 16px 10px 14px; background: #e9e6e0 }
+#intro .control svg { display: block; margin: 0 auto 10px; height: 46px; width: auto }
+#intro .control b { display: block; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase }
+#intro .control span { display: block; margin-top: 3px; font-size: 12.5px; color: #5d5a55 }
+#intro button { font: inherit; font-weight: 600; font-size: 14px; height: 44px; padding: 0 30px; border: 0; background: var(--ink); color: var(--paper); cursor: pointer }
+#intro button:focus-visible { outline: 3px solid #315da8; outline-offset: 3px }
+#esc { top: 14px; left: 50%; transform: translateX(-50%); font-size: 12px; letter-spacing: .04em; color: var(--mute); display: none }
+#esc.on { display: block }
+@media (pointer: coarse) { #esc { display: none !important } }
+#credit { right: 14px; bottom: 14px; font-size: 11.5px; color: var(--mute); text-align: right; letter-spacing: .02em }
+#credit b { color: #c9c5bd; font-weight: 600 }
+#result { position: fixed; left: 0; top: 0; white-space: pre; font: 12px ui-monospace, monospace; background: #fff; color: #000; padding: 8px; z-index: 9; display: none; max-height: 100%; overflow: auto }
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="A first-person walk through an empty underground station"></canvas>
+<div class="hud" id="sub"><b id="lname"></b><span id="stext"></span></div>
+<canvas class="hud" id="map" width="352" height="352" aria-hidden="true"></canvas>
+<div class="hud" id="level">B1</div>
+<div id="touch" aria-hidden="true"><div class="pad l"><div class="knob"></div></div><div class="pad r"><div class="knob"></div></div></div>
+<div id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle" aria-describedby="introText"><div class="card">
+  <p class="eyebrow">Tokyo Biennale 2027 · Social Dive</p>
+  <h1 id="introTitle">Ueno Underground</h1>
+  <p class="lede" id="introText">This is a graybox demo for the proposed Ueno Underground project, to give a sense of moving about in space.</p>
+  <div class="controls">
+    <div class="control">
+      <svg viewBox="0 0 40 56" aria-hidden="true"><rect x="3" y="3" width="34" height="50" rx="17" fill="none" stroke="#1d1c1a" stroke-width="2.5"/><line x1="20" y1="3" x2="20" y2="22" stroke="#1d1c1a" stroke-width="2.5"/><rect x="17.5" y="9" width="5" height="9" rx="2.5" fill="#1d1c1a"/></svg>
+      <b>Look</b><span>Mouse</span>
+    </div>
+    <div class="control">
+      <svg viewBox="0 0 96 64" aria-hidden="true" font-family="Montserrat, system-ui, sans-serif" font-size="13" font-weight="600" text-anchor="middle">
+        <g fill="none" stroke="#1d1c1a" stroke-width="2.2"><rect x="35" y="3" width="26" height="26" rx="4"/><rect x="5" y="35" width="26" height="26" rx="4"/><rect x="35" y="35" width="26" height="26" rx="4"/><rect x="65" y="35" width="26" height="26" rx="4"/></g>
+        <g fill="#1d1c1a"><text x="48" y="21">W</text><text x="18" y="53">A</text><text x="48" y="53">S</text><text x="78" y="53">D</text></g>
+      </svg>
+      <b>Move</b><span>W A S D or arrow keys</span>
+    </div>
+  </div>
+  <button type="button" id="enter">Enter</button>
+</div></div>
+<div class="hud" id="esc">Press Esc to exit</div>
+<div class="hud" id="credit"><b>Divya Tak</b> · Ueno Underground · Tokyo Biennale demo submission</div>
+<pre id="result"></pre>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// World units are metres, authored in the Blender frame of Study 25's hall:
+// x east, y north, z up. three.js is (x, z, -y).
+const Q = new URLSearchParams(location.search);
+const TEST = Q.has('test');
+const T = (x, y, z) => new THREE.Vector3(x, z, -y);
+
+// ---------------------------------------------------------------- the world (world.js, shared with the baker)
+import * as WORLD from './world.js';
+const { HZ, B2, B2C, boxes, solids, floors, SIGNS, DEMO_SIGNS, OBJECTS, floorOf, GATE_A_Y, LIGHTS, gather, covered, tB, facesOf } = WORLD;
+const SUBTITLE = 'Placeholder recording only for demo purposes.';
+
+// ---------------------------------------------------------------- lighting: four approaches, switchable at the top
+// grid      light gathered at 40 cm grid points, blended (the build she called blocky)
+// fine      the same, at 15 cm: tests whether density alone fixes it (it made it worse)
+// lightmap  light baked per 8 cm texel offline (bake-lightmap.mjs), 25 points per panel, blurred,
+//           with ambient occlusion so things sit on the floor; chosen from the comparison
+// shadowmap real-time lights with soft shadow maps, the GPU draws the shadows
+// All four use the same panels, the same lighting model and the same exposure.
+const MODES = { grid: 'Grid', fine: 'Fine grid', lightmap: 'Lightmap', shadowmap: 'Shadow maps' };
+const ALIAS = { vertex: 'grid', 'lightmap-hq': 'lightmap' };
+let LIGHT = ALIAS[Q.get('light')] || Q.get('light') || 'lightmap';
+if (!MODES[LIGHT] && LIGHT !== 'lightmap-9') LIGHT = 'lightmap';
+const ALBEDO = { floor: 0x9c9993, wall: 0xcbc8c2, ceil: 0xb2afaa, dark: 0x5d5b57, rod: 0x4a4845, orange: 0xf39700, silver: 0xb5b5ac, train: 0x77746f };
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: TEST || Q.has('at') });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.shadowMap.autoUpdate = false;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x141312);
+scene.fog = new THREE.Fog(0x1e1d1b, 16, 50);
+const EXPOSURE = WORLD.exposure();
+const lightStats = { mode: LIGHT, exposure: +EXPOSURE.toFixed(3) };
+const boxGeo = (b, cell) => {
+  const sx = b.x1 - b.x0, sy = b.z1 - b.z0, sz = b.y1 - b.y0;
+  const g = cell ? new THREE.BoxGeometry(sx, sy, sz, Math.max(1, Math.ceil(sx / cell)), Math.max(1, Math.ceil(sy / cell)), Math.max(1, Math.ceil(sz / cell))) : new THREE.BoxGeometry(sx, sy, sz);
+  g.translate((b.x0 + b.x1) / 2, (b.z0 + b.z1) / 2, -(b.y0 + b.y1) / 2); return g;
+};
+const kinds = [...new Set(boxes.map(b => b.kind))].filter(k => k !== 'glow' && k !== 'day');
+for (const k of ['glow', 'day']) scene.add(new THREE.Mesh(mergeGeometries(boxes.filter(b => b.kind === k).map(b => boxGeo(b))), new THREE.MeshBasicMaterial({ color: k === 'day' ? 0xf4f8ff : 0xfff4e2 })));
+let station = null;             // the lit station for the current mode
+const vertexCache = {}, mapCache = {};
+async function buildStation(mode) {
+  const g = new THREE.Group(), t0 = performance.now(), st = { mode, vertices: 0, rays: 0 };
+  if (mode === 'grid' || mode === 'fine') {
+    const CELL = mode === 'fine' ? 0.15 : 0.4, S = mode === 'fine' ? 3 : 2;
+    const geos = vertexCache[mode] ||= Object.fromEntries(kinds.map(k => [k, mergeGeometries(boxes.filter(b => b.kind === k).map(b => {
+      const bg = boxGeo(b, CELL), p = bg.attributes.position, n = bg.attributes.normal, col = new Float32Array(p.count * 3);
+      const cx0 = (b.x0 + b.x1) / 2, cy0 = (b.z0 + b.z1) / 2, cz0 = -(b.y0 + b.y1) / 2;
+      for (let i = 0; i < p.count; i++) {
+        const px = p.getX(i), py = p.getY(i), pz = p.getZ(i), nx = n.getX(i), ny = n.getY(i), nz = n.getZ(i);
+        const ix = (cx0 - px) * (1 - Math.abs(nx)), iy = (cy0 - py) * (1 - Math.abs(ny)), iz = (cz0 - pz) * (1 - Math.abs(nz));
+        const il = Math.hypot(ix, iy, iz), nud = il > 1e-6 ? Math.min(0.06, il) / il : 0;
+        const c = gather(px + ix * nud, py + iy * nud, pz + iz * nud, nx, ny, nz, S, st);
+        col[i * 3] = c[0] * EXPOSURE; col[i * 3 + 1] = c[1] * EXPOSURE; col[i * 3 + 2] = c[2] * EXPOSURE;
+      }
+      st.vertices += p.count;
+      bg.setAttribute('color', new THREE.BufferAttribute(col, 3)); return bg;
+    }))]));
+    for (const k of kinds) g.add(new THREE.Mesh(geos[k], new THREE.MeshBasicMaterial({ color: ALBEDO[k] ?? 0xcbc8c2, vertexColors: true })));
+  } else if (mode === 'lightmap' || mode === 'lightmap-9') {
+    const file = Q.get('lm') || (mode === 'lightmap' ? 'lightmap-hq' : 'lightmap');   // ?lm=name loads another bake, for comparisons
+    const { meta, tex, geos } = mapCache[file] ||= await (async () => {
+      const [meta, tex] = await Promise.all([fetch(file + '.json').then(r => r.json()), new THREE.TextureLoader().loadAsync(file + '.png')]);
+      tex.colorSpace = THREE.SRGBColorSpace; tex.generateMipmaps = false; tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter; tex.flipY = true; tex.needsUpdate = true;
+      const [AW, AH] = meta.size, where = new Map(meta.faces.map(f => [f.box + ':' + f.id, f])), geos = {};
+      for (const k of kinds) {
+        const pos = [], uv = [], idx = [];
+        boxes.forEach((b, bi) => {
+          if (b.kind !== k) return;
+          for (const f of facesOf(b, bi)) {
+            const m = where.get(bi + ':' + f.id); if (!m) continue;
+            const base = pos.length / 3;
+            for (const [u, v] of [[0, 0], [1, 0], [1, 1], [0, 1]]) { pos.push(f.o.x + f.u.x * u + f.v.x * v, f.o.y + f.u.y * u + f.v.y * v, f.o.z + f.u.z * u + f.v.z * v); uv.push((m.x + u * m.tw) / AW, 1 - (m.y + v * m.th) / AH); }
+            idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+          }
+        });
+        const bg = new THREE.BufferGeometry();
+        bg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); bg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); bg.setIndex(idx);
+        geos[k] = bg;
+      }
+      return { meta, tex, geos };
+    })();
+    // the atlas stores light/2 (so values up to 2 fit in 8 bits); the colour's x2 undoes it
+    for (const k of kinds) g.add(new THREE.Mesh(geos[k], new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(ALBEDO[k] ?? 0xcbc8c2).multiplyScalar(2) })));
+    Object.assign(st, { atlas: meta.size, texel: meta.texel, samples: meta.samples, ao: meta.ao, bakeMsOffline: meta.bakeMs });
+  } else if (mode === 'shadowmap') {
+    for (const k of kinds) {
+      const m = new THREE.Mesh(mergeGeometries(boxes.filter(b => b.kind === k).map(b => boxGeo(b))), new THREE.MeshLambertMaterial({ color: ALBEDO[k] ?? 0xcbc8c2 }));
+      m.castShadow = k !== 'floor'; m.receiveShadow = true; g.add(m);
+    }
+    // a real light per cluster of panels (a light per panel would be 51 shadow maps), same total output
+    const clusters = [];
+    for (const L of LIGHTS) {
+      let c = clusters.find(c => Math.hypot(c.x / c.I - L.p.x, c.y / c.I - L.p.y, c.z / c.I - L.p.z) < 5.5);
+      if (!c) clusters.push(c = { x: 0, y: 0, z: 0, I: 0 });
+      c.x += L.p.x * L.I; c.y += L.p.y * L.I; c.z += L.p.z * L.I; c.I += L.I;
+    }
+    for (const c of clusters) {
+      const l = new THREE.PointLight(0xfff1dc, Math.PI * c.I * EXPOSURE * 0.75, 0, 2);
+      l.position.set(c.x / c.I, c.y / c.I - 0.08, c.z / c.I); l.castShadow = true;
+      l.shadow.mapSize.set(512, 512); l.shadow.bias = -0.004; l.shadow.normalBias = 0.03; l.shadow.camera.near = 0.1; l.shadow.camera.far = 16;
+      g.add(l);
+    }
+    g.add(new THREE.HemisphereLight(0xfffaf0, 0x8a857e, Math.PI * 0.07 * EXPOSURE * 1.8));
+    st.realLights = clusters.length;
+  }
+  st.ms = Math.round(performance.now() - t0);
+  return { g, st };
+}
+async function setLighting(mode) {
+  const { g, st } = await buildStation(mode);
+  if (station) scene.remove(station);
+  station = g; scene.add(g); LIGHT = mode;
+  const shadows = mode === 'shadowmap';
+  if (renderer.shadowMap.enabled !== shadows) { renderer.shadowMap.enabled = shadows; scene.traverse(o => { if (o.material) o.material.needsUpdate = true; }); }
+  renderer.shadowMap.needsUpdate = true;
+  Object.assign(lightStats, st);
+}
+await setLighting(LIGHT);
+// the lighting model's own floor levels, identical for every approach: the check that nothing blows out
+{
+  const vals = [];
+  for (let x = 0.25; x < 32; x += 0.5) for (let y = 0.25; y < 22; y += 0.5) { if ((x > 23 && x < 30 && y > 8 && y < 14) || covered(x, y)) continue; vals.push(gather(x, 0, -y, 0, 1, 0, 3)[1] * EXPOSURE); }
+  vals.sort((a, b) => a - b);
+  lightStats.hallFloor = { p5: +vals[Math.floor(vals.length * 0.05)].toFixed(2), median: +vals[vals.length >> 1].toFixed(2), p95: +vals[Math.floor(vals.length * 0.95)].toFixed(2), max: +vals.at(-1).toFixed(2) };
+}
+// no outlines: they drew lines across seams where two floor or wall pieces meet (passage A showed it)
+
+// DEMO signs on the closed areas
+function demoTexture() {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 224; const g = c.getContext('2d');
+  g.fillStyle = '#2b2a28'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '600 150px Montserrat, system-ui, sans-serif'; g.fillText('DEMO', 256, 116);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+const demoMat = new THREE.MeshBasicMaterial({ map: demoTexture(), transparent: true, depthWrite: false });
+for (const s of DEMO_SIGNS) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(s.w, s.h), demoMat);
+  m.position.copy(T(...s.at));
+  if (s.facing === 'south') m.rotation.y = 0;          // plane faces +z in three = -y (south) in Blender
+  if (s.facing === 'west') m.rotation.y = -Math.PI / 2; // faces -x
+  scene.add(m);
+}
+
+// the objects, each under its own spotlight
+const objGroup = new THREE.Group();
+const objMat = new THREE.MeshLambertMaterial({ color: 0xf1ebdf });
+const poolTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); const r = g.createRadialGradient(64, 64, 0, 64, 64, 64); r.addColorStop(0, 'rgba(255,238,205,1)'); r.addColorStop(0.45, 'rgba(255,232,195,.55)'); r.addColorStop(1, 'rgba(255,230,190,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+const ringMat = new THREE.MeshBasicMaterial({ map: poolTex, transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+for (const o of OBJECTS) {
+  const [x, y, z] = o.at; let m;
+  // the umbrella leans 10 degrees onto its pillar; its top edge rests on the face at x 10.9
+  if (o.id === 'umbrella') { m = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.78, 8), objMat); m.rotation.x = Math.PI; m.rotation.z = THREE.MathUtils.degToRad(-10); m.position.copy(T(x, y, z + 0.39)); }
+  else if (o.id === 'glove') { m = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.025, 0.22), objMat); m.position.copy(T(x, y, z + 0.013)); m.rotation.y = 0.4; }
+  else if (o.id === 'card') { m = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.012, 0.07), objMat); m.position.copy(T(x, y, z + 0.006)); m.rotation.y = 0.7; }
+  else if (o.id === 'handkerchief') { m = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.006, 0.28), objMat); m.position.copy(T(x, y, z + 0.003)); m.rotation.y = 0.3; }
+  else if (o.id === 'scarf') { m = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.03, 1.3), objMat); m.position.copy(T(x, y, z + 0.015)); }
+  else if (o.id === 'earbud') { m = new THREE.Mesh(new RoundedBoxGeometry(0.065, 0.03, 0.052, 3, 0.012), objMat); m.position.copy(T(x, y, z + 0.015)); m.rotation.y = 0.5; }   // an earbud case, 6.5 x 5.2 x 3 cm
+  else { m = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.22, 14), objMat); m.position.copy(T(x, y, z + 0.11)); }
+  const fz = floorOf(o), off = (o.id === 'scarf' || o.id === 'bottle') ? 0.7 : 0;
+  const ring = new THREE.Mesh(new THREE.CircleGeometry(1.1, 40), ringMat); ring.rotation.x = -Math.PI / 2;
+  ring.position.copy(T(x + off, y, fz + 0.0005)); o.ring = ring;
+  const spot = new THREE.SpotLight(0xffe9c8, 60, 7, 0.36, 0.55, 1.4);
+  spot.position.copy(T(x + off * 0.5, y, fz + (fz < -1 ? 3.1 : 3.35)));
+  spot.target.position.copy(T(x, y, z));
+  objGroup.add(m, ring, spot, spot.target); o.mesh = m; o.visited = false;
+}
+scene.add(objGroup);
+scene.add(new THREE.HemisphereLight(0xfffaf0, 0x6d6a65, 0.6));   // for the objects only; the station is lit by its panels
+const cam = new THREE.PerspectiveCamera(70, 1, 0.05, 120);
+function fit() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+fit(); addEventListener('resize', fit);
+
+// ---------------------------------------------------------------- walking
+// start at an entry: the top of the small exit stair (south-west), coming down into the hall
+const SPAWN = { x: 4, y: -3.95, z: 0.17 * 12, yaw: Math.PI / 2, pitch: -0.14 };
+const P = { ...SPAWN, vx: 0, vy: 0, steps: 0 };
+const AT = Q.get('at');   // ?at=x,y,headingDegrees places the camera for review screenshots
+if (AT) { const [ax, ay, ah] = AT.split(',').map(Number); P.x = ax; P.y = ay; P.yaw = THREE.MathUtils.degToRad(ah); P.pitch = -0.25; }
+const EYE = 1.6, R = 0.28, STEP = 0.45;
+const SPEED = 3.7;   // fixed; the slider is gone
+function groundAt(x, y, z) {
+  let best = -Infinity;
+  for (const f of floors) if (x >= f.x0 - 1e-6 && x <= f.x1 + 1e-6 && y >= f.y0 - 1e-6 && y <= f.y1 + 1e-6 && f.top <= z + STEP && f.top > best) best = f.top;
+  return best;
+}
+if (AT) P.z = groundAt(P.x, P.y, 3);
+function blocked(x, y, z, extra) {
+  if (groundAt(x, y, z) === -Infinity) return true;                       // no floor: the edge of the world
+  for (const s of extra ? solids.concat(extra) : solids) {
+    if (s.z1 <= z + 0.3 || s.z0 >= z + 1.8) continue;                    // below the knee or above the head
+    if (x > s.x0 - R && x < s.x1 + R && y > s.y0 - R && y < s.y1 + R) return true;
+  }
+  return false;
+}
+function move(dx, dy, dt) {
+  if (dx && !blocked(P.x + dx, P.y, P.z)) P.x += dx;
+  if (dy && !blocked(P.x, P.y + dy, P.z)) P.y += dy;
+  const g = groundAt(P.x, P.y, P.z);
+  if (g > -Infinity) P.z += (g - P.z) * Math.min(1, dt * 14);
+}
+const cadence = v => 1.75 + 0.25 * v;                 // steps per second: ~2.1 at a walk, ~2.7 at 3.7 m/s
+function bobAt(steps, v) {
+  const a = Math.min(1, v / 1.2) * (0.012 + 0.012 * Math.min(1, v / 3.7));   // amplitude grows with speed
+  const ph = steps - Math.floor(steps);                                      // 0 at each footfall
+  const h = Math.pow(Math.sin(Math.PI * ph), 0.7);                           // V at the footfall, round at the top
+  return { up: a * (h - 0.6), side: 0.006 * Math.min(1, v / 1.2) * Math.sin(Math.PI * steps), nod: -0.006 * Math.min(1, v / 1.2) * (1 - h), h };
+}
+function place() {
+  // head bob tied to steps: P.steps counts footfalls; each one is the low point (a sharp dip),
+  // mid-step is the high point (rounded), the body sways once per two steps and the head nods a
+  // little at each impact. The earlier bob used a fixed 0.75 m stride, so at 3.7 m/s it ran at
+  // five tiny bumps a second and read as floating.
+  const bob = bobAt(P.steps, Math.hypot(P.vx, P.vy));
+  const e = new THREE.Vector3(-Math.sin(P.yaw) * bob.side, 0, -Math.cos(P.yaw) * bob.side);
+  cam.position.copy(T(P.x, P.y, P.z + EYE + bob.up)).add(e);
+  const pitch = P.pitch + bob.nod;
+  const d = new THREE.Vector3(Math.cos(P.yaw) * Math.cos(pitch), Math.sin(pitch), -Math.sin(P.yaw) * Math.cos(pitch));
+  cam.lookAt(cam.position.clone().add(d));
+}
+
+// input: keyboard + mouse, gamepad, touch
+const keys = {};
+addEventListener('keydown', e => { keys[e.code] = true; });
+addEventListener('keyup', e => { keys[e.code] = false; });
+canvas.addEventListener('click', () => { if (!matchMedia('(pointer: coarse)').matches) canvas.requestPointerLock?.(); });
+addEventListener('mousemove', e => { if (document.pointerLockElement !== canvas) return; P.yaw -= e.movementX * 0.0022; P.pitch = Math.max(-1.2, Math.min(1.2, P.pitch - e.movementY * 0.0022)); });
+let drag = null;
+canvas.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' && document.pointerLockElement !== canvas) drag = { x: e.clientX, y: e.clientY }; });
+addEventListener('pointerup', () => { drag = null; });
+addEventListener('pointermove', e => { if (!drag) return; P.yaw -= (e.clientX - drag.x) * 0.004; P.pitch = Math.max(-1.2, Math.min(1.2, P.pitch - (e.clientY - drag.y) * 0.004)); drag = { x: e.clientX, y: e.clientY }; });
+const pads = { l: { x: 0, y: 0, id: null }, r: { x: 0, y: 0, id: null } };
+for (const side of ['l', 'r']) {
+  const el = document.querySelector('#touch .pad.' + side), knob = el.querySelector('.knob');
+  const set = (e) => { const b = el.getBoundingClientRect(); let x = (e.clientX - b.left - b.width / 2) / (b.width / 2), y = (e.clientY - b.top - b.height / 2) / (b.height / 2); const m = Math.hypot(x, y); if (m > 1) { x /= m; y /= m; } pads[side].x = x; pads[side].y = y; knob.style.transform = `translate(${x * 38}px,${y * 38}px)`; };
+  el.addEventListener('pointerdown', e => { pads[side].id = e.pointerId; el.setPointerCapture(e.pointerId); set(e); });
+  el.addEventListener('pointermove', e => { if (pads[side].id === e.pointerId) set(e); });
+  const end = e => { if (pads[side].id !== e.pointerId) return; pads[side] = { x: 0, y: 0, id: null }; knob.style.transform = ''; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+}
+const dz = v => Math.abs(v) < 0.15 ? 0 : v;
+function readInput(dt) {
+  let f = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0);
+  let s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
+  let turn = (keys.ArrowLeft ? 1 : 0) - (keys.ArrowRight ? 1 : 0), look = 0;
+  f -= pads.l.y; s += pads.l.x; turn -= pads.r.x * 1.6; look -= pads.r.y * 1.2;
+  for (const g of navigator.getGamepads?.() || []) {
+    if (!g) continue;
+    f -= dz(g.axes[1] || 0); s += dz(g.axes[0] || 0);
+    turn -= dz(g.axes[2] || 0) * 2.2; look -= dz(g.axes[3] || 0) * 1.6;
+  }
+  P.yaw += turn * 1.7 * dt; P.pitch = Math.max(-1.2, Math.min(1.2, P.pitch + look * dt));
+  const m = Math.hypot(f, s); if (m > 1) { f /= m; s /= m; }
+  const fx = Math.cos(P.yaw), fy = Math.sin(P.yaw);
+  // weight: the body eases into a walk and out of it rather than starting and stopping dead
+  const tx = (fx * f + fy * s) * SPEED, ty = (fy * f - fx * s) * SPEED, k = Math.min(1, dt * (m > 0 ? 10 : 12));
+  P.vx += (tx - P.vx) * k; P.vy += (ty - P.vy) * k;
+  const sp = Math.hypot(P.vx, P.vy);
+  if (sp > 0.05) { P.steps += dt * cadence(sp); move(P.vx * dt, P.vy * dt, dt); }
+  else P.steps += (Math.round(P.steps) - P.steps) * Math.min(1, dt * 8);   // finish the step and stand
+}
+
+// ---------------------------------------------------------------- sound
+// The recordings are placeholders: the Study 09 tapes, cleaned (clicks trimmed, hiss removed,
+// band-limited to the voice). Level follows distance every frame through a smoothed gain,
+// so a voice swells in as you approach and thins out as you leave. No switch, no click.
+const NEAR = 2.2, FULL = 1.2, FAR = 4.5;
+const distGain = d => d <= FULL ? 1 : d >= FAR ? 0 : (t => 1 - t * t * (3 - 2 * t))((d - FULL) / (FAR - FULL));
+let ctx = null; const buffers = {};
+const state = { active: null, voice: null, level: 0 };
+async function initAudio() {
+  if (ctx) return;
+  try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch { ctx = null; return; }
+  for (const v of ['passenger', 'staff']) {
+    try {
+      const b = await ctx.decodeAudioData(await (await fetch(`voice-${v}.wav`)).arrayBuffer());
+      // a two-second pause before the voice repeats while you stay near
+      const out = ctx.createBuffer(1, b.length + ctx.sampleRate * 2, b.sampleRate); out.copyToChannel(b.getChannelData(0), 0); buffers[v] = out;
+    } catch { /* missing: stay silent */ }
+  }
+}
+function startVoice(o) {
+  stopVoice();
+  state.active = o.id;
+  if (!ctx || !buffers[o.voice]) return;
+  const src = ctx.createBufferSource(); src.buffer = buffers[o.voice]; src.loop = true;
+  const out = ctx.createGain(); out.gain.value = 0;
+  const pan = ctx.createStereoPanner();
+  src.connect(pan).connect(out).connect(ctx.destination); src.start();
+  state.voice = { src, out, pan };
+}
+function stopVoice() {
+  const v = state.voice; state.voice = null; state.active = null;
+  if (!v || !ctx) return;
+  const t = ctx.currentTime; v.out.gain.cancelScheduledValues(t); v.out.gain.setTargetAtTime(0, t, 0.08);
+  setTimeout(() => { try { v.src.stop(); } catch {} }, 700);
+}
+
+// ---------------------------------------------------------------- encounters
+const sub = document.getElementById('sub'), stext = document.getElementById('stext');
+let typing = null;
+function typeSubtitle() {
+  clearInterval(typing); stext.textContent = ''; let i = 0;
+  typing = setInterval(() => { stext.textContent = SUBTITLE.slice(0, ++i); if (i >= SUBTITLE.length) clearInterval(typing); }, 38);
+}
+function objDist(o) { return { d: Math.hypot(P.x - o.at[0], P.y - o.at[1]), dz: Math.abs(P.z - floorOf(o)) }; }
+function encounters() {
+  let nearest = null, nd = Infinity;
+  for (const o of OBJECTS) { const { d, dz } = objDist(o); if (dz < 1.5 && d < nd) { nd = d; nearest = o; } }
+  const cur = OBJECTS.find(o => o.id === state.active);
+  if (cur) {
+    const { d, dz } = objDist(cur);
+    const g = dz > 1.5 ? 0 : distGain(d);
+    state.level = g;
+    if (state.voice && ctx) {
+      state.voice.out.gain.setTargetAtTime(0.9 * g, ctx.currentTime, 0.12);
+      const a = Math.atan2(cur.at[1] - P.y, cur.at[0] - P.x) - P.yaw; state.voice.pan.pan.setTargetAtTime(Math.max(-1, Math.min(1, -Math.sin(a))), ctx.currentTime, 0.1);
+    }
+    if (g === 0) { stopVoice(); sub.classList.remove('on'); clearInterval(typing); }
+  } else if (nearest && nd < NEAR) {
+    startVoice(nearest); nearest.visited = true; state.level = distGain(nd);
+    document.getElementById('lname').textContent = nearest.name;
+    sub.classList.add('on'); typeSubtitle();
+  }
+}
+
+// ---------------------------------------------------------------- map
+const map = document.getElementById('map'), mg = map.getContext('2d');
+const MX0 = -12, MY0 = -6, MS = 352 / 50;
+const mx = x => (x - MX0) * MS, my = y => 352 - (y - MY0) * MS;
+function drawMap() {
+  const lvl = P.z > -2 ? 'B1' : 'B2';
+  document.getElementById('level').textContent = lvl + (lvl === 'B1' ? ' · concourse' : ' · platform level');
+  mg.clearRect(0, 0, 352, 352);
+  for (const f of floors) {
+    const onB1 = f.top > -2, stair = f.name.includes('stair');
+    if (!stair && (lvl === 'B1') !== onB1) continue;
+    mg.fillStyle = stair ? 'rgba(244,242,238,.28)' : 'rgba(244,242,238,.16)';
+    mg.fillRect(mx(f.x0), my(f.y1), (f.x1 - f.x0) * MS, (f.y1 - f.y0) * MS);
+  }
+  for (const o of OBJECTS) {
+    const oz = o.id === 'earbud' || o.id === 'bottle' ? 'B2' : 'B1'; if (oz !== lvl) continue;
+    mg.fillStyle = o.visited ? '#f1ebdf' : 'rgba(241,235,223,.45)'; mg.fillRect(mx(o.at[0]) - 4, my(o.at[1]) - 4, 8, 8);
+  }
+  mg.save(); mg.translate(mx(P.x), my(P.y)); mg.rotate(-P.yaw); mg.fillStyle = '#f39700';
+  mg.beginPath(); mg.moveTo(12, 0); mg.lineTo(-7, 7); mg.lineTo(-7, -7); mg.closePath(); mg.fill(); mg.restore();
+}
+
+// ---------------------------------------------------------------- loop
+const clock = new THREE.Clock();
+function frame(dt) { if (entered) readInput(dt); encounters(); place(); drawMap(); }
+renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), 0.05); if (!TEST) frame(dt); renderer.render(scene, cam); });
+place(); drawMap();
+// the opening box (her wording). Entering unlocks sound and captures the mouse; Esc releases the
+// mouse (the browser's own rule) and the box comes back as a pause until you enter again.
+const intro = document.getElementById('intro'), esc = document.getElementById('esc');
+let entered = false;
+function enter() {
+  if (entered) return; entered = true; intro.hidden = true; esc.classList.add('on');
+  initAudio().then(() => { if (ctx?.state === 'suspended') ctx.resume(); });
+  if (!matchMedia('(pointer: coarse)').matches) canvas.requestPointerLock?.()?.catch?.(() => {});   // refused without a real gesture (only in the test)
+}
+function pause() { entered = false; intro.hidden = false; esc.classList.remove('on'); for (const k in keys) keys[k] = false; document.getElementById('enter').focus(); }
+intro.addEventListener('click', enter);
+addEventListener('keydown', e => { if (!entered && !e.repeat && e.key !== 'Escape') { e.preventDefault(); enter(); } });
+document.addEventListener('pointerlockchange', () => { if (entered && !document.pointerLockElement && !matchMedia('(pointer: coarse)').matches) pause(); });
+document.getElementById('enter').focus();
+// browsers only allow sound after a gesture: the first key, click or touch unlocks it, silently
+for (const ev of ['pointerdown', 'keydown', 'touchstart']) addEventListener(ev, () => { initAudio().then(() => { if (ctx?.state === 'suspended') ctx.resume(); }); }, { passive: true });
+
+// ---------------------------------------------------------------- test mode (?test)
+if (TEST) {
+  const out = { route: [], objects: [], checks: [], fail: 0, info: {} };
+  const check = (name, pass, detail) => { out.checks.push({ name, pass, detail }); if (!pass) out.fail++; };
+  check('spawn is on the exit stair, top step', groundAt(SPAWN.x, SPAWN.y, SPAWN.z) === 0.17 * 12, { at: [SPAWN.x, SPAWN.y] });
+  check('walk speed fixed at 3.7 m/s, no speed control', SPEED === 3.7 && !document.getElementById('speed'), { SPEED });
+  check('no settings on screen (lighting fixed to the lightmap)', !document.getElementById('modes') && LIGHT === 'lightmap', { LIGHT });
+  check('no line colour anywhere (the orange band and door caps are gone)', !boxes.some(b => b.kind === 'orange'), { orange: boxes.filter(b => b.kind === 'orange').length });
+  check('light pools lie on the floor (they lit the feet of the ticket machines at 8 mm up)', OBJECTS.every(o => Math.abs(o.ring.position.y - floorOf(o)) <= 0.001), { heights: OBJECTS.map(o => +(o.ring.position.y - floorOf(o)).toFixed(4)) });
+  {
+    const lm = await fetch('lightmap-hq.json').then(r => r.json()), c = lm.contact;
+    // contact shading must show, but gently: the last bake went near black at the joins and read as a gap
+    const inBand = (v, lo, hi) => v >= lo && v <= hi;
+    check('contact shading at wall, gate and column bases is visible but gentle', !!lm.ao?.short && inBand(c.wallBase, 0.55, 0.8) && [c.gateEast, c.gateWest, c.gateNorth].every(v => inBand(v, 0.3, 0.65)) && inBand(c.columnBase, 0.3, 0.65), { ...c, gateSouth: 'not measured: its reference point fell inside the fence end', previousBake: { wallBase: 0.37, gates: '0.18 to 0.30', columnBase: 0.22 } });
+    check('no banding across shadow edges (no flat run longer than 12 texels, 60 cm)', lm.banding.longestFlatRun <= 12 && lm.jitter && lm.dither, { ...lm.banding, previousBake: { longestFlatRun: 40 } });
+    // (first written as 'above 0.25', a number picked before measuring; the real test is against the old bake)
+    check('shadows are soft grey, not black: the darkest 5% of visible hall floor is at least twice the old 0.10', lightStats.hallFloor.p5 >= 0.2, { ...lightStats.hallFloor, previousP5: 0.10 });
+  }
+  // holes in the walls: walk the edge of every walkway; just outside it there must be a wall, fixture or another
+  // walkway at about the same level. Slots narrower than 20 cm (between platform doors) are allowed.
+  {
+    const solidAt = (x, y, z) => boxes.some(b => b.kind !== 'glow' && x > b.x0 - 1e-6 && x < b.x1 + 1e-6 && y > b.y0 - 1e-6 && y < b.y1 + 1e-6 && z > b.z0 && z < b.z1);
+    const walkAt = (x, y, top) => floors.some(f => x > f.x0 - 1e-6 && x < f.x1 + 1e-6 && y > f.y0 - 1e-6 && y < f.y1 + 1e-6 && Math.abs(f.top - top) < 0.6);
+    const closed = (x, y, top) => solidAt(x, y, top + 0.5) || walkAt(x, y, top);
+    const holes = [];
+    for (const f of floors) {
+      const edges = [[f.x0, f.y0, f.x1, f.y0, 0, -1], [f.x0, f.y1, f.x1, f.y1, 0, 1], [f.x0, f.y0, f.x0, f.y1, -1, 0], [f.x1, f.y0, f.x1, f.y1, 1, 0]];
+      for (const [ax, ay, bx, by, ox, oy] of edges) {
+        const len = Math.hypot(bx - ax, by - ay), n = Math.max(1, Math.round(len / 0.1)), tx = (bx - ax) / len, ty = (by - ay) / len;
+        for (let i = 0; i <= n; i++) {
+          const px = ax + (bx - ax) * i / n + ox * 0.15, py = ay + (by - ay) * i / n + oy * 0.15;
+          if (closed(px, py, f.top)) continue;
+          if (solidAt(px - ox * 0.2, py - oy * 0.2, f.top + 0.5)) continue;   // a wall or railing stands on the edge itself
+          if (closed(px + tx * 0.1, py + ty * 0.1, f.top) && closed(px - tx * 0.1, py - ty * 0.1, f.top)) continue;   // a narrow slot
+          holes.push([f.name, +px.toFixed(2), +py.toFixed(2)]);
+        }
+      }
+    }
+    check('no holes in the walls along any walkway (the passage A corner had a 30 cm one)', holes.length === 0, { holes: holes.slice(0, 8), count: holes.length });
+  }
+  const curve = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map(d => +distGain(d).toFixed(3));
+  const steps = curve.slice(1).map((g, i) => curve[i] - g);
+  check('sound level falls as you walk away, never jumps', curve[0] === 1 && curve.at(-1) === 0 && steps.every(s => s >= 0) && Math.max(...steps) < 0.3, { curve });
+  const ub = new THREE.Box3().setFromObject(OBJECTS[0].mesh);
+  check('umbrella does not pass into the pillar', ub.min.x >= 10.9 - 0.005, { minX: +ub.min.x.toFixed(3) });
+  const card = intro.querySelector('.card'), cs = getComputedStyle(card), h1 = getComputedStyle(intro.querySelector('h1')), lede = getComputedStyle(intro.querySelector('.lede'));
+  const introOk = !intro.hidden && document.getElementById('introText').textContent === 'This is a graybox demo for the proposed Ueno Underground project, to give a sense of moving about in space.' && /Mouse/.test(intro.textContent) && /W A S D/.test(intro.textContent) && /arrow keys/i.test(intro.textContent) && intro.querySelectorAll('.control svg').length === 2;
+  const hierarchy = parseFloat(h1.fontSize) >= 1.8 * parseFloat(lede.fontSize) && cs.textAlign === 'center';
+  check('opening box: her sentence, mouse to look, arrow keys or WASD to move, an icon for each', introOk, { text: intro.textContent.replace(/\s+/g, ' ').trim() });
+  check('opening box is centred, with a clear type hierarchy (title at least 1.8x the body)', hierarchy, { align: cs.textAlign, title: h1.fontSize, body: lede.fontSize });
+  enter();
+  const visible = [...document.body.querySelectorAll('div,label,p,span,b,button,h1,li,small,dt,dd')].filter(e => e.checkVisibility ? e.checkVisibility() : e.offsetParent !== null).filter(e => !e.children.length).map(e => e.textContent).join(' ');   // only what actually renders (children of the hidden box report 'block')
+  check('once entered, the only instruction on screen is "Press Esc to exit" (her request)', esc.classList.contains('on') && intro.hidden && !/click|use the|W A S D|arrow|controller|enter the/i.test(visible.replace('Press Esc to exit', '')), { visible: visible.replace(/\s+/g, ' ').trim().slice(0, 100) });
+  // the walls above both stairs' lower openings reach up to close the gap (no view over a ceiling into nothing)
+  const covers = (x, y, z) => boxes.some(b => b.kind !== 'glow' && x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1 && z >= b.z0 && z <= b.z1);
+  const gapA = []; for (let x = -9.9; x < -5; x += 0.25) for (let z = B2C + 0.05; z < HZ; z += 0.25) if (!covers(x, 35.85, z)) gapA.push([+x.toFixed(2), +z.toFixed(2)]);
+  const gapE = []; for (let x = 23.1; x < 30; x += 0.25) for (let z = B2C + 0.05; z < -0.3; z += 0.1) if (!covers(x, 13.85, z)) gapE.push([+x.toFixed(2), +z.toFixed(2)]);
+  check('the wall above each stair opening goes up to the roof (no gap)', gapA.length === 0 && gapE.length === 0, { passageAStair: gapA.slice(0, 4), platformStair: gapE.slice(0, 4) });
+  const eb = new THREE.Box3().setFromObject(OBJECTS.find(o => o.id === 'earbud').mesh), es = eb.getSize(new THREE.Vector3());
+  check('earbud is an earbud case, at least 5 cm across', OBJECTS.find(o => o.id === 'earbud').name === 'Earbud case' && Math.max(es.x, es.z) >= 0.05, { cm: [+(es.x * 100).toFixed(1), +(es.y * 100).toFixed(1), +(es.z * 100).toFixed(1)] });
+  const gl = OBJECTS.find(o => o.id === 'glove'), step = floors.find(f => f.name.includes('stair') && gl.at[0] >= f.x0 && gl.at[0] <= f.x1 && gl.at[1] >= f.y0 && gl.at[1] <= f.y1);
+  check('the glove lies on a stair step, not on a ticket gate', !!step && Math.abs(step.top - gl.at[2]) < 1e-6, { step: step && step.name, top: step && step.top });
+  const occAt = (x, z) => WORLD.nearOcc(x - 0.1, 0, z - 0.1, x + 0.1, 0.1, z + 0.1);
+  const aoGate = WORLD.openness(20.45, 0, -3.64, 0, 1, 0, occAt(20.45, -3.64)), aoOpen = WORLD.openness(21.8, 0, -3.64, 0, 1, 0, occAt(21.8, -3.64));
+  const aoWall = WORLD.openness(10, 0, -0.05, 0, 1, 0, occAt(10, -0.05)) , aoMid = WORLD.openness(10, 0, -3.0, 0, 1, 0, occAt(10, -3.0));
+  const meta = await fetch('lightmap-hq.json').then(r => r.json());
+  check('things meet the floor: contact shading at a gate base and a wall base, baked into the lightmap', !!meta.ao && aoGate < 0.85 * aoOpen && aoWall < 0.85 * aoMid, { gateBase: +aoGate.toFixed(2), openFloor: +aoOpen.toFixed(2), wallBase: +aoWall.toFixed(2), floor3mOut: +aoMid.toFixed(2), bakedWith: meta.ao });
+  // head bob in step: the lowest point of each step is the footfall, at a walking cadence
+  const lows = []; let prev = Infinity, prevPrev = Infinity;
+  for (let st = 0; st <= 4.001; st += 0.005) { const u = bobAt(st, 3.7).up; if (prev < prevPrev && prev <= u) lows.push(+(st - 0.005).toFixed(3)); prevPrev = prev; prev = u; }
+  const onFootfalls = lows.every(l => Math.abs(l - Math.round(l)) < 0.011) && lows.length >= 3;
+  check('head bob is in step: its low points land on footfalls, ~2.7 steps a second at 3.7 m/s', onFootfalls && Math.abs(cadence(3.7) - 2.675) < 1e-9, { lows, stepsPerSecond: cadence(3.7), strideM: +(3.7 / cadence(3.7)).toFixed(2), before: '4.9 bumps a second on a fixed 0.75 m stride' });
+  check('bottom right credits her, the project and the submission (the count is gone)', document.getElementById('credit').textContent === 'Divya Tak · Ueno Underground · Tokyo Biennale demo submission' && !document.getElementById('count'), { credit: document.getElementById('credit').textContent });
+  pause(); const paused = !intro.hidden && !esc.classList.contains('on'); enter();
+  check('Esc brings the opening box back as a pause, and entering again resumes', paused && intro.hidden && entered, {});
+  check('object label has no location line', !document.getElementById('lwhere') && OBJECTS.every(o => !('where' in o)), {});
+  // every hanging sign hangs from the ceiling: its rods reach the ceiling's underside
+  const rods = boxes.filter(b => b.kind === 'rod');
+  const ceilAt = (x, y) => Math.min(...boxes.filter(b => b.kind === 'ceil' && x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1).map(b => b.z0));
+  check('signs hang from the ceiling (no floating signs)', rods.length === SIGNS.length * 2 && rods.every(r => Math.abs(r.z1 - ceilAt((r.x0 + r.x1) / 2, (r.y0 + r.y1) / 2)) < 1e-6), { rods: rods.length });
+  // z-fighting: no two boxes may have faces on the same plane, facing the same way, overlapping
+  const fights = [];
+  const ax = [['x0', 'x1', 'y0', 'y1', 'z0', 'z1'], ['y0', 'y1', 'x0', 'x1', 'z0', 'z1'], ['z0', 'z1', 'x0', 'x1', 'y0', 'y1']];
+  const hiddenDown = (b, z) => floors.some(f => Math.abs(f.top - z) < 1e-6 && b.x0 >= f.x0 - 1e-6 && b.x1 <= f.x1 + 1e-6 && b.y0 >= f.y0 - 1e-6 && b.y1 <= f.y1 + 1e-6);
+  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+    const a = boxes[i], b = boxes[j];
+    for (const [lo, hi, u0, u1, v0, v1] of ax) for (const side of [lo, hi]) {
+      if (Math.abs(a[side] - b[side]) > 1e-6) continue;
+      const ou = Math.min(a[u1], b[u1]) - Math.max(a[u0], b[u0]), ov = Math.min(a[v1], b[v1]) - Math.max(a[v0], b[v0]);
+      if (ou <= 1e-4 || ov <= 1e-4) continue;
+      if (side === 'z0' && hiddenDown(a, a.z0) && hiddenDown(b, b.z0)) continue;   // both bottoms sit on a floor: never seen
+      fights.push(`${a.kind}[${a.x0},${a.y0},${a.z0}] / ${b.kind}[${b.x0},${b.y0},${b.z0}] on ${side}=${a[side]}`);
+    }
+  }
+  check('no coplanar overlapping faces (z-fighting)', fights.length === 0, { count: fights.length, first: fights.slice(0, 6) });
+  // lighting comes from the ceiling panels: every light is a panel, and there are no other lamps
+  const lamps = []; scene.traverse(o => { if (o.isPointLight || o.isDirectionalLight || o.isRectAreaLight) lamps.push(o.type); });
+  check('visible hall floor is not blown out (95% of it below 1.0 before tone mapping)', lightStats.hallFloor.p95 < 1.0, lightStats.hallFloor);
+  check('the station is lit only by its ceiling panels', LIGHTS.length === boxes.filter(b => b.kind === 'glow' || b.kind === 'day').length && (lamps.length === 0 || LIGHT === 'shadowmap'), { mode: LIGHT, panels: LIGHTS.length, otherLamps: lamps.length, ...lightStats, hallFloor: undefined });
+  // both ways down to the platform go through ticket gates
+  function reachPlatform(extra) {
+    const seen = new Set(), q = [[SPAWN.x, SPAWN.y, SPAWN.z]], S = 0.25;
+    while (q.length) {
+      const [x, y, z] = q.pop();
+      if (z < -3.9 && x > 21 && x < 32 && y > 14 && y < 44) return true;
+      for (const [dx, dy] of [[S, 0], [-S, 0], [0, S], [0, -S]]) {
+        const nx = +(x + dx).toFixed(2), ny = +(y + dy).toFixed(2);
+        if (blocked(nx, ny, z, extra)) continue;
+        const nz = groundAt(nx, ny, z), key = `${nx},${ny},${Math.round(nz * 5)}`;
+        if (seen.has(key)) continue; seen.add(key); q.push([nx, ny, nz]);
+      }
+    }
+    return false;
+  }
+  const gateLines = [{ x0: 19.7, y0: 0, z0: 0, x1: 20.3, y1: 22, z1: 1.0 }, { x0: -10, y0: GATE_A_Y, z0: 0, x1: -5, y1: GATE_A_Y + 0.6, z1: 1.0 }];
+  const open = reachPlatform(), closed = reachPlatform(gateLines);
+  check('both routes to the platform pass through ticket gates', open && !closed, { reachableThroughGates: open, reachableWithGatesShut: closed });
+  const dt = 1 / 30;
+  function walkTo(tx, ty, limit = 90) {
+    for (let t = 0; t < limit; t += dt) {
+      if (Math.hypot(tx - P.x, ty - P.y) < 0.2) { for (let k = 0; k < 20; k++) move(0, 0, dt); return true; }
+      P.yaw = Math.atan2(ty - P.y, tx - P.x);
+      const fx = Math.cos(P.yaw), fy = Math.sin(P.yaw);
+      move(fx * 1.4 * dt, fy * 1.4 * dt, dt); encounters();
+    }
+    return false;
+  }
+  const route = [
+    ['down the exit stair into the hall', 4, 1.5, 0], ['hall, middle', 12.9, 9.4, 0], ['hall, west side', 2, 10.5, 0], ['passage A, west end', -7.5, 10.5, 0],
+    ['passage A, through its gates', -7.5 + 0.65, 28, 0], ['stair down to B2', -7.5, 36.4, -4], ['B2 corridor, west', -7.5, 38, -4],
+    ['B2 corridor, east', 19, 38, -4], ['platform, north', 24, 42, -4], ['platform, south', 24, 15, -4],
+    ['stair up to the hall', 24, 7.6, 0], ['through the hall gates', 20, 6.5, 0], ['hall, north', 14.5, 20, 0],
+    ['passage B, shutter', 14.5, 31, 0], ['back to the hall', 4, 2, 0], ['exit stair, top', 4, -4.05, 2.04],
+  ];
+  for (const [name, x, y, ez] of route) {
+    const ok = walkTo(x, y); const zok = Math.abs(P.z - ez) < 0.2;
+    out.route.push({ name, reached: ok, z: +P.z.toFixed(2), expectedZ: ez, pass: ok && zok, at: [+P.x.toFixed(2), +P.y.toFixed(2)] });
+    if (!(ok && zok)) out.fail++;
+  }
+  for (const o of OBJECTS) {
+    const [ax2, ay2] = o.approach; P.x = ax2; P.y = ay2; P.z = groundAt(ax2, ay2, o.at[2] + 1);
+    stopVoice(); for (let i = 0; i < 5; i++) encounters();
+    const heard = state.active === o.id && sub.classList.contains('on') && document.getElementById('lname').textContent === o.name;
+    const ux = (ax2 - o.at[0]) / Math.hypot(ax2 - o.at[0], ay2 - o.at[1]), uy = (ay2 - o.at[1]) / Math.hypot(ax2 - o.at[0], ay2 - o.at[1]);
+    const levels = [];
+    for (let k = 1; k <= 16 && state.active === o.id; k++) { P.x = ax2 + ux * 0.25 * k; P.y = ay2 + uy * 0.25 * k; encounters(); levels.push(+(state.level ?? 0).toFixed(2)); }
+    const falling = levels.every((v, i) => i === 0 || v <= levels[i - 1] + 1e-9);
+    const faded = state.active !== o.id;
+    out.objects.push({ id: o.id, heard, thinsOut: falling, fadedWhenLeft: faded, pass: heard && falling && faded });
+    if (!(heard && falling && faded)) out.fail++;
+  }
+  Object.assign(P, SPAWN); place(); renderer.render(scene, cam);
+  out.info = { boxes: boxes.length, floors: floors.length, solids: solids.length, drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, bakeMs: lightStats.ms, light: LIGHT };
+  out.pass = out.fail === 0;
+  const pre = document.getElementById('result'); pre.textContent = JSON.stringify(out, null, 1); pre.style.display = 'block';
+  document.title = (out.pass ? 'PASS' : 'FAIL') + ' ' + out.fail;
+}
+</script>
+</body>
+</html>
