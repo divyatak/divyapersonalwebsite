@@ -136,24 +136,15 @@ export const extraWorks = [
       { label: 'TestFlight', href: 'https://testflight.apple.com/join/hU6Evjzg', icon: 'apple' },
     ],
     image: '/playground/perpetuity.webp',
-    imageAlt: 'A moving abstract painting, a pink and blue flower on dark green, from Perpetuity',
+    imageAlt: 'Three phone screens from Perpetuity: the home screen, a scrambled board and a solved painting',
     orientation: 'portrait',
     heroVideo: '/clips/perpetuity-promo.mp4', // her App Store promo, byte for byte (square pixels; the YouTube export is anamorphic)
     tech: 'Godot · C++',
-    media: [
-      { type: 'video', src: '/clips/perpetuity-bloom.mp4', width: 1080, height: 1920 },
-      { type: 'video', src: '/clips/perpetuity-tapestry.mp4', width: 1080, height: 1920 },
-      { type: 'video', src: '/clips/perpetuity-city-lights.mp4', width: 1080, height: 1920 },
-      { type: 'image', src: '/clips/perpetuity-albums.png', width: 1290, height: 2796 },
-      { type: 'image', src: '/clips/perpetuity-solved.png', width: 1290, height: 2796 },
-      { type: 'video', src: '/clips/perpetuity-red-dew.mp4', width: 1080, height: 1920 },
-      { type: 'video', src: '/clips/perpetuity-lemon-sea.mp4', width: 1080, height: 1920 },
-      { type: 'video', src: '/clips/perpetuity-rising-again.mp4', width: 1080, height: 1920 },
-    ],
-    // from her store listing; the page's arrangement lives in work-layouts.json
-    what: "A jigsaw where the picture won't hold still. Perpetuity is a zen puzzle game of moving paintings, each with its own music. Each painting moves the way the visualisers in old music players moved to a song, and you put it back together one swap at a time, matching the motion as much as the colour.",
-    how: "Every day there is one new painting, cut just for that day, and they gather into albums, each with its own mood: Beginnings, Lost in morning, Flowers after a snow. Boards start with a dozen big pieces and grow to a hundred small ones. The paintings come from a procedural colour-field engine and the game runs in Godot, with a C++ extension for the audio.",
-    why: "No countdown. No lives. No score. Nothing is timing you, and nothing is waiting to tell you that you lost. When the last piece lands, the painting opens up to fill the screen and keeps playing. Stay as long as you like.",
+    media: [],
+    // the page's arrangement, rows of small screens and paintings, lives in work-layouts.json
+    what: "Perpetuity is a jigsaw puzzle game for Android and iOS where the picture keeps moving. Each puzzle is an abstract animated painting with its own music. You tap two pieces to swap them until the painting is back together. There is no timer, no score and no way to lose.",
+    how: "There is a new puzzle every day and a new album every Wednesday, with 148 levels across nine packs so far. Boards run from a dozen pieces to a hundred. Because the picture moves while you solve it, you match the motion as well as the colour. The paintings and music come from a procedural engine. I choose them, name them and arrange them into albums in my own pack-making tool, and the game is built in Godot with a C++ extension for the audio.",
+    why: "It is in open testing on Google Play and TestFlight. The same engine also grew into Field Studio, the desktop tool I now use to make audiovisual pieces.",
   },
   {
     slug: 'field-studio',
@@ -167,20 +158,14 @@ export const extraWorks = [
       { label: 'Perpetuity', href: '/works/perpetuity/' },
     ],
     image: '/playground/field-studio.webp',
-    imageAlt: 'A colour field transforming, rendered in Field Studio',
+    imageAlt: "Field Studio: a colour field in the centre, visual controls on the left, music on the right, the timeline below",
     orientation: 'landscape',
-    heroVideo: '/clips/field-studio-transformer.mp4',
     tech: 'WebGL · Web Audio · Electron',
-    media: [
-      { type: 'image', src: '/clips/field-studio-ui.png', width: 2139, height: 1386, alt: "Field Studio: a colour field in the centre, its visual controls on the left and its music on the right" },
-      { type: 'video', src: '/clips/field-studio-flow.mp4' },
-      { type: 'video', src: '/clips/field-studio-contour.mp4' },
-      { type: 'video', src: '/clips/field-studio-flat.mp4' },
-    ],
-    // what: her words on where it came from, plus the repo README. how: README and
-    // handoff. why: her words from the Field record. Clips rendered by the tool itself.
+    media: [],
+    // the interface closeups and clips are arranged in work-layouts.json. Clips are rendered
+    // from her Android Dreams and Electric Dreams projects through the tool's offline path.
     what: "A local audiovisual generator, editor and performance surface. A field in the middle, its visual controls on the left, its music on the right, a timeline and live controls below. It began as a supporting tool for entrancing visuals for a jigsaw puzzle game, the one that became Perpetuity, and then developed into audiovisual pieces of its own.",
-    how: "The picture and the music are separate procedural engines joined by connections you can edit: a score's phrases and note entrances can drive the field. Make one composition, make another, connect them, and the transformer plays the movement from one to the other. Live, ten musical relationship dials reshape a four-part composer of melody, harmony, bass and pulse, and the changes enter on the beat. It renders PNG, WAV and WebM, and no generative AI chooses a note at runtime.",
+    how: "The picture and the music are separate procedural engines joined by connections you can edit. Phrases breathe the shape spacing, melody entrances lift the colour and pulse entrances nudge the field's warp, with one strength control over all of it. No generative AI chooses a note at runtime.",
     why: "Conceptually the whole piece is about the aesthetics of interconnected responsiveness. That is why the music originates from the same view as the picture.",
   },
   {

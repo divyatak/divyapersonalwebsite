@@ -347,6 +347,31 @@ const metaDescription = work.what
       {flowFinal.map((b: any) =>
         b.kind === 'para' ? (
           <p class:list={['wk-prose', b.pos]}>{b.body}</p>
+        ) : b.kind === 'row' ? (
+          <div class="wk-row" style={`--n: ${b.items.length}`} data-row={JSON.stringify(b)}>
+            {b.items.map((m: any) =>
+              m.type === 'video' ? (
+                <video
+                  src={`${base}${m.src}`}
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                  style={m.width && m.height ? `aspect-ratio: ${m.width} / ${m.height}` : undefined}
+                  aria-label={`${work.title}, video`}
+                ></video>
+              ) : (
+                <img
+                  src={`${base}${m.src}`}
+                  alt={m.alt || work.title}
+                  loading="lazy"
+                  decoding="async"
+                  width={m.width || undefined}
+                  height={m.height || undefined}
+                />
+              )
+            )}
+          </div>
         ) : b.media.type === 'video' ? (
           <figure class:list={['wk-plate', b.pos]}>
             <video
@@ -580,6 +605,7 @@ const metaDescription = work.what
             if (el.classList.contains('wk-prose')) {
               return { kind: 'para', body: textOf(el), pos: posOf(el) }
             }
+            if (el.classList.contains('wk-row')) return JSON.parse(el.dataset.row)
             var media = el.querySelector('video, img')
             var isVid = media && media.tagName === 'VIDEO'
             var out = { kind: 'plate', pos: posOf(el), media: { type: isVid ? 'video' : 'image', src: media ? media.getAttribute('src') : '' } }
@@ -828,6 +854,18 @@ const metaDescription = work.what
   .wk-flow .wk-plate.mh-r { grid-column: 2 / 4; }  /* the wide half, right */
   .wk-flow .wk-plate.m-s { grid-column: auto / span 1; } /* the narrow half */
   .wk-flow .wk-plate.m-f { grid-column: 1 / -1; }  /* full-bleed, editor's call */
+  /* a phone-shaped piece, held to about phone size rather than filling its column */
+  .wk-flow .wk-plate.m-phone { max-width: 280px; justify-self: center; width: 100%; }
+  /* small things side by side: --n of them across the full measure */
+  .wk-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: calc(var(--r) * 0.75);
+  }
+  .wk-row img,
+  .wk-row video { display: block; width: 100%; height: auto; }
+
   .wk-plate img,
   .wk-plate video {
     display: block;
@@ -925,6 +963,11 @@ const metaDescription = work.what
       justify-self: stretch;
     }
     .wk-flow { row-gap: calc(var(--r) * 2); }
+    .wk-row { grid-column: 1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--r) * 0.5); }
+    .wk-flow .wk-plate.m-phone { max-width: 240px; }
+    /* a wide closeup of an interface stays legible: it pans inside its own box */
+    .wk-flow .wk-plate.m-pan { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .wk-flow .wk-plate.m-pan img { width: 860px; max-width: none; }
     /* the narrow header leaves no gutter for the pinned arrow — it returns
        to the flow up top */
     .wk-back {

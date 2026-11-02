@@ -1561,11 +1561,11 @@
       {
         "kind": "para",
         "pos": "pw-l",
-        "body": "A jigsaw where the picture won't hold still. Perpetuity is a zen puzzle game of moving paintings, each with its own music. Each painting moves the way the visualisers in old music players moved to a song, and you put it back together one swap at a time, matching the motion as much as the colour."
+        "body": "Perpetuity is a jigsaw puzzle game for Android and iOS where the picture keeps moving. Each puzzle is an abstract animated painting with its own music. You tap two pieces to swap them until the painting is back together. There is no timer, no score and no way to lose."
       },
       {
         "kind": "plate",
-        "pos": "m-s",
+        "pos": "m-s m-phone",
         "media": {
           "type": "video",
           "src": "/clips/perpetuity-promo.mp4",
@@ -1574,96 +1574,95 @@
         }
       },
       {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/perpetuity-bloom.mp4",
-          "width": 1080,
-          "height": 1920
-        }
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/perpetuity-tapestry.mp4",
-          "width": 1080,
-          "height": 1920
-        }
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/perpetuity-city-lights.mp4",
-          "width": 1080,
-          "height": 1920
-        }
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "image",
-          "src": "/clips/perpetuity-albums.png",
-          "width": 1290,
-          "height": 2796,
-          "alt": "The albums in Perpetuity"
-        }
-      },
-      {
-        "kind": "para",
-        "pos": "pw-r",
-        "body": "Every day there is one new painting, cut just for that day, and they gather into albums, each with its own mood: Beginnings, Lost in morning, Flowers after a snow. Boards start with a dozen big pieces and grow to a hundred small ones. The paintings come from a procedural colour-field engine and the game runs in Godot, with a C++ extension for the audio."
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/perpetuity-red-dew.mp4",
-          "width": 1080,
-          "height": 1920
-        }
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/perpetuity-lemon-sea.mp4",
-          "width": 1080,
-          "height": 1920
-        }
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/perpetuity-rising-again.mp4",
-          "width": 1080,
-          "height": 1920
-        }
+        "kind": "row",
+        "items": [
+          {
+            "type": "image",
+            "src": "/clips/perpetuity-home.webp",
+            "width": 1080,
+            "height": 2160,
+            "alt": "Perpetuity's home screen: today's puzzle and the album shelf"
+          },
+          {
+            "type": "image",
+            "src": "/clips/perpetuity-board.webp",
+            "width": 1080,
+            "height": 2160,
+            "alt": "A scrambled board with large pieces"
+          },
+          {
+            "type": "image",
+            "src": "/clips/perpetuity-board-large.webp",
+            "width": 1080,
+            "height": 2160,
+            "alt": "A harder board with many small pieces"
+          },
+          {
+            "type": "image",
+            "src": "/clips/perpetuity-solved.webp",
+            "width": 1080,
+            "height": 2160,
+            "alt": "A solved painting filling the screen"
+          },
+          {
+            "type": "image",
+            "src": "/clips/perpetuity-calendar.webp",
+            "width": 1080,
+            "height": 2160,
+            "alt": "The calendar of daily puzzles"
+          }
+        ]
       },
       {
         "kind": "para",
         "pos": "pw-l",
-        "body": "No countdown. No lives. No score. Nothing is timing you, and nothing is waiting to tell you that you lost. When the last piece lands, the painting opens up to fill the screen and keeps playing. Stay as long as you like."
+        "body": "There is a new puzzle every day and a new album every Wednesday, with 148 levels across nine packs so far. Boards run from a dozen pieces to a hundred. Because the picture moves while you solve it, you match the motion as well as the colour. The paintings and music come from a procedural engine. I choose them, name them and arrange them into albums in my own pack-making tool, and the game is built in Godot with a C++ extension for the audio."
       },
       {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "image",
-          "src": "/clips/perpetuity-solved.png",
-          "width": 1290,
-          "height": 2796,
-          "alt": "A solved painting in Perpetuity"
-        }
+        "kind": "row",
+        "items": [
+          {
+            "type": "video",
+            "src": "/clips/perpetuity-bloom.mp4",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "type": "video",
+            "src": "/clips/perpetuity-tapestry.mp4",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "type": "video",
+            "src": "/clips/perpetuity-city-lights.mp4",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "type": "video",
+            "src": "/clips/perpetuity-red-dew.mp4",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "type": "video",
+            "src": "/clips/perpetuity-lemon-sea.mp4",
+            "width": 1080,
+            "height": 1920
+          },
+          {
+            "type": "video",
+            "src": "/clips/perpetuity-rising-again.mp4",
+            "width": 1080,
+            "height": 1920
+          }
+        ]
+      },
+      {
+        "kind": "para",
+        "pos": "pw-l",
+        "body": "It is in open testing on Google Play and TestFlight. The same engine also grew into Field Studio, the desktop tool I now use to make audiovisual pieces."
       }
     ]
   },
@@ -1678,25 +1677,120 @@
         "kind": "plate",
         "pos": "mh-r",
         "media": {
-          "type": "video",
-          "src": "/clips/field-studio-transformer.mp4"
+          "type": "image",
+          "src": "/clips/field-studio-ui-full.webp",
+          "width": 2400,
+          "height": 1500,
+          "alt": "Field Studio: a colour field in the centre, visual controls on the left, music on the right, the timeline below"
         }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-f",
+        "media": {
+          "type": "video",
+          "src": "/clips/field-studio-electric-a.mp4",
+          "width": 4096,
+          "height": 556
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s m-phone",
+        "media": {
+          "type": "image",
+          "src": "/clips/field-studio-ui-shapes.png",
+          "width": 560,
+          "height": 770,
+          "alt": "The shape, count, arrangement and symmetry controls"
+        }
+      },
+      {
+        "kind": "para",
+        "pos": "pw-r",
+        "body": "A composition is built from a small set of controls: a shape, how many of it, how they are arranged and what symmetry they follow, then colour, motion and finish. Reroll generates a new one, and every value can be edited by hand."
+      },
+      {
+        "kind": "para",
+        "pos": "pw-l",
+        "body": "The picture and the music are separate procedural engines joined by connections you can edit. Phrases breathe the shape spacing, melody entrances lift the colour and pulse entrances nudge the field's warp, with one strength control over all of it. No generative AI chooses a note at runtime."
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/clips/field-studio-ui-music-link.png",
+          "width": 600,
+          "height": 390,
+          "alt": "The Music to Field panel, with a strength slider"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-f m-pan",
+        "media": {
+          "type": "image",
+          "src": "/clips/field-studio-ui-timeline.png",
+          "width": 3200,
+          "height": 530,
+          "alt": "The timeline: three compositions overlapping, joined by transformers"
+        }
+      },
+      {
+        "kind": "para",
+        "pos": "pw-l",
+        "body": "Make one composition, make another, connect them, and the transformer plays the movement from one to the other. It renders PNG, WAV and WebM at a chosen resolution, up to 8192 × 1112 for an ultrawide screen."
+      },
+      {
+        "kind": "plate",
+        "pos": "m-f",
+        "media": {
+          "type": "video",
+          "src": "/clips/field-studio-electric-b.mp4",
+          "width": 4096,
+          "height": 556
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-f m-pan",
+        "media": {
+          "type": "image",
+          "src": "/clips/field-studio-ui-dials.png",
+          "width": 3136,
+          "height": 464,
+          "alt": "Ten musical relationship dials, from Sparse to Bustling and Ominous to Hopeful"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-f m-pan",
+        "media": {
+          "type": "image",
+          "src": "/clips/field-studio-ui-sound-families.png",
+          "width": 3136,
+          "height": 398,
+          "alt": "The sound family picker"
+        }
+      },
+      {
+        "kind": "para",
+        "pos": "pw-l",
+        "body": "Live, ten musical relationship dials reshape a four-part composer of melody, harmony, bass and pulse, and the changes enter every four beats. Five sound families swap the ensemble playing it: Wood & String, Felt & Tine, Bowed Air, Tape Circuit and Neon Keys."
       },
       {
         "kind": "plate",
         "pos": "mh-l",
         "media": {
-          "type": "image",
-          "src": "/clips/field-studio-ui.png",
-          "width": 2139,
-          "height": 1386,
-          "alt": "Field Studio: a colour field in the centre, its visual controls on the left and its music on the right"
+          "type": "video",
+          "src": "/clips/field-studio-android-a.mp4"
         }
       },
       {
         "kind": "para",
         "pos": "ph-r",
-        "body": "The picture and the music are separate procedural engines joined by connections you can edit: a score's phrases and note entrances can drive the field. Make one composition, make another, connect them, and the transformer plays the movement from one to the other. Live, ten musical relationship dials reshape a four-part composer of melody, harmony, bass and pulse, and the changes enter on the beat. It renders PNG, WAV and WebM, and no generative AI chooses a note at runtime."
+        "body": "I have made two pieces with it so far: Android Dreams, a one-minute film, and Electric Dreams, an 8192 × 1112 ultrawide. The moving images on this page are rendered from those two projects."
       },
       {
         "kind": "para",
@@ -1708,23 +1802,17 @@
         "pos": "mh-r",
         "media": {
           "type": "video",
-          "src": "/clips/field-studio-flow.mp4"
+          "src": "/clips/field-studio-android-b.mp4"
         }
       },
       {
         "kind": "plate",
-        "pos": "mh-l",
+        "pos": "m-f",
         "media": {
           "type": "video",
-          "src": "/clips/field-studio-contour.mp4"
-        }
-      },
-      {
-        "kind": "plate",
-        "pos": "m-s",
-        "media": {
-          "type": "video",
-          "src": "/clips/field-studio-flat.mp4"
+          "src": "/clips/field-studio-electric-c.mp4",
+          "width": 4096,
+          "height": 556
         }
       }
     ]

@@ -19,9 +19,9 @@ url: https://www.samarni.com/
 description: Known for Sita's Ramayana (NYT Bestseller) and The Mahabharatha — A Child's View. Elsa Morante Literary Award winner.
 
 name: Anurati Srivastva
-role: Learning game designer & new media artist
+role: Product and Learning Game Designer
 url: https://www.anuratisrivastva.com/
-description: Founder of PEDAL Studio, making games for social-emotional learning. Worked with Charu and Divya on The Titli Effect.
+description: Builds playful and meaningful experiences for children and youth to create behavioural change.
 
 name: Sana Alimohamed
 role: Game designer & writer
