@@ -123,6 +123,44 @@ export const extraWorks = [
       "fails, so visual quality was the first thing to de-risk.",
   },
   {
+    slug: 'perpetuity',
+    title: 'Perpetuity',
+    year: 2026,
+    status: 'ongoing',
+    with: 'with Joyus',
+    url: 'https://play.google.com/store/apps/details?id=studio.joyus.motionjigsaw',
+    linkLabel: 'Play it',
+    image: '/playground/perpetuity.webp',
+    imageAlt: 'A moving abstract painting, a pink and blue flower on dark green, from Perpetuity',
+    orientation: 'portrait',
+    heroVideo: '/clips/perpetuity-promo.mp4', // her App Store promo, byte for byte (square pixels; the YouTube export is anamorphic)
+    tech: 'Godot · C++ · Electron',
+    media: [
+      { type: 'image', src: '/clips/perpetuity-field-studio.png', width: 2139, height: 1386, alt: 'Field Studio: a colour field in the centre, its visual controls on the left and its music on the right' },
+      { type: 'video', src: '/clips/perpetuity-bloom.mp4', width: 1080, height: 1920 },
+      { type: 'video', src: '/clips/perpetuity-city-lights.mp4', width: 1080, height: 1920 },
+    ],
+    // what: her store listing. how: the Field lineage record. why: her words from
+    // the Field record plus the listing. Draft for her to edit.
+    what:
+      "A jigsaw where the picture won't hold still. Perpetuity is a zen puzzle game of moving paintings, " +
+      "each with its own music. Each painting moves the way the visualisers in old music players moved " +
+      "to a song, and you put it back together one swap at a time, matching the motion as much as the " +
+      "colour. Every day there is one new painting, and they gather into albums, each with its own mood: " +
+      "Beginnings, Lost in morning, Flowers after a snow.",
+    how:
+      "The paintings come from a procedural colour-field engine, and the game runs them in Godot, with a " +
+      "C++ extension for the audio. Making visuals for the puzzle also grew a second thing: Field Studio, " +
+      "a desktop audiovisual generator, editor and performance surface built from the same engine. A " +
+      "field in the middle, music on the side, and a four-part procedural composer joined to the picture " +
+      "by couplings you can edit, with dials you can perform live.",
+    why:
+      "The whole thing is about the aesthetics of interconnected responsiveness, which is why the music " +
+      "comes from the same view as the picture. In the game that stays quiet. No countdown, no lives, no " +
+      "score, nothing waiting to tell you that you lost. When the last piece lands, the painting opens up " +
+      "to fill the screen and keeps playing. Stay as long as you like.",
+  },
+  {
     slug: 'bioluminescent-flow',
     title: 'Bioluminescent Flow',
     year: 2026,
