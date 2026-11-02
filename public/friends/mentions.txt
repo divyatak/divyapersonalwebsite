@@ -30,6 +30,7 @@ description: Made Rishta: Aunties Know Best, a hidden agenda party game. Worked 
 
 name: Rosebridges Starchuk Code
 role: Founder & CEO
+url: https://rstarchukcode.com/
 description: Runs The Oooooze School, a business school for freaks, weirdos and utopians, the video ritual studio Innerorbital Psychostructures Corp., and the stealth aurapunk company Lespionage Corp.
 
 name: Nanditi Khilnani
