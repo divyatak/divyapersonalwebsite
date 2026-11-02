@@ -26,12 +26,11 @@ description: Builds playful and meaningful experiences for children and youth to
 name: Sana Alimohamed
 role: Game designer & writer
 url: https://playrishta.com/
-description: Made Rishta: Aunties Know Best, a social deduction party game. Worked with Charu and Divya on The Titli Effect.
+description: Made Rishta: Aunties Know Best, a hidden agenda party game. Worked with Charu and Divya on The Titli Effect.
 
-name: Brie Code
-role: Game developer
-url: https://truluv.ai/
-description: Led AI programming at Ubisoft Montreal, then made #SelfCare at her studio TRU LUV, games built around care.
+name: Rosebridges Starchuk Code
+role: Founder & CEO
+description: Runs The Oooooze School, a business school for freaks, weirdos and utopians, the video ritual studio Innerorbital Psychostructures Corp., and the stealth aurapunk company Lespionage Corp.
 
 name: Nanditi Khilnani
 role: Musician, live-coder & cultural technologist
