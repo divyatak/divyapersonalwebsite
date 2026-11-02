@@ -1555,5 +1555,178 @@
         "pos": "pw-l"
       }
     ]
+  },
+  "perpetuity": {
+    "flow": [
+      {
+        "kind": "para",
+        "pos": "pw-l",
+        "body": "A jigsaw where the picture won't hold still. Perpetuity is a zen puzzle game of moving paintings, each with its own music. Each painting moves the way the visualisers in old music players moved to a song, and you put it back together one swap at a time, matching the motion as much as the colour."
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-promo.mp4",
+          "width": 886,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-bloom.mp4",
+          "width": 1080,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-tapestry.mp4",
+          "width": 1080,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-city-lights.mp4",
+          "width": 1080,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/clips/perpetuity-albums.png",
+          "width": 1290,
+          "height": 2796,
+          "alt": "The albums in Perpetuity"
+        }
+      },
+      {
+        "kind": "para",
+        "pos": "pw-r",
+        "body": "Every day there is one new painting, cut just for that day, and they gather into albums, each with its own mood: Beginnings, Lost in morning, Flowers after a snow. Boards start with a dozen big pieces and grow to a hundred small ones. The paintings come from a procedural colour-field engine and the game runs in Godot, with a C++ extension for the audio."
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-red-dew.mp4",
+          "width": 1080,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-lemon-sea.mp4",
+          "width": 1080,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/perpetuity-rising-again.mp4",
+          "width": 1080,
+          "height": 1920
+        }
+      },
+      {
+        "kind": "para",
+        "pos": "pw-l",
+        "body": "No countdown. No lives. No score. Nothing is timing you, and nothing is waiting to tell you that you lost. When the last piece lands, the painting opens up to fill the screen and keeps playing. Stay as long as you like."
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "image",
+          "src": "/clips/perpetuity-solved.png",
+          "width": 1290,
+          "height": 2796,
+          "alt": "A solved painting in Perpetuity"
+        }
+      }
+    ]
+  },
+  "field-studio": {
+    "flow": [
+      {
+        "kind": "para",
+        "pos": "ph-l",
+        "body": "A local audiovisual generator, editor and performance surface. A field in the middle, its visual controls on the left, its music on the right, a timeline and live controls below. It began as a supporting tool for entrancing visuals for a jigsaw puzzle game, the one that became Perpetuity, and then developed into audiovisual pieces of its own."
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/field-studio-transformer.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "image",
+          "src": "/clips/field-studio-ui.png",
+          "width": 2139,
+          "height": 1386,
+          "alt": "Field Studio: a colour field in the centre, its visual controls on the left and its music on the right"
+        }
+      },
+      {
+        "kind": "para",
+        "pos": "ph-r",
+        "body": "The picture and the music are separate procedural engines joined by connections you can edit: a score's phrases and note entrances can drive the field. Make one composition, make another, connect them, and the transformer plays the movement from one to the other. Live, ten musical relationship dials reshape a four-part composer of melody, harmony, bass and pulse, and the changes enter on the beat. It renders PNG, WAV and WebM, and no generative AI chooses a note at runtime."
+      },
+      {
+        "kind": "para",
+        "pos": "ph-l",
+        "body": "Conceptually the whole piece is about the aesthetics of interconnected responsiveness. That is why the music originates from the same view as the picture."
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-r",
+        "media": {
+          "type": "video",
+          "src": "/clips/field-studio-flow.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "mh-l",
+        "media": {
+          "type": "video",
+          "src": "/clips/field-studio-contour.mp4"
+        }
+      },
+      {
+        "kind": "plate",
+        "pos": "m-s",
+        "media": {
+          "type": "video",
+          "src": "/clips/field-studio-flat.mp4"
+        }
+      }
+    ]
   }
 }

@@ -17,3 +17,28 @@ name: Samhita Arni
 role: Author & brand consultant
 url: https://www.samarni.com/
 description: Known for Sita's Ramayana (NYT Bestseller) and The Mahabharatha — A Child's View. Elsa Morante Literary Award winner.
+
+name: Anurati Srivastva
+role: Learning game designer & new media artist
+url: https://www.anuratisrivastva.com/
+description: Founder of PEDAL Studio, making games for social-emotional learning. Worked with Charu and Divya on The Titli Effect.
+
+name: Sana Alimohamed
+role: Game designer & writer
+url: https://playrishta.com/
+description: Made Rishta: Aunties Know Best, a social deduction party game. Worked with Charu and Divya on The Titli Effect.
+
+name: Brie Code
+role: Game developer
+url: https://truluv.ai/
+description: Led AI programming at Ubisoft Montreal, then made #SelfCare at her studio TRU LUV, games built around care.
+
+name: Nanditi Khilnani
+role: Musician, live-coder & cultural technologist
+url: https://nanditi.com/
+description: Co-founder of Ajaibghar with Computational Mama, a creative technology studio and lab for art, culture and futures.
+
+name: Safia Tapal
+role: Writer
+url: https://safiatapal.substack.com/
+description: Writes on identity, belonging, and moving through the world.

@@ -126,39 +126,62 @@ export const extraWorks = [
     slug: 'perpetuity',
     title: 'Perpetuity',
     year: 2026,
-    status: 'ongoing',
+    status: 'finished',
     with: 'with Joyus',
-    url: 'https://play.google.com/store/apps/details?id=studio.joyus.motionjigsaw',
-    linkLabel: 'Play it',
+    url: null,
+    linkLabel: null,
+    // the open tests on both stores: Play's listing, and TestFlight's public link
+    links: [
+      { label: 'Google Play', href: 'https://play.google.com/store/apps/details?id=studio.joyus.motionjigsaw', icon: 'google-play' },
+      { label: 'TestFlight', href: 'https://testflight.apple.com/join/hU6Evjzg', icon: 'apple' },
+    ],
     image: '/playground/perpetuity.webp',
     imageAlt: 'A moving abstract painting, a pink and blue flower on dark green, from Perpetuity',
     orientation: 'portrait',
     heroVideo: '/clips/perpetuity-promo.mp4', // her App Store promo, byte for byte (square pixels; the YouTube export is anamorphic)
-    tech: 'Godot · C++ · Electron',
+    tech: 'Godot · C++',
     media: [
-      { type: 'image', src: '/clips/perpetuity-field-studio.png', width: 2139, height: 1386, alt: 'Field Studio: a colour field in the centre, its visual controls on the left and its music on the right' },
       { type: 'video', src: '/clips/perpetuity-bloom.mp4', width: 1080, height: 1920 },
+      { type: 'video', src: '/clips/perpetuity-tapestry.mp4', width: 1080, height: 1920 },
       { type: 'video', src: '/clips/perpetuity-city-lights.mp4', width: 1080, height: 1920 },
+      { type: 'image', src: '/clips/perpetuity-albums.png', width: 1290, height: 2796 },
+      { type: 'image', src: '/clips/perpetuity-solved.png', width: 1290, height: 2796 },
+      { type: 'video', src: '/clips/perpetuity-red-dew.mp4', width: 1080, height: 1920 },
+      { type: 'video', src: '/clips/perpetuity-lemon-sea.mp4', width: 1080, height: 1920 },
+      { type: 'video', src: '/clips/perpetuity-rising-again.mp4', width: 1080, height: 1920 },
     ],
-    // what: her store listing. how: the Field lineage record. why: her words from
-    // the Field record plus the listing. Draft for her to edit.
-    what:
-      "A jigsaw where the picture won't hold still. Perpetuity is a zen puzzle game of moving paintings, " +
-      "each with its own music. Each painting moves the way the visualisers in old music players moved " +
-      "to a song, and you put it back together one swap at a time, matching the motion as much as the " +
-      "colour. Every day there is one new painting, and they gather into albums, each with its own mood: " +
-      "Beginnings, Lost in morning, Flowers after a snow.",
-    how:
-      "The paintings come from a procedural colour-field engine, and the game runs them in Godot, with a " +
-      "C++ extension for the audio. Making visuals for the puzzle also grew a second thing: Field Studio, " +
-      "a desktop audiovisual generator, editor and performance surface built from the same engine. A " +
-      "field in the middle, music on the side, and a four-part procedural composer joined to the picture " +
-      "by couplings you can edit, with dials you can perform live.",
-    why:
-      "The whole thing is about the aesthetics of interconnected responsiveness, which is why the music " +
-      "comes from the same view as the picture. In the game that stays quiet. No countdown, no lives, no " +
-      "score, nothing waiting to tell you that you lost. When the last piece lands, the painting opens up " +
-      "to fill the screen and keeps playing. Stay as long as you like.",
+    // from her store listing; the page's arrangement lives in work-layouts.json
+    what: "A jigsaw where the picture won't hold still. Perpetuity is a zen puzzle game of moving paintings, each with its own music. Each painting moves the way the visualisers in old music players moved to a song, and you put it back together one swap at a time, matching the motion as much as the colour.",
+    how: "Every day there is one new painting, cut just for that day, and they gather into albums, each with its own mood: Beginnings, Lost in morning, Flowers after a snow. Boards start with a dozen big pieces and grow to a hundred small ones. The paintings come from a procedural colour-field engine and the game runs in Godot, with a C++ extension for the audio.",
+    why: "No countdown. No lives. No score. Nothing is timing you, and nothing is waiting to tell you that you lost. When the last piece lands, the painting opens up to fill the screen and keeps playing. Stay as long as you like.",
+  },
+  {
+    slug: 'field-studio',
+    title: 'Field Studio',
+    year: 2026,
+    status: 'ongoing',
+    with: '',
+    url: null,
+    linkLabel: null,
+    links: [
+      { label: 'Perpetuity', href: '/works/perpetuity/' },
+    ],
+    image: '/playground/field-studio.webp',
+    imageAlt: 'A colour field transforming, rendered in Field Studio',
+    orientation: 'landscape',
+    heroVideo: '/clips/field-studio-transformer.mp4',
+    tech: 'WebGL · Web Audio · Electron',
+    media: [
+      { type: 'image', src: '/clips/field-studio-ui.png', width: 2139, height: 1386, alt: "Field Studio: a colour field in the centre, its visual controls on the left and its music on the right" },
+      { type: 'video', src: '/clips/field-studio-flow.mp4' },
+      { type: 'video', src: '/clips/field-studio-contour.mp4' },
+      { type: 'video', src: '/clips/field-studio-flat.mp4' },
+    ],
+    // what: her words on where it came from, plus the repo README. how: README and
+    // handoff. why: her words from the Field record. Clips rendered by the tool itself.
+    what: "A local audiovisual generator, editor and performance surface. A field in the middle, its visual controls on the left, its music on the right, a timeline and live controls below. It began as a supporting tool for entrancing visuals for a jigsaw puzzle game, the one that became Perpetuity, and then developed into audiovisual pieces of its own.",
+    how: "The picture and the music are separate procedural engines joined by connections you can edit: a score's phrases and note entrances can drive the field. Make one composition, make another, connect them, and the transformer plays the movement from one to the other. Live, ten musical relationship dials reshape a four-part composer of melody, harmony, bass and pulse, and the changes enter on the beat. It renders PNG, WAV and WebM, and no generative AI chooses a note at runtime.",
+    why: "Conceptually the whole piece is about the aesthetics of interconnected responsiveness. That is why the music originates from the same view as the picture.",
   },
   {
     slug: 'bioluminescent-flow',
