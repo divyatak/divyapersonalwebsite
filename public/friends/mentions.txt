@@ -42,3 +42,8 @@ name: Safia Tapal
 role: Writer
 url: https://safiatapal.substack.com/
 description: Writes on identity, belonging, and moving through the world.
+
+name: Hrushi Jadhav
+role: VFX & environment artist
+url: https://www.instagram.com/hrushi.07/
+description: Works across VFX, environment art, and real-time 3D. Specializes in Houdini, Nuke and Game Engines. Currently making fun levels for Flip Flop Fury.
