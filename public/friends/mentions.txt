@@ -18,11 +18,6 @@ role: Author & brand consultant
 url: https://www.samarni.com/
 description: Known for Sita's Ramayana (NYT Bestseller) and The Mahabharatha — A Child's View. Elsa Morante Literary Award winner.
 
-name: Anurati Srivastva
-role: Product and Learning Game Designer
-url: https://www.anuratisrivastva.com/
-description: Builds playful and meaningful experiences for children and youth to create behavioural change.
-
 name: Sana Alimohamed
 role: Game designer & writer
 url: https://playrishta.com/
@@ -47,3 +42,8 @@ name: Hrushi Jadhav
 role: VFX & environment artist
 url: https://www.instagram.com/hrushi.07/
 description: Works across VFX, environment art, and real-time 3D. Specializes in Houdini, Nuke and Game Engines. Currently making fun levels for Flip Flop Fury.
+
+name: Anurati Srivastva
+role: Product and Learning Game Designer
+url: https://www.anuratisrivastva.com/
+description: Builds playful and meaningful experiences for children and youth to create behavioural change.
